@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="war" name="exploding">
+	<description>
+		Exploding Places Webapp
+	</description>
+	<!-- set global properties for this build -->
+	<property location="src" name="src"/>
+	<property location="lib" name="lib"/>
+	<property location="etc" name="etc"/>
+	<property location="test" name="test"/>
+	<property location="tools" name="tools"/>
+	<property location="build" name="build"/>
+	<property location="dist" name="dist"/>
+	<property location="docs" name="docs"/>
+	<property location="${docs}/javadoc" name="javadoc"/>
+	<property location="generated" name="generated"/>
+
+	<!-- local properties -->
+	<property file="build.properties"/>
+
+	<property value="exploding" name="webappname"/>
+	<property value="${webappname}.war" name="warfile"/>
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}"/>
+		<mkdir dir="${generated}"/>
+		<mkdir dir="${dist}"/>
+		<!-- copied relevant things to here -->
+		<property name="equip2home" location="."/>
+		
+		<available property="junit.found" file="${dependencies.dir}/junit-4.jar"/>
+		<available file="${dependencies.dir}/hibernate3.jar" property="hibernate.found"/>
+		<available file="${xalanhome}/xalan.jar" property="xalan.found"/>
+		<available file="${dependencies.dir}/spring.jar" property="spring.found"/>
+		<available file="${webapps.dir}" type="dir" property="webapps.found"/>
+		<available file="${dependencies.dir}/equip2.jar" property="equip2.found"/>
+		<available file="${dependencies.dir}/equip2hibernate.jar" property="equip2hibernate.found"/>
+		<available file="${dependencies.dir}/equip2tools.jar" property="equip2tools.found"/>
+		<available file="${dependencies.dir}/equip2webdb.jar" property="equip2webdb.found"/>
+		<available file="${dependencies.dir}/equip2webdb_jsp.jar" property="equip2webdb_jsp.found"/>
+		<available file="${dependencies.dir}/bsf.jar" property="bsf.found"/>
+		<available file="${jythonhome}/jython.jar" property="jython.found"/>
+		<available file="${jythonhome}" type="dir" property="jythonhome.found"/>
+		<uptodate property="generated.uptodate" targetfile="${generated}/timestamp">
+			<srcfiles dir="${etc}" includes="*.xml" excludes="hibernate.cfg.xml" />
+		</uptodate>
+	</target>
+
+	<target name="hibernate_check" unless="hibernate.found">
+		<echo message="Can't compile, hibernate not found in ${dependencies.dir}"/>
+		<echo message="Please set the 'dependencies.dir' property in 'build.properties' to the correct path for dependencies (see ../minimal/docs/EQUIP2_WebApp_Configuring_and_Building.html)"/>
+		<fail/>
+	</target>
+
+	<target name="junit_check" unless="junit.found">
+		<echo message="Can't compile/run tests, junit .jar not found in ${lib}"/>
+		<echo message="Please copy junit JAR to ${lib}"/>
+		<fail/>
+	</target>
+
+	<target name="jython_check" depends="jythonhome_check" unless="jython.found">
+		<echo message="Warning, jython not found in ${jythonhome} - Jython scripting will not work at run-time"/>
+		<echo message="Please set the 'jythonhome' property in 'build.properties' to the correct path if you require Jython scripting"/>
+	</target>
+
+	<target name="jythonhome_check" unless="jythonhome.found">
+		<echo message="Error: jythonhome is not a directory: ${jythonhome}"/>
+		<echo message="Please set the 'jythonhome' property in 'build.properties' to the correct path if you require Jython scripting, or to another directory (e.g. '.') if you do not"/>
+		<fail/>
+	</target>
+
+	<target name="bsf_check" unless="bsf.found">
+		<echo message="Can't compile, Bean Scripting Frame (bsf.jar) not found in ${lib}"/>
+		<echo message="Please download BSF and copy bsf.jar to ${lib}"/>
+		<fail/>
+	</target>
+
+	<target name="xalan_check" unless="xalan.found">
+		<echo message="Note: xalan not found in ${xalanhome} - relying on JDK XSL"/>
+		<echo message="Please set the 'xalanhome' property in 'build.properties' if this fails"/>
+	</target>
+
+	<target name="spring_check" unless="spring.found">
+		<echo message="Can't compile, spring framework not found in ${dependencies.dir}"/>
+		<echo message="Please set the 'dependencies.dir' property in 'build.properties' to the correct path for dependencies (see ../minimal/docs/EQUIP2_WebApp_Configuring_and_Building.html)"/>
+		<fail/>
+	</target>
+
+	<target name="webapps_check" unless="webapps.found">
+		<echo message="Can't install, webapps directory not found: ${webapps.dir}"/>
+		<echo message="Please set the 'webapps.dir' property in 'build.properties' to the correct path"/>
+		<fail/>
+	</target>
+
+	<target name="equip2_check" unless="equip2.found">
+		<echo message="Can't compile, equip2 installation (equip2.jar) not found in ${dependencies.dir}"/>
+		<echo message="Please set the 'dependencies.dir' property in 'build.properties' to the correct path  for dependencies (see ../minimal/docs/EQUIP2_WebApp_Configuring_and_Building.html)"/>
+		<fail/>
+	</target>
+
+	<target name="equip2hibernate_check" unless="equip2hibernate.found">
+		<echo message="Can't compile, equip2 installation (equip2hibernate.jar) not found in ${dependencies.dir}"/>
+		<echo message="Please set the 'dependencies.dir' property in 'build.properties' to the correct path  for dependencies (see ../minimal/docs/EQUIP2_WebApp_Configuring_and_Building.html)"/>
+		<fail/>
+	</target>
+
+	<target name="equip2tools_check" unless="equip2tools.found">
+		<echo message="Can't compile, equip2 installation (equip2tools.jar) not found in ${dependencies.dir}"/>
+		<echo message="Please set the 'dependencies.dir' property in 'build.properties' to the correct path for dependencies (see docs/EQUIP2_WebApp_Configuring_and_Building.html)"/>
+		<fail/>
+	</target>
+
+	<target name="equip2webdb_check" unless="equip2webdb.found">
+		<echo message="Can't compile, equip2webdb installation (equip2webdb.jar) not found in ${dependencies.dir}"/>
+		<echo message="Please set the 'dependencies.dir' property in 'build.properties' to the correct path for dependencies (see docs/EQUIP2_WebApp_Configuring_and_Building.html)"/>
+		<fail/>
+	</target>
+
+	<target name="equip2webdb_jsp_check" unless="equip2webdb_jsp.found">
+		<echo message="Can't compile, equip2webdb installation (equip2webdb_jsp.jar) not found in ${dependencies.dir}"/>
+		<echo message="Please set the 'dependencies.dir' property in 'build.properties' to the correct path for dependencies (see docs/EQUIP2_WebApp_Configuring_and_Building.html)"/>
+		<fail/>
+	</target>
+	
+	<!-- except junit & xalan & equip2webdb_jsp & webapps - which are all more specific -->
+	<target name="compile_check" depends="hibernate_check,spring_check,equip2_check,equip2hibernate_check,equip2tools_check,equip2webdb_check"/>
+
+	<path id="classpath_tools">
+		<!-- equip2 -->
+		<pathelement location="${dependencies.dir}/equip2tools.jar"/>
+		<!-- xalan -->
+		<fileset dir="${xalanhome}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<!-- generate javabeans, helpers and hibernate mapping files -->
+	<target name="generate" depends="init,xalan_check,equip2tools_check" unless="generated.uptodate">
+		<mkdir dir="${generated}/equip2/spring/db"/>
+		<mkdir dir="${generated}/uk/ac/horizon/ug/exploding/db"/>
+		
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Message.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Message.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Message.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Message_helper.java"/>
+			<arg value="${equip2home}/etc/bean2hibernatehbm.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Message.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Message.hbm.xml"/>
+		</java>
+
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Position.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Position.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Position.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Position_helper.java"/>
+			<!-- member class -->
+		</java>
+		
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Game.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Game.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Game.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Game_helper.java"/>
+			<arg value="${equip2home}/etc/bean2hibernatehbm.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Game.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Game.hbm.xml"/>
+		</java>
+		
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Player.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Player.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Player.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Player_helper.java"/>
+			<arg value="${equip2home}/etc/bean2hibernatehbm.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Player.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Player.hbm.xml"/>
+		</java>
+		
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Member.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Member.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Member.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Member_helper.java"/>
+			<arg value="${equip2home}/etc/bean2hibernatehbm.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Member.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Member.hbm.xml"/>
+		</java>						
+		
+		<!-- authored content -->
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.StatsModifier.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/StatsModifier.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.StatsModifier.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/StatsModifier_helper.java"/>
+			<!-- interface -->
+		</java>			
+		
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.ContentGroup.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/ContentGroup.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.ContentGroup.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/ContentGroup_helper.java"/>
+			<arg value="${equip2home}/etc/bean2hibernatehbm.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.ContentGroup.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/ContentGroup.hbm.xml"/>
+		</java>		
+		
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Zone.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Zone.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Zone.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Zone_helper.java"/>
+			<arg value="${equip2home}/etc/bean2hibernatehbm.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.Zone.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Zone.hbm.xml"/>
+		</java>
+		
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.TimelineEvent.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/TimelineEvent.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.TimelineEvent.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/TimelineEvent_helper.java"/>
+			<arg value="${equip2home}/etc/bean2hibernatehbm.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.TimelineEvent.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/TimelineEvent.hbm.xml"/>
+		</java>		
+	
+		<!-- NextID is a special-case which is just used for Database ID allocation -->
+		<mkdir dir="${generated}/equip2/spring/db"/>
+		<java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/equip2.spring.db.NextID.xml"/>
+			<arg value="${generated}/equip2/spring/db/NextID.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/equip2.spring.db.NextID.xml"/>
+			<arg value="${generated}/equip2/spring/db/NextID_helper.java"/>
+		</java>
+		<!-- hand-crafted hibenate mapping for NextID -->
+		<copy file="etc/NextID.hbm.xml" todir="${generated}/equip2/spring/db/"/>
+
+		<!-- mark done -->
+		<touch file="${generated}/timestamp"/>
+	</target>
+
+	<target depends="init,compile_check,bsf_check,jython_check,generate" description="compile the Java source " name="compile">
+		<!-- Compile the java code from ${common-src} into ${common-build} -->
+		<javac destdir="${build}" debug="true">
+			<classpath refid="classpath_hibernate"/>
+			<src path="${generated}"/>
+			<src path="${src}"/>
+		</javac>
+		<copy todir="${build}">
+			<fileset dir="${src}">
+				<include name="**/*.properties"/>
+				<include name="**/*.gif"/>
+				<!-- other scripting languages?? -->
+				<include name="**/*.py"/>
+			</fileset>
+		</copy>
+		<copy file="webapp/WEB-INF/log4j.properties" todir="${build}"/>
+		<copy file="${etc}/hibernate.cfg.xml" todir="${build}"/>
+		<copy todir="${build}">
+			<fileset dir="${generated}" includes="**/*.hbm.xml"/>
+		</copy>
+	</target>
+
+	<!-- build war directory structure -->
+	<target depends="compile,equip2webdb_jsp_check" description="generate the war content files" name="webapp">
+		<mkdir dir="${build}/webapp"/>
+		<copy todir="${build}/webapp">
+			<fileset dir="webapp" includes="**"/>
+		</copy>
+		<mkdir dir="${build}/webapp/WEB-INF/jsp"/>
+		<!-- standard JSPs from webapp -->
+		<unjar src="${dependencies.dir}/equip2webdb_jsp.jar" dest="${build}/webapp/WEB-INF/jsp">
+			<patternset>
+				<exclude name="**/configuration.jsp"/>
+			</patternset>
+		</unjar>
+		<mkdir dir="${build}/webapp/WEB-INF/classes"/>
+		<copy todir="${build}/webapp/WEB-INF/classes">
+			<fileset dir="${build}">
+				<exclude name="webapp/**"/>
+				<exclude name="test/**"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${build}/webapp/WEB-INF/lib"/>
+		<copy todir="${build}/webapp/WEB-INF/lib">
+			<fileset dir="${lib}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${dependencies.dir}">
+				<!-- equip2 -->
+				<include name="equip2.jar"/>
+				<include name="equip2taglib.jar"/>
+				<include name="equip2hibernate.jar"/>
+			</fileset>
+			<!-- equip2 web app -->
+			<fileset dir="${dependencies.dir}">
+				<include name="equip2webdb.jar"/>
+			</fileset>
+			<!-- hibernate -->
+			<fileset dir="${dependencies.dir}">
+				<include name="hibernate3.jar"/>
+			</fileset>
+			<!-- hibernate dependencies -->
+			<fileset dir="${dependencies.dir}">
+				<include name="antlr-*.jar"/>
+				<include name="cglib-*.jar"/>
+				<include name="asm.jar"/>
+				<include name="commons-collections-*.jar"/>
+				<include name="jta.jar"/>
+				<include name="dom4j-*.jar"/>
+				<!--<include name="log4j-1.2.11.jar"/>-->
+				<include name="commons-logging-*.jar"/>
+				<include name="c3p0-*.jar"/>
+			</fileset>
+			<!-- spring -->
+			<fileset dir="${dependencies.dir}">
+				<include name="spring.jar"/>
+			</fileset>
+			<!-- spring depedendencies -->
+			<fileset dir="${dependencies.dir}">
+				<include name="log4j-*.jar"/><!-- at least 1.2.13 -->
+			</fileset>
+			<fileset dir="${dependencies.dir}">
+				<include name="quartz-*.jar"/>
+			</fileset>
+			<fileset dir="${dependencies.dir}">
+				<include name="commons-fileupload.jar"/>
+			</fileset>
+			<!-- NB version 1.1, not 1.0 (to get functions) -->
+			<!-- Hmm. At least with Jetty 6.1.5 using our own versions breaks it. Stick to its own
+			-->
+			<fileset dir="${dependencies.dir}">
+				<include name="standard.jar"/>
+				<include name="jstl.jar"/>
+			</fileset>
+			<!-- jdbc database / driver -->
+			<fileset dir="${dependencies.dir}">
+				<!-- HSQLDB -->
+				<include name="hsqldb.jar"/>
+				<!-- mysql connector -->
+				<include name="mysql-connector-java-3.1.12-bin.jar"/>
+			</fileset>
+			<!-- jython - needs jar, but also registry and Lib -->
+			<fileset dir="${jythonhome}">
+				<include name="jython.jar"/>
+				<include name="registry.jar"/>
+				<include name="Lib/**"/>
+			</fileset>
+			<!-- xstream -->
+			<fileset dir="${dependencies.dir}">
+				<include name="xstream-1.3.1.jar"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target depends="webapp" description="generate the war files" name="war">
+		<mkdir dir="${dist}"/>
+		<!-- Put everything in ${build} into equip4jcore.jar file -->
+		<war destfile="${dist}/${warfile}" webxml="webapp/WEB-INF/web.xml">
+			<fileset dir="${build}/webapp" excludes="**/web.xml" includes="**"/>
+		</war>
+	</target>
+
+	<!-- copy webapp files into local j2ee container -->
+	<target depends="webapp,webapps_check" description="copy webapp files into local container" name="deploy">
+		<echo>Copying ${build}/webapp to ${webapps.dir}/${webappname}</echo>
+		<copy todir="${webapps.dir}/${webappname}">
+			<fileset dir="${build}/webapp" includes="**"/>
+		</copy>
+	</target>
+
+	<target depends="" description="clean up" name="clean">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+		<delete dir="${generated}"/>
+		<delete dir="${javadoc}"/>
+	</target>
+	
+	<path id="classpath_hibernate">
+		<fileset dir="${dependencies.dir}">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<path id="classpath_test">
+		<!-- order is important - test first! -->
+		<pathelement location="${build}/test"/>
+		<path refid="classpath_hibernate"/>
+		<pathelement location="${build}"/>
+		<!-- xalan - seems to be wanted with java 1.5.0 -->
+		<fileset dir="${xalanhome}">
+			<include name="*.jar"/>
+		</fileset>
+		<!-- spring mock -->
+	</path>
+
+</project>
+
+

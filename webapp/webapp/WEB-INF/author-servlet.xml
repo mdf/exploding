@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/index.html">filenameViewController</prop>
+				<prop key="/content.html">contentViewMultiController</prop>
+				<prop key="/delete.html">contentViewMultiController</prop>
+				<prop key="/upload.html">contentController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- content controller -->
+	<bean id="internalPathMethodNameResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver"/>
+
+	<bean id="contentViewMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+		<property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+		<property name="delegate"><ref bean="contentController"/></property>
+	</bean>
+
+	<bean id="contentController" class="uk.ac.horizon.ug.exploding.author.ContentController">
+		<property name="commandClass"><value>uk.ac.horizon.ug.exploding.author.FileUploadBean</value></property>
+		<property name="successView"><value>content</value></property>
+		<property name="dataspace"><ref bean="dataspace"/></property>
+	</bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+	<!-- generic htm/html to jsp mapper -->
+	<bean id="webFilenameViewController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+
+	<bean id="filenameViewController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController">
+		<property name="prefix" value="author/" />
+	</bean>
+  	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+</beans>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Spring application context for "db" LoveCity dispatcher servlet. Nested with the
+     global spring application context (see applicationContext.xml). -->
+<beans>
+
+  <!-- ========================================================================
+       Experimental generic direct database interface - work in progress (cmg)
+       ======================================================================== -->
+
+  <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="interceptors">
+      <list>
+        <ref bean="equipSessionReleaseInterceptor"/>
+      </list>
+    </property>
+    <property name="mappings">
+      <props>
+        <!-- index.htm - > db_index.jsp -->
+        <prop key="/index.htm">filenameViewController</prop>
+        <prop key="/index.html">filenameViewController</prop>
+        <prop key="/dump_form.htm">filenameViewController</prop>
+        <prop key="/upload_form.htm">filenameViewController</prop>
+        <prop key="/upload_hessian_form.htm">filenameViewController</prop>
+        <prop key="/upload_csv_form.htm">filenameViewController</prop>
+        <prop key="/dump_csv_form.htm">filenameViewController</prop>
+        <prop key="/test_query_form.htm">filenameViewController</prop>
+        <!-- dump_form.htm - > db_dump_form.jsp -->
+        <prop key="/dump.xml">dbViewMultiController</prop>
+        <prop key="/dump_hessian.hessian">dbViewMultiController</prop>
+        <prop key="/dump_csv.txt">dbViewMultiController</prop>
+	<!-- DbUploadController -->
+	<prop key="/upload.do.htm">dbUploadController</prop>
+	<prop key="/upload_hessian.do.htm">dbHessianUploadController</prop>
+	<prop key="/upload_csv.do.htm">dbCsvUploadController</prop>
+        <prop key="/class_index.htm">filenameViewController</prop>
+        <prop key="/view_list.htm">genViewMultiController</prop>
+        <prop key="/view_object.htm">genViewMultiController</prop>
+        <prop key="/search_form.htm">genViewMultiController</prop>
+        <prop key="/do_search.htm">genViewMultiController</prop>
+        <prop key="/add_object.htm">genViewMultiController</prop>
+        <prop key="/do_add_object.htm">genViewMultiController</prop>
+        <prop key="/edit_object.htm">genViewMultiController</prop>
+        <prop key="/do_edit_object.htm">genViewMultiController</prop>
+        <prop key="/do_delete_object.htm">genViewMultiController</prop>
+        <prop key="/xml_query.do.xml">xmlQueryController</prop>
+        <prop key="/xml_query.do.txt">xmlQueryController</prop>
+        <!-- equip2 status -->
+        <prop key="/status_equip.htm">statusEquipMultiController</prop>
+        <!-- view-only pages -->
+        <prop key="/view/*.htm">viewFilenameViewController</prop>
+      </props>
+    </property>
+  </bean>
+
+  <!-- In general, the name of a view as returned by a controller is not the same 
+       as the actual view page/JSP/etc to allow the same controllers to be used
+       with different view technologies. Any view resolver classes in this context
+       are used to map from (logical) view names to actual page URLs or equivalent,
+       and may do other view-technology-specific set-up. -->
+       
+  <!-- This view resolver maps the view name to a directly corresponding JSP page
+       under WEB-INF/jsp/ with support for JSTL, e.g. "hello" => "WEB-INF/jsp/hello.jsp. -->
+  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"> 
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/> 
+    <property name="prefix" value="/WEB-INF/jsp/"/> 
+    <property name="suffix" value=".jsp"/> 
+  </bean> 
+
+  <!-- simple controller for db which prefixes gen_ to the filename, e.g. for index -->
+  <bean id="filenameViewController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController">
+    <property name="prefix" value="db/"/>
+  </bean>
+
+  <!-- simple controller for db which prefixes gen_ to the filename, e.g. for index -->
+  <bean id="viewFilenameViewController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController">
+    <property name="prefix" value="db/view/"/>
+  </bean>
+
+  <!-- mapping URLs to the multi-controller DbGenericController's methods - identical -->
+  <bean id="internalPathMethodNameResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver"/>
+
+  <!-- multi-controller despatching to genViewController, mapping filename to method name -->
+  <bean id="genViewMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+    <property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+    <property name="delegate"><ref bean="genViewController"/></property>
+  </bean>
+
+  <!-- the genViewController - generic view_list, ... -->
+  <bean id="genViewController" class="equip2.spring.DbGenericController">
+    <property name="dataspace"><ref bean="dataspace"/></property>
+    <property name="defaultPackageName"><value>mrl.compliant.db</value></property>
+    <property name="prefix"><value>db/</value></property>
+    <!-- properties which hold an ID of an instance of another class which
+         do not conform to simple heuristic check <class>ID or ...<class>ID -->
+    <property name="linkedObjectProperties">
+      <map>
+      <!-- Compliant -->
+	  <entry key="childScriptActionIDs" value="mrl.compliant.db.ScriptAction"/>
+	  <entry key="scriptActionIDs" value="mrl.compliant.db.ScriptAction"/>
+	  <entry key="stateIDs" value="mrl.compliant.db.State"/>
+	  <entry key="incomingCallScriptID" value="mrl.asterisk.db.CallScript"/>
+	  <entry key="incomingLostCallScriptID" value="mrl.asterisk.db.CallScript"/>
+      <!-- Asterisk -->
+	  <entry key="actionIDs" value="mrl.asterisk.db.CallAction"/>
+	  <entry key="callID" value="mrl.asterisk.db.Call"/>
+	  <entry key="callScriptID" value="mrl.asterisk.db.CallScript"/>
+	  <entry key="phoneID" value="mrl.asterisk.db.Phone"/>
+	  <entry key="callActionID" value="mrl.asterisk.db.CallAction"/>
+	  
+      </map>
+    </property>
+    <property name="dbGenericIDAllocator"><ref bean="dbIdAllocator"/></property> 
+  </bean>
+
+  <!-- multi-controller despatching to dbViewController, mapping filename to method name -->
+  <bean id="dbViewMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+    <property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+    <property name="delegate"><ref bean="dbViewController"/></property>
+  </bean>
+
+  <!-- the DbViewController - view_objects, view_object, view_linked_object, dump -->
+  <bean id="dbViewController" class="equip2.spring.DbViewController">
+    <property name="dataspace"><ref bean="dataspace"/></property>
+    <property name="defaultPackageName"><value>mrl.compliant.db</value></property>
+    <property name="prefix"><value>db/</value></property>
+    <!-- map class name - > Array of String (property name) -->
+    <property name="classPropertiesInOrder">
+      <map>
+        <!-- e.g. <entry key="lovecity.db.City"><list><value>ID</value></list></entry>  -->
+      </map>
+    </property>
+    <!-- map class name - > map of property name - > description -->
+    <property name="classPropertyDescriptions">
+      <map>
+        <!--  e.g.<entry key="lovecity.db.City">
+          <map>
+            <entry key="ID" value="Database internal ID"/>
+          </map>
+        </entry> -->
+      </map>
+    </property>
+  </bean>
+
+  <!-- the DbUploadController - upload.do -->
+  <bean id="dbUploadController" class="equip2.spring.DbUploadController">
+    <property name="dataspace"><ref bean="dataspace"/></property>
+    <property name="commandClass"><value>equip2.spring.DbUploadBean</value></property>
+    <property name="formView"><value>db/upload_form</value></property>
+    <property name="successView"><value>db/upload_done</value></property>
+    <property name="defaultPackageName"><value>mrl.compliant.db</value></property>
+  </bean>
+  
+  <!-- the DbUploadController - upload.do -->
+  <bean id="dbHessianUploadController" class="equip2.spring.DbHessianUploadController">
+    <property name="dataspace"><ref bean="dataspace"/></property>
+    <property name="commandClass"><value>equip2.spring.DbUploadBean</value></property>
+    <property name="formView"><value>db/upload_form</value></property>
+    <property name="successView"><value>db/upload_done</value></property>
+  </bean>
+
+  <!-- the DbUploadController - upload.do -->
+  <bean id="dbCsvUploadController" class="equip2.spring.DbCsvUploadController">
+    <property name="dataspace"><ref bean="dataspace"/></property>
+    <property name="commandClass"><value>equip2.spring.DbUploadBean</value></property>
+    <property name="formView"><value>db/upload_csv_form</value></property>
+    <property name="successView"><value>db/upload_csv_done</value></property>
+    <property name="defaultPackageName"><value>mrl.compliant.db</value></property>
+    <!-- generic controller - for id allocation -->
+    <property name="dbGenericIDAllocator"><ref bean="dbIdAllocator"/></property>
+    <!-- guess classname from first line of csv file -->
+    <property name="classFirstLines">
+      <map>
+        <!-- ... -->
+      </map>
+    </property>
+    <property name="addMultipleHeadingName"><value>HOW MANY?</value></property>
+  </bean>
+  
+  <!-- multipart resolver for file upload -->
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+  <!-- the xml query controller - xml_query.do.xml -->
+  <bean id="xmlQueryController" class="equip2.spring.XmlQueryController">
+    <property name="dataspace"><ref bean="dataspace"/></property>
+    <property name="commandClass"><value>equip2.spring.XmlQueryBean</value></property>
+    <property name="formView"><value>db/test_query_form</value></property>
+    <property name="defaultPackageName"><value>mrl.compliant.db</value></property>
+  </bean>
+  
+  <!-- multi-controller despatching to statusEquipController, mapping filename to method name -->
+  <bean id="statusEquipMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+    <property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+    <property name="delegate"><ref bean="statusEquipController"/></property>
+  </bean>
+
+  <!-- the statusEquipController - -->
+  <bean id="statusEquipController" class="equip2.spring.EquipStatusController">
+    <property name="dataspace"><ref bean="dataspace"/></property>
+    <property name="viewname"><value>db/status_equip</value></property>
+  </bean>
+
+</beans>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.db" class="Game" id="ID" primarykey="ID" primarykeygenerator="assigned" table="games">
+	
+	<type name="IDType" javatype="java.lang.String" maxlength="20" />
+
+	<property name="ID" type="IDType" />
+	
+	<property name="contentGroupID" type="IDType" />
+	
+	<property name="name" javatype="java.lang.String" />
+	
+	<property name="dateStarted" javatype="java.util.Date" />
+	
+	<property name="active" javatype="java.lang.Boolean" />
+	
+	<property name="gameTime" javatype="java.lang.Float" />
+
+</bean>

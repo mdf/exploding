@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.db" class="Message" id="ID" primarykey="ID" primarykeygenerator="assigned" table="messages">
+	
+	<type name="IDType" javatype="java.lang.String" maxlength="20" />
+
+	<property name="ID" type="IDType" />
+	
+	<property name="playerID" type="IDType" />
+		
+	<property name="type" javatype="java.lang.String" />
+	
+	<property name="message" javatype="java.lang.String" />
+	
+</bean>

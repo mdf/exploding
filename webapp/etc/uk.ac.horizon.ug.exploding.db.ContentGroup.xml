@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.db" class="ContentGroup" id="ID" primarykey="ID" primarykeygenerator="assigned" table="contentgroups">
+	
+	<type name="IDType" javatype="java.lang.String" maxlength="20" />
+
+	<property name="ID" type="IDType" />
+	
+	<property name="name" javatype="java.lang.String" />
+
+	<property name="version" javatype="java.lang.String" />
+	
+	<property name="location" javatype="java.lang.String" />
+	
+	<property name="startYear" javatype="java.lang.Integer" />
+	
+	<property name="endYear" javatype="java.lang.Integer" />
+
+</bean>

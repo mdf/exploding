@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.db" class="Member" id="ID" primarykey="ID" primarykeygenerator="assigned" table="members">
+
+	<implements beanfile="uk.ac.horizon.ug.exploding.db.StatsModifier.xml"/>
+	
+	<type name="IDType" javatype="java.lang.String" maxlength="20" />
+
+	<property name="ID" type="IDType" />
+	
+	<property name="playerID" type="IDType" />
+	
+	<property name="gameID" type="IDType" />
+	
+	<property name="parentMemberID" type="IDType" />
+	
+	<property name="zone" javatype="java.lang.Integer" />
+	
+	<property name="position" javatype="uk.ac.horizon.ug.exploding.db.Position" />
+	
+	<property name="health" javatype="java.lang.Integer" />
+	
+	<property name="wealth" javatype="java.lang.Integer" />
+	
+	<property name="brains" javatype="java.lang.Integer" />
+	
+	<property name="action" javatype="java.lang.Integer" />
+	
+	<property name="carried" javatype="java.lang.Boolean" />
+	
+</bean>

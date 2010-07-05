@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.db" class="TimelineEvent" id="ID" primarykey="ID" primarykeygenerator="assigned" table="timelineevents">
+
+	<implements beanfile="uk.ac.horizon.ug.exploding.db.StatsModifier.xml"/>
+
+	<type name="IDType" javatype="java.lang.String" maxlength="20" />
+
+	<property name="ID" type="IDType" />
+	
+	<property name="orgId" javatype="java.lang.Integer" />
+	
+	<property name="contentGroupID" type="IDType" />
+	
+	<property name="name" javatype="java.lang.String" />
+	
+	<property name="ref" javatype="java.lang.String" />
+	
+	<property name="description" javatype="java.lang.String" />
+	
+	<property name="zoneId" javatype="java.lang.Integer" />
+
+	<property name="enabled" javatype="java.lang.Integer" />
+	
+	<property name="startTime" javatype="java.lang.Float" />
+	
+	<property name="endTime" javatype="java.lang.Float" />
+	
+	<property name="track" javatype="java.lang.Integer" />
+	
+	<property name="rgb" javatype="java.lang.Integer" />
+
+</bean>

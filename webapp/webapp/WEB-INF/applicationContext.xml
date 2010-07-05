@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Global Spring application context -->
+<beans>
+
+  <!-- ==============================================================
+       Standard EQUIP2 J2EE/Hibernate Dataspace
+       ============================================================== -->
+
+  <!-- the (non-default) object helper registry to be used by EQUIP2.
+       Must be the J2SE one to support float, double and Set -->
+  <bean id="objectHelperRegistry" class="equip2.core.objectsupport.impl.j2se.J2SEObjectHelperRegistry"/>
+
+  <!-- the EQUIP2 global naming context - equivalent to a simple JNDI -->
+  <bean id="equip2InitialContext" class="equip2.naming.InitialContext"/>
+
+  <!-- register objectHelperRegitry with equip2InitialContext as name
+       'java:/app/env/provider/IObjectHelperRegistry' (IObjectHelperRegistry.JNDI_DEFAULT_NAME) -->
+  <bean id="force-register" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject"><ref bean="equip2InitialContext"/></property>
+    <property name="targetMethod"><value>rebind</value></property>
+    <property name="arguments">
+      <list>
+        <value>java:/app/env/provider/IObjectHelperRegistry</value>
+        <ref bean="objectHelperRegistry"/>
+      </list>
+    </property>
+  </bean>
+
+  <!-- dataspace logger.
+  	Constructor arguments: String dirname, String prefix, String suffix,
+	boolean checkpointFlag, int encoding (1=Hessian, 2=XML), Hashtable headerMetadata.
+	Make sure that the logging directory exists.
+	Note that the current directory on Jetty & Windows/Tomcat is the main
+	application directory, but not so on Linux/Tomcat, where a full path may
+	be required. -->
+  <!-- uncomment to enable logging (also the constructor argument for the dataspace, below)
+  <bean id="dataspaceLogger" class="equip2.core.logging.j2se.SimpleFileDataspaceLogger">
+    <constructor-arg><value>/usr/local/tomcat-compliant/logs</value></constructor-arg>
+    <constructor-arg><value>compliant-dataspace-log-</value></constructor-arg>
+    <constructor-arg><value>.equip2log.hessian</value></constructor-arg>
+    <constructor-arg><value>true</value></constructor-arg>
+    <constructor-arg><value>1</value></constructor-arg>
+    <constructor-arg><map><entry key="application" value="compliant"/></map></constructor-arg>
+  </bean>
+   -->
+
+  <!-- the (single) persistent EQUIP2 dataspace, which currently by default will read
+       hibernate configuration from classes/hibernate.cfg.xml -->
+  <bean id="dataspace" class="equip2.persist.hibernate.j2se.PersistentDataspace" destroy-method="shutdown">
+    <!-- logger arg -->
+    <!-- uncomment this argument and the dataspaceLogger, above,
+	 to enable logging (make sure the log dir above exists):
+    <constructor-arg><ref bean="dataspaceLogger"/></constructor-arg>
+     -->
+  </bean>
+
+  <!-- register dataspace with equip2InitialContext as name
+       'java:/app/env/provider/IDataspace' (equip2 taglib v.2 default) -->
+  <bean id="force-register-dataspace" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject"><ref bean="equip2InitialContext"/></property>
+    <property name="targetMethod"><value>rebind</value></property>
+    <property name="arguments">
+      <list>
+        <value>java:/app/env/provider/IDataspace</value>
+        <ref bean="dataspace"/>
+      </list>
+    </property>
+  </bean>
+
+  <!-- equip2 scheduler - should be multi-threaded? or quartz?? -->
+  <bean id="equip2scheduler" class="equip2.core.tasks.Scheduler" destroy-method="shutdown"/>
+
+  <!-- attach equip2 scheduler to dataspace -->
+  <bean id="dataspaceEventMgr" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject"><ref bean="dataspace"/></property>
+    <property name="targetMethod"><value>getEventManagement</value></property>
+    <property name="arguments">
+      <list>
+      </list>
+    </property>
+  </bean>
+  <bean id="dataspaceTask" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject"><ref local="dataspaceEventMgr"/></property>
+    <property name="targetMethod"><value>getTask</value></property>
+    <property name="arguments">
+      <list>
+      </list>
+    </property>
+  </bean>
+  <bean id="force-schedule" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject"><ref bean="equip2scheduler"/></property>
+    <property name="targetMethod"><value>scheduleAsynchronous</value></property>
+    <property name="arguments">
+      <list>
+        <ref local="dataspaceTask"/>
+        <value>0</value>
+        <value>0</value>
+        <value>true</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="equipSessionReleaseInterceptor" class="equip2.spring.EquipSessionReleaseInterceptor">
+    <property name="dataspace"><ref bean="dataspace"/></property>
+  </bean>
+
+  <!-- ==============================================================
+       Generic Database stuff
+       ============================================================== -->
+
+   <!-- ID allocation common thing -->
+	<bean id="dbIdAllocator" class="equip2.spring.DbGenericIDAllocator">
+    <property name="dataspace"><ref bean="dataspace"/></property>
+    <!-- map of classname to IDAllocationBean, describing how the ID
+         property (if any) should be allocated using the IDAllocator. -->
+    <property name="idAllocations">
+      <map>
+      	<!-- Compliant -->
+		<entry key="mrl.compliant.db.Annotation">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="A"/>
+	      </bean>
+	    </entry>
+		<entry key="mrl.compliant.db.PerformerRole">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="PR"/>
+	      </bean>
+	    </entry>	    
+		<entry key="mrl.compliant.db.Player">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="P"/>
+	      </bean>
+	    </entry>
+		<entry key="mrl.compliant.db.ScriptAction">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="SA"/>
+	      </bean>
+	    </entry>
+		<entry key="mrl.compliant.db.State">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="ST"/>
+	      </bean>
+	    </entry>	    
+		<entry key="mrl.compliant.db.StateEvent">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="STE"/>
+	      </bean>
+	    </entry>
+	    <!-- Asterisk -->
+		<entry key="mrl.asterisk.db.Call">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="AC"/>
+	      </bean>
+	    </entry>
+		<entry key="mrl.asterisk.db.CallEvent">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="ACE"/>
+	      </bean>
+	    </entry>
+	    <entry key="mrl.asterisk.db.CallAction">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="ACA"/>
+	      </bean>
+	    </entry>
+		<entry key="mrl.asterisk.db.CallScript">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="ACS"/>
+	      </bean>
+	    </entry>
+		<entry key="mrl.asterisk.db.Phone">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="APH"/>
+	      </bean>
+	    </entry>
+      </map>
+    </property>
+	</bean>
+
+  <!-- ==============================================================
+       Application specific...
+       ============================================================== -->
+
+	<!-- exploding places -->
+
+	<bean id="engineController" class="uk.ac.horizon.ug.exploding.engine.Engine"
+		init-method="startup">
+		<property name="dataspace"><ref bean="dataspace"/></property>
+		<property name="timeRatio" value="0.001"/>
+	</bean>
+
+	<bean id="engineTickJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="engineController"/>
+		<property name="targetMethod" value="checkEvents"/>
+		<property name="concurrent" value="false"/>
+	</bean>
+
+	<bean id="engineTickTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="engineTickJob"/>
+		<property name="startDelay" value="10000"/>
+		<property name="repeatInterval" value="5000"/>
+	</bean>
+
+	<!-- quartz scheduler -->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="engineTickTrigger"/>
+			</list>
+		</property>
+	</bean>
+
+</beans>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.db" class="Zone" id="ID" primarykey="ID" primarykeygenerator="assigned" table="zones">
+	
+	<type name="IDType" javatype="java.lang.String" maxlength="20" />
+
+	<property name="ID" type="IDType" />
+	
+	<property name="contentGroupID" type="IDType" />
+	
+	<property name="orgId" javatype="java.lang.Integer" />
+	
+	<property name="name" javatype="java.lang.String" />
+	
+	<property name="ref" javatype="java.lang.String" />
+
+	<property name="polygon" javatype="java.lang.Integer" />
+
+	<property name="radius" javatype="java.lang.Double" />
+
+	<property name="coordinates" javatype="uk.ac.horizon.ug.exploding.db.Position[]" />
+
+</bean>

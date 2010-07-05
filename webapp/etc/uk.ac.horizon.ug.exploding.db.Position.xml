@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.db" class="Position">
+	
+	<property name="latitude" javatype="java.lang.Double" />
+	
+	<property name="longitude" javatype="java.lang.Double" />
+	
+	<property name="elevation" javatype="java.lang.Double" />
+
+</bean>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.db" class="StatsModifier" interface="true">
+
+	<property name="health" javatype="java.lang.Integer" />
+	
+	<property name="healthMax" javatype="java.lang.Integer" />
+	
+	<property name="healthMin" javatype="java.lang.Integer" />
+	
+	<property name="wealth" javatype="java.lang.Integer" />
+	
+	<property name="wealthMax" javatype="java.lang.Integer" />
+	
+	<property name="wealthMin" javatype="java.lang.Integer" />
+	
+	<property name="brains" javatype="java.lang.Integer" />
+	
+	<property name="brainsMax" javatype="java.lang.Integer" />
+	
+	<property name="brainsMin" javatype="java.lang.Integer" />
+	
+	<property name="action" javatype="java.lang.Integer" />
+	
+	<property name="actionMax" javatype="java.lang.Integer" />
+	
+	<property name="actionMin" javatype="java.lang.Integer" />
+	
+	<property name="instant" javatype="java.lang.Integer" />
+	
+	<property name="flags" javatype="java.lang.Integer" />
+	
+	<property name="absolute" javatype="java.lang.Integer" />
+
+</bean>

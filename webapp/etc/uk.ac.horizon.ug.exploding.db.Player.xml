@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.db" class="Player" id="ID" primarykey="ID" primarykeygenerator="assigned" table="players">
+	
+	<type name="IDType" javatype="java.lang.String" maxlength="20" />
+
+	<property name="ID" type="IDType" />
+	
+	<property name="name" javatype="java.lang.String" />
+
+	<property name="gameID" type="IDType" />
+	
+	<property name="position" javatype="uk.ac.horizon.ug.exploding.db.Position" />
+	
+	<property name="points" javatype="java.lang.Integer" />
+	
+	<property name="canAuthor" javatype="java.lang.Boolean" />
+
+</bean>
