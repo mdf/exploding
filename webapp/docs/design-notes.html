@@ -1,0 +1,17 @@
+<html>
+<head><title>Exploding Places Webapp Design Notes</title></head>
+<body>
+<h1>Exploding Places Webapp Design Notes</h1>
+<h2>Data Model</h2>
+<p>The server can host several games simultaneouly. Each is represented by a Game object, including field active (boolean). On creation each game is given a name and a specific ContentGroup to use. These are started and stopped using the orchestration/games.html web page.</p>
+<p>Each ContentGroup represents a distinct set of game content, i.e. Zones and TimelineEvents. These are created by uploading an authored XML configuration file using the author/content.html page. This XML configuration file is created using the stand-alone authoring tool.</p>
+<p>A Player is associated with a particular Game.</p>
+<p>A Member is associated with a particular Player and Game.</p>
+<p>A Message is associated with a particular Player.</p>
+<h2>Execution</h2>
+<p>On start-up the application caches Zone information (updated as new Zones are added/changed).</p>
+<p>Every 5 seconds the container calls the game Engine's checkEvents method.</p>
+<p>(Currently) this, for each active Game, gets all TimelineEvents with startTime since its last check and calls handleEvent on them.</p>
+<p>This gets each Member in that Game and Zone (if zone-specific), and modifies its attributes as specified in the TimelineEvent.</p>
+</body>
+</html>
