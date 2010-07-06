@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android" android:title="Exploding Places Preferences">
+<EditTextPreference android:summary="URL of the game server" android:key="serverUrl" android:title="Server URL" android:enabled="true" android:selectable="true"></EditTextPreference>
+<CheckBoxPreference android:key="restartClient" android:title="Restart Client" android:summary="Restart client when next opened from Home"></CheckBoxPreference>
+</PreferenceScreen>

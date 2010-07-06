@@ -15,4 +15,15 @@
 	 android:layout_height="wrap_content"
 	 android:src="@drawable/icon"
     />
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Server URL:"
+    />
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="..."
+    android:id="@+id/main_server_url_text_view"
+    />
 </LinearLayout>
