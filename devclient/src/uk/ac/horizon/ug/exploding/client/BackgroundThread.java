@@ -21,6 +21,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 /** Background thread to handle communication with the server.
  * A full service is not required as it is all within a single application.
  * 
@@ -121,15 +124,18 @@ public class BackgroundThread implements Runnable {
 			return;
 		}
 		try {
-			// TODO
-			JSONObject json = new JSONObject();
-			json.put("clientId", imei);
-			json.put("conversationId", conversationId);
+			LoginMessage login = new LoginMessage();
+			login.setClientId(imei);
+			login.setConversationId(conversationId);
+			// TODO XPP3 driver?
+			XStream xs = new XStream(new DomDriver());
+			xs.alias("login", LoginMessage.class);
+			xs.alias("reply", LoginReplyMessage.class);
+			String xmlText = xs.toXML(login);
 			// name?
-			String jsonText = json.toString();
-			Log.d(TAG,"Login: "+jsonText);
+			Log.d(TAG,"Login: "+xmlText);
 			//request.setHeader("Content-Type", )
-			request.setEntity(new StringEntity(jsonText));
+			request.setEntity(new StringEntity(xmlText));
 			HttpResponse response = httpClient.execute(request);
 			StatusLine statusLine = response.getStatusLine();
 			Log.d(TAG, "Http status on login: "+statusLine);
@@ -138,7 +144,14 @@ public class BackgroundThread implements Runnable {
 				setClientStatus(ClientStatus.ERROR_DOING_LOGIN);				
 				return;
 			}
-			setClientStatus(ClientStatus.GETTING_STATE);
+			LoginReplyMessage reply = (LoginReplyMessage )xs.fromXML(response.getEntity().getContent());
+			
+			setGameStatus(reply.getGameStatus());
+			if (reply.getGameStatus()==GameStatus.ACTIVE) {
+				setClientStatus(ClientStatus.GETTING_STATE);
+			} else {
+				setClientStatus(ClientStatus.ERROR_DOING_LOGIN);
+			}
 		} catch (Exception e) {
 			Log.e(TAG, "Attempting post to serverUrl "+serverUrl, e);
 			setClientStatus(ClientStatus.ERROR_DOING_LOGIN);
@@ -169,6 +182,17 @@ public class BackgroundThread implements Runnable {
 		}
 		if (currentClientState!=null && currentClientState.getClientStatus()!=clientStatus) {
 			currentClientState.setClientStatus(clientStatus);
+			fireClientStateChanged(currentClientState.clone());
+		}
+	}
+	/** set game status and fire */
+	private static synchronized void setGameStatus(GameStatus gameStatus) {
+		if (singleton!=Thread.currentThread()) {
+			Log.e(TAG, "setGameStatus called by thread non-current thread");
+			throw new RuntimeException("setGameStatus called by thread non-current thread");
+		}
+		if (currentClientState!=null && currentClientState.getGameStatus()!=gameStatus) {
+			currentClientState.setGameStatus(gameStatus);
 			fireClientStateChanged(currentClientState.clone());
 		}
 	}

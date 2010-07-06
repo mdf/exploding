@@ -7,17 +7,6 @@
 <TextView  
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
-<ImageButton
-	 android:layout_gravity="center"
-	 android:layout_width="fill_parent"
-	 android:layout_height="wrap_content"
-	 android:src="@drawable/icon"
-    />
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
     android:text="Server URL:"
     />
 <TextView  
@@ -25,5 +14,27 @@
     android:layout_height="wrap_content" 
     android:text="..."
     android:id="@+id/main_server_url_text_view"
+    />
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Status:"
+    />
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="..."
+    android:id="@+id/main_status_text_view"
+    />
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Game:"
+    />
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="..."
+    android:id="@+id/main_game_status_text_view"
     />
 </LinearLayout>

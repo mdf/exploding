@@ -115,8 +115,8 @@ public class HomeActivity extends Activity implements ClientStateListener {
 	public void guiClientStateChanged(ClientState clientState) {
 		Log.d(TAG, "clientStateChanged: "+clientState);
 		// TODO Auto-generated method stub
-		if (clientState.getClientStatus()!=ClientStatus.LOGGING_IN && clientState.getClientStatus()!=ClientStatus.GETTING_STATE)
-			Toast.makeText(this, "State: "+clientState.getClientStatus(), Toast.LENGTH_SHORT).show();
+		//if (clientState.getClientStatus()!=ClientStatus.LOGGING_IN && clientState.getClientStatus()!=ClientStatus.GETTING_STATE)
+		//Toast.makeText(this, "State: "+clientState.getClientStatus(), Toast.LENGTH_SHORT).show();
 	
 		switch (clientState.getClientStatus()) {
 		case ERROR_GETTING_STATE:
@@ -141,6 +141,13 @@ public class HomeActivity extends Activity implements ClientStateListener {
 			showDialog(DialogId.GETTING_STATE.ordinal());
 		else if (gettingStatePd!=null && gettingStatePd.isShowing())
 			dismissDialog(DialogId.GETTING_STATE.ordinal());
+		
+		// update status
+		TextView statusTextView = (TextView)findViewById(R.id.main_status_text_view);
+		statusTextView.setText(clientState.getClientStatus().name());
+		// update status
+		TextView gameStatusTextView = (TextView)findViewById(R.id.main_game_status_text_view);
+		gameStatusTextView.setText(clientState.getGameStatus().name());
 	}
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onPause()
