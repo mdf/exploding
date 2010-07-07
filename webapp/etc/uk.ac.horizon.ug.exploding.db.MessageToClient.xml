@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.db" class="MessageToClient" id="ID" primarykey="ID" primarykeygenerator="assigned" table="messagetoclient">
+	
+	<type name="IDType" javatype="java.lang.String" maxlength="20" />
+
+	<property name="ID" type="IDType" />
+	
+	<property name="clientID" type="IDType" />
+
+	<property name="conversationID" javatype="java.lang.String" />
+
+	<property name="gameID" type="IDType" />
+
+	<property name="playerID" type="IDType" />
+	
+	<property name="type" javatype="java.lang.Integer" />
+	
+<!-- <constant name="TYPE_NEW_CONV" javatype="int" value="0" />
+	<constant name="TYPE_FACT_EX" javatype="int" value="1" />
+	<constant name="TYPE_FACT_ADD" javatype="int" value="2" />
+	<constant name="TYPE_FACT_UPD" javatype="int" value="3" />
+	<constant name="TYPE_FACT_DEL" javatype="int" value="4" />
+	<constant name="TYPE_POLL_RESP" javatype="int" value="5" />
+	<constant name="TYPE_POLL" javatype="int" value="6" />
+	<constant name="TYPE_ACK" javatype="int" value="7" />
+	<constant name="TYPE_ADD_FACT" javatype="int" value="8" />
+	<constant name="TYPE_UPD_FACT" javatype="int" value="9" />
+	<constant name="TYPE_DEL_FACT" javatype="int" value="10" />
+	<constant name="TYPE_ERROR" javatype="int" value="11" />  -->	
+
+	<property name="seqNo" javatype="java.lang.Integer" />
+
+	<property name="time" javatype="java.lang.Long" />
+
+	<property name="clientLifetime" javatype="java.lang.Boolean" />
+
+	<property name="sentToClient" javatype="java.lang.Long" />
+
+	<property name="ackedByClient" javatype="java.lang.Long" />
+
+	<property name="oldVal" javatype="java.lang.String" maxlength="10000" />
+
+	<property name="newVal" javatype="java.lang.String" maxlength="10000" />
+
+</bean>

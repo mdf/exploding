@@ -54,7 +54,7 @@ public class BackgroundThread implements Runnable {
 		mainloop:
 		while (Thread.currentThread()==singleton) {
 			try {
-				boolean doLogin = false;
+				boolean doLogin = false, doGetState = false;
 				ClientState clientStateEvent = null;
 				synchronized (BackgroundThread.class) {
 					// Synchronized!
@@ -72,6 +72,9 @@ public class BackgroundThread implements Runnable {
 						clientStateEvent = currentClientState.clone();
 						doLogin = true;
 						break;
+					case GETTING_STATE:
+						doGetState = true;
+						break;
 					}
 					// End Synchronized!
 				}
@@ -80,7 +83,10 @@ public class BackgroundThread implements Runnable {
 					fireClientStateChanged(clientStateEvent);
 				if (doLogin) 
 					doLogin();
-				Thread.sleep(THREAD_SLEEP_MS);
+				else if (doGetState)
+					doGetState();
+				else
+					Thread.sleep(THREAD_SLEEP_MS);
 			}
 			catch (Exception e) {
 				Log.e(TAG, "Exception in background thread "+Thread.currentThread(), e);
@@ -98,35 +104,60 @@ public class BackgroundThread implements Runnable {
 		httpClient = new DefaultHttpClient();
 		return httpClient;
 	}
+	private String clientId;
 	/** conversation */
 	private String conversationId;
 	//private static String server
 	/** attempt login - called from background thread, unsync. */
-	private void doLogin() {
+	private Context getContext() {
 		// TODO Auto-generated method stub
 		if (contextRef==null)
 		{
 			Log.e(TAG,"doLogin: contextRef==null");
 			setClientStatus(ClientStatus.ERROR_IN_SERVER_URL);
-			return;
+			return null;
 		}
 		Context context = contextRef.get();
 		if (context==null) {
 			Log.e(TAG,"doLogin: context==null");
 			setClientStatus(ClientStatus.ERROR_IN_SERVER_URL);
-			return;			
+			return null;			
 		}
+		return context;
+	}
+	private SharedPreferences getSharedPreferences() {
+		Context context = getContext();
+		if (context==null)
+			return null;
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return preferences;
+	}
+	private String getServerUrl() {
+		SharedPreferences preferences = getSharedPreferences();
+		if (preferences==null)
+			return null;
 		String serverUrl = preferences.getString("serverUrl", null);
 		if (serverUrl==null || serverUrl.length()==0) {
 			Log.e(TAG,"doLogin: serverUrl==null");
 			setClientStatus(ClientStatus.ERROR_IN_SERVER_URL, "The Server URL is not set\n(See Preferences)");
-			return;
+			return null;
 		}
+		return serverUrl;
+	}
+	/** attempt login - called from background thread, unsync. */
+	private void doLogin() {
+		Context context = getContext();
+		if (context==null)
+			return;
         // get device unique ID(s)
-		String clientId = ExplodingPreferences.getDeviceId(context);
-
+		clientId = ExplodingPreferences.getDeviceId(context);
+		String serverUrl = getServerUrl();
+		if (serverUrl==null)
+			return;
         conversationId = GUIDFactory.newGUID(clientId);
+        SharedPreferences preferences = getSharedPreferences();
+        if (preferences==null)
+        	return;
         
         HttpClient httpClient = getHttpClient();
 		HttpPost request = null;
@@ -168,12 +199,12 @@ public class BackgroundThread implements Runnable {
 			synchronized (BackgroundThread.class) {
 				checkCurrentThread();
 
-				currentClientState.setGameStatus(reply.getGameStatus());
-				currentClientState.setLoginStatus(reply.getStatus());
+				currentClientState.setGameStatus(GameStatus.valueOf(reply.getGameStatus()));
+				currentClientState.setLoginStatus(LoginReplyMessage.Status.valueOf(reply.getStatus()));
 				currentClientState.setLoginMessage(reply.getMessage());
 				//fireClientStateChanged(currentClientState.clone());
 
-				if (reply.getStatus()==LoginReplyMessage.Status.OK && reply.getGameStatus()==GameStatus.ACTIVE) {
+				if (currentClientState.getLoginStatus()==LoginReplyMessage.Status.OK && currentClientState.getGameStatus()==GameStatus.ACTIVE) {
 					currentClientState.setClientStatus(ClientStatus.GETTING_STATE);
 				} else {
 					currentClientState.setClientStatus(ClientStatus.ERROR_DOING_LOGIN);
@@ -185,6 +216,30 @@ public class BackgroundThread implements Runnable {
 			Log.e(TAG, "Attempting post to serverUrl "+serverUrl, e);
 			setClientStatus(ClientStatus.ERROR_DOING_LOGIN, "Error logging in!\n("+e.getMessage()+")");
 			return;
+		}
+	}
+	private Client client;
+	private void doGetState() {
+		String serverUrl = getServerUrl();
+		if (serverUrl==null)
+			return;
+		try {
+			client = new Client(httpClient, serverUrl+MESSAGES_PATH+"?conversationID="+conversationId, clientId);
+		}
+		catch (Exception e) {
+			Log.e(TAG, "Creating message client", e);
+			setClientStatus(ClientStatus.ERROR_IN_SERVER_URL, "There is a problem with the Server messages URL\n("+e.getMessage()+")");
+			return;			
+		}
+		try {
+			client.poll();
+			// success = good
+			setClientStatus(ClientStatus.POLLING, "Ready to play");
+		}
+		catch (Exception e) {
+			Log.e(TAG, "Doing first poll", e);
+			setClientStatus(ClientStatus.ERROR_GETTING_STATE, "Could not join the game\n("+e.getMessage()+")");
+			return;						
 		}
 	}
 	/** listeners */

@@ -21,8 +21,13 @@
 		<property name="delegate"><ref bean="clientController"/></property>
 	</bean>
 
+	<bean id="clientSubscriptionManager" class="uk.ac.horizon.ug.exploding.clientapi.ClientSubscriptionManager">
+		<property name="dataspace"><ref bean="dataspace"/></property>
+	</bean>
+
 	<bean id="clientController" class="uk.ac.horizon.ug.exploding.clientapi.ClientController">
 		<property name="dataspace"><ref bean="dataspace"/></property>
+		<property name="clientSubscriptionManager"><ref bean="clientSubscriptionManager"/></property>
 	</bean>
 
 

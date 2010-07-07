@@ -75,5 +75,11 @@ public class LoginReplyMessage {
 	public void setDetail(String detail) {
 		this.detail = detail;
 	}
+	@Override
+	public String toString() {
+		return "LoginReplyMessage [detail=" + detail + ", gameId=" + gameId
+				+ ", gameStatus=" + gameStatus + ", message=" + message
+				+ ", status=" + status + "]";
+	}
 	
 }

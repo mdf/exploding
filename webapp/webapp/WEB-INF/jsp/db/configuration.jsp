@@ -38,6 +38,7 @@
 		"uk.ac.horizon.ug.exploding.db.Game",
 		"uk.ac.horizon.ug.exploding.db.Member",
 		"uk.ac.horizon.ug.exploding.db.Message",
+		"uk.ac.horizon.ug.exploding.db.MessageToClient",
 		"uk.ac.horizon.ug.exploding.db.Player",
 		"uk.ac.horizon.ug.exploding.db.TimelineEvent",
 		"uk.ac.horizon.ug.exploding.db.Zone"

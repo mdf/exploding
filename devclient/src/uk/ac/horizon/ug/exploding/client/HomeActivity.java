@@ -142,10 +142,19 @@ public class HomeActivity extends Activity implements ClientStateListener {
 		case ERROR_DOING_LOGIN:
 		case ERROR_IN_SERVER_URL:
 		case CANCELLED_BY_USER:
+		case ERROR_AFTER_STATE:
 			enableRetry = true;
+			enablePlay = false;
+			break;
+		case POLLING:
+		case IDLE:
+		case PAUSED:
+			enablePlay = true;
+			enableRetry = false;
 			break;
 		default:
 			enableRetry = false;
+			enablePlay = false;
 			break;
 		}
 
