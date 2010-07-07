@@ -15,6 +15,7 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.location.GpsStatus.Listener;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
@@ -27,32 +28,52 @@ public class LocationUtils {
 	private static boolean locationRequired = false;
 	private static LocationThread locationThread;
 	public static synchronized void updateRequired(Context context, boolean req) {
-		if (locationRequired==req)
-			// no-op
-			return;
+		Log.d(TAG,"updateRequired("+req+")");
 		if (locationCallback==null) {
 			locationCallback = new LocationCallback(context);			
 		}
-		if (req) {
-//			locationThread = new LocationThread(context);
-//			locationThread.start();
-//			locationRequired = req;
+		if (locationThread==null) {
+			locationThread = new LocationThread(context);
+			locationThread.start();
 		}
-		else 
-		{
-			// TODO
-//			Log.i(TAG,"Removing listener");
-//			LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-//			locationManager.removeUpdates(locationCallback);
-		}
+		locationRequired = req;
+		locationThread.check();
 	}
 	static class LocationThread extends Thread {
 		private Context context;
+		private Handler handler;
+		private boolean locating = false;
 		LocationThread(Context context) {
 			this.context = context;			
 		}
 		public void run() {
 			Looper.prepare();
+			handler = new Handler();
+			Looper.loop();
+			Log.i(TAG,"LocationThread terminated");
+		}
+		private void waitForHandler() {
+			try {
+				while (handler==null) {
+					sleep(10);
+				}
+			} catch (InterruptedException ie) { /*ignore?*/ }
+		}
+		void check() {
+			waitForHandler();
+			handler.post(new Runnable() {
+				public void run() {
+					boolean required = locationRequired;
+					Log.d(TAG,"Checking in thread ("+locationRequired+" vs "+locating+")");
+					if (required && !locating) 
+						registerOnThread();
+					else if (!required && locating)
+						unregisterOnThread();
+					locating = required;
+				}
+			});
+		}
+		private void registerOnThread() {
 			LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
 			List<String> providers = locationManager.getAllProviders();
 			Log.i(TAG,"Found "+providers.size()+" location providers");
@@ -66,11 +87,16 @@ public class LocationUtils {
 				Location loc = locationManager.getLastKnownLocation(provider);
 				if (loc!=null)
 					Log.i(TAG,"Last Location, provider="+loc.getProvider()+", lat="+loc.getLatitude()+", long="+loc.getLongitude()+", bearing="+(loc.hasBearing() ? ""+loc.getBearing() : "NA")+", speed="+(loc.hasSpeed() ? ""+loc.getSpeed() : "NA")+", accuracy="+(loc.hasAccuracy() ? ""+loc.getAccuracy() : "NA")+", alt="+(loc.hasAltitude() ? ""+loc.getAltitude() : "NA"));
-				locationManager.requestLocationUpdates(provider, 0/*minTime*/, 0/*minDistance*/, locationCallback);
+				if (!"passive".equals(provider))
+					locationManager.requestLocationUpdates(provider, 0/*minTime*/, 0/*minDistance*/, locationCallback);
 			}
 			locationManager.addGpsStatusListener(locationCallback);
-			Looper.loop();
-			Log.i(TAG,"LocationThread terminated");
+		}
+		private void unregisterOnThread() {
+			Log.i(TAG,"Unregister for location events");
+			LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+			locationManager.removeUpdates(locationCallback);
+			locationManager.removeGpsStatusListener(locationCallback);
 		}
 	}
 	private static LocationCallback locationCallback;

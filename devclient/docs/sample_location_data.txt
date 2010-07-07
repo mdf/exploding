@@ -40,6 +40,9 @@ I/LocationUtils( 3316): GpsStatus timeToFirstFix=34278
 Mock (ddms [both providers nominally enabled in settings]):
 
 I/LocationUtils(  213): Found 1 location providers
+//
+I/LocationUtils(  321): Found 2 location providers
+I/LocationUtils(  321): Provider network enabled
 I/LocationUtils(  213): Provider gps enabled
 
 I/LocationUtils(  213): GpsStatus 3 (First fix
