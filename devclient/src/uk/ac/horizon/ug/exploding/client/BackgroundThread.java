@@ -4,6 +4,8 @@
 package uk.ac.horizon.ug.exploding.client;
 
 import java.lang.ref.WeakReference;
+import java.net.URI;
+import java.net.URL;
 import java.util.LinkedList;
 
 import android.content.Context;
@@ -34,6 +36,10 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 public class BackgroundThread implements Runnable {
 	public static final String TAG = "ExplodingPlacesBackgroundThread";
 	private static final long THREAD_SLEEP_MS = 1000;
+	// in preferences.xml
+	private static final String DEFAULT_PLAYER = "defaultPlayerName";
+	public static final int CLIENT_VERSION = 1;
+	private static final String CLIENT_TYPE = "AndroidDevclient";
 	/** cons - private */
 	private BackgroundThread() {
 		super();
@@ -105,28 +111,31 @@ public class BackgroundThread implements Runnable {
 		String serverUrl = preferences.getString("serverUrl", null);
 		if (serverUrl==null || serverUrl.length()==0) {
 			Log.e(TAG,"doLogin: serverUrl==null");
-			setClientStatus(ClientStatus.ERROR_IN_SERVER_URL);
+			setClientStatus(ClientStatus.ERROR_IN_SERVER_URL, "The Server URL is not set\n(See Preferences)");
 			return;
 		}
         // get device unique ID(s)
-        TelephonyManager mTelephonyMgr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-        String imei = mTelephonyMgr.getDeviceId(); // Requires READ_PHONE_STATE  
+		String clientId = ExplodingPreferences.getDeviceId(context);
 
-        conversationId = GUIDFactory.newGUID(imei);
+        conversationId = GUIDFactory.newGUID(clientId);
         
         HttpClient httpClient = getHttpClient();
 		HttpPost request = null;
 		try {
-			request = new HttpPost(serverUrl);
+			request = new HttpPost(new URI(serverUrl));
 		} catch (Exception e) {
 			Log.e(TAG, "parsing serverUrl "+serverUrl, e);
-			setClientStatus(ClientStatus.ERROR_IN_SERVER_URL);
+			setClientStatus(ClientStatus.ERROR_IN_SERVER_URL, "There is a problem with the Server URL\n("+e.getMessage()+")");
 			return;
 		}
 		try {
 			LoginMessage login = new LoginMessage();
-			login.setClientId(imei);
+			login.setClientId(clientId);
+			if (preferences.contains(DEFAULT_PLAYER) && preferences.getString(DEFAULT_PLAYER, "").length()>0)
+				login.setPlayerName(preferences.getString(DEFAULT_PLAYER, null));
 			login.setConversationId(conversationId);
+			login.setClientVersion(CLIENT_VERSION);
+			login.setClientType(CLIENT_TYPE);
 			// TODO XPP3 driver?
 			XStream xs = new XStream(new DomDriver());
 			xs.alias("login", LoginMessage.class);
@@ -146,15 +155,25 @@ public class BackgroundThread implements Runnable {
 			}
 			LoginReplyMessage reply = (LoginReplyMessage )xs.fromXML(response.getEntity().getContent());
 			
-			setGameStatus(reply.getGameStatus());
-			if (reply.getGameStatus()==GameStatus.ACTIVE) {
-				setClientStatus(ClientStatus.GETTING_STATE);
-			} else {
-				setClientStatus(ClientStatus.ERROR_DOING_LOGIN);
+			synchronized (BackgroundThread.class) {
+				checkCurrentThread();
+
+				currentClientState.setGameStatus(reply.getGameStatus());
+				currentClientState.setLoginStatus(reply.getStatus());
+				currentClientState.setLoginMessage(reply.getMessage());
+				//fireClientStateChanged(currentClientState.clone());
+
+				if (reply.getStatus()==LoginReplyMessage.Status.OK && reply.getGameStatus()==GameStatus.ACTIVE) {
+					currentClientState.setClientStatus(ClientStatus.GETTING_STATE);
+				} else {
+					currentClientState.setClientStatus(ClientStatus.ERROR_DOING_LOGIN);
+				}
+				fireClientStateChanged(currentClientState.clone());
+				
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "Attempting post to serverUrl "+serverUrl, e);
-			setClientStatus(ClientStatus.ERROR_DOING_LOGIN);
+			setClientStatus(ClientStatus.ERROR_DOING_LOGIN, "Error logging in!\n("+e.getMessage()+")");
 			return;
 		}
 	}
@@ -174,13 +193,25 @@ public class BackgroundThread implements Runnable {
 			}
 		}
 	}
-	/** set client status and fire */
-	private static synchronized void setClientStatus(ClientStatus clientStatus) {
+	/** check we are current background thread */
+	private static synchronized void checkCurrentThread() {
 		if (singleton!=Thread.currentThread()) {
 			Log.e(TAG, "setClientStatus called by thread non-current thread");
-			throw new RuntimeException("setClientStatus called by thread non-current thread");
+			throw new RuntimeException("checkCurrentThread called by thread non-current thread");
+		} else if (currentClientState!=null && currentClientState.getClientStatus()==ClientStatus.CANCELLED_BY_USER) {
+			Log.e(TAG, "setClientStatus called by thread when Cancelled by user");
+			throw new RuntimeException("checkCurrentThread called by cancelled thread");
 		}
-		if (currentClientState!=null && currentClientState.getClientStatus()!=clientStatus) {
+	}
+	/** set client status and fire */
+	private static synchronized void setClientStatus(ClientStatus clientStatus) {
+		setClientStatus(clientStatus, null);
+	}
+	/** set client status and fire */
+	private static synchronized void setClientStatus(ClientStatus clientStatus, String message) {
+		checkCurrentThread();
+		if (currentClientState!=null && (currentClientState.getClientStatus()!=clientStatus || message!=currentClientState.getLoginMessage())) {
+			currentClientState.setLoginMessage(message);
 			currentClientState.setClientStatus(clientStatus);
 			fireClientStateChanged(currentClientState.clone());
 		}
@@ -253,12 +284,32 @@ public class BackgroundThread implements Runnable {
 			case ERROR_DOING_LOGIN:
 			case ERROR_GETTING_STATE:
 			case ERROR_IN_SERVER_URL:
+			case CANCELLED_BY_USER:
 				Log.i(TAG, "Retry from "+currentClientState.getClientStatus()+" to NEW");
 				restart(context);
 				break;
 			default:
 				// no-op
 			}			
+		}
+	}
+	public static void cancel(Context context) {
+		checkThread(context);
+		Log.i(TAG, "Cancel client - explicit request (state "+currentClientState.getClientStatus());
+		synchronized (BackgroundThread.class) {
+			switch (currentClientState.getClientStatus()) {
+			case LOGGING_IN:
+			case GETTING_STATE:
+				Log.i(TAG, "Cacnel from "+currentClientState.getClientStatus()+" to CANCELLED_BY_USER");
+				if (singleton!=null && singleton.isAlive())
+					singleton.interrupt();
+				currentClientState.setLoginMessage("Cancelled by user");
+				currentClientState.setClientStatus(ClientStatus.CANCELLED_BY_USER);
+				fireClientStateChanged(currentClientState.clone());
+				break;
+			default:
+				// no op
+			}
 		}
 	}
 }

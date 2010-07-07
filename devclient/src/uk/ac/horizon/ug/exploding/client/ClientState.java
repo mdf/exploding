@@ -3,6 +3,8 @@
  */
 package uk.ac.horizon.ug.exploding.client;
 
+import uk.ac.horizon.ug.exploding.client.LoginReplyMessage.Status;
+
 /** Client State bundle.
  * 
  * @author cmg
@@ -13,9 +15,22 @@ public class ClientState {
 	private ClientStatus clientStatus;
 	/** game status */
 	private GameStatus gameStatus;
+	/** login status */
+	private LoginReplyMessage.Status loginStatus = LoginReplyMessage.Status.NOT_DONE;
+	/** login message */
+	private String loginMessage;
 	/** cons */
 	public ClientState() {		
 	}
+	public ClientState(ClientStatus clientStatus, GameStatus gameStatus,
+			Status loginStatus, String loginMessage) {
+		super();
+		this.clientStatus = clientStatus;
+		this.gameStatus = gameStatus;
+		this.loginStatus = loginStatus;
+		this.loginMessage = loginMessage;
+	}
+	
 	public ClientState(ClientStatus clientStatus, GameStatus gameStatus) {
 		super();
 		this.clientStatus = clientStatus;
@@ -45,16 +60,28 @@ public class ClientState {
 	public void setGameStatus(GameStatus gameStatus) {
 		this.gameStatus = gameStatus;
 	}
+	
+	public LoginReplyMessage.Status getLoginStatus() {
+		return loginStatus;
+	}
+	public void setLoginStatus(LoginReplyMessage.Status loginStatus) {
+		this.loginStatus = loginStatus;
+	}
+	public String getLoginMessage() {
+		return loginMessage;
+	}
+	public void setLoginMessage(String loginMessage) {
+		this.loginMessage = loginMessage;
+	}
 	public ClientState clone() {
-		ClientState copy = new ClientState(clientStatus, gameStatus);
+		ClientState copy = new ClientState(clientStatus, gameStatus, loginStatus, loginMessage);
 		return copy;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "ClientState [clientStatus=" + clientStatus + ", gameStatus="
-				+ gameStatus + "]";
+				+ gameStatus + ", loginMessage=" + loginMessage
+				+ ", loginStatus=" + loginStatus + "]";
 	}
+	
 }

@@ -12,6 +12,7 @@ public enum ClientStatus {
 	NEW, // started - no activity
 	LOGGING_IN, // initial request
 	GETTING_STATE,
+	CANCELLED_BY_USER,
 	IDLE,
 	POLLING,
 	PAUSED,

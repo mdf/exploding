@@ -12,6 +12,12 @@ public class LoginMessage {
 	private String clientId;
 	/** conversation ID */
 	private String conversationId;
+	/** player name */
+	private String playerName;
+	/** client version */
+	private int clientVersion;
+	/** client type */
+	private String clientType;
 	/** cons */
 	public LoginMessage() {		
 	}
@@ -38,6 +44,24 @@ public class LoginMessage {
 	 */
 	public void setConversationId(String conversationId) {
 		this.conversationId = conversationId;
+	}
+	public String getPlayerName() {
+		return playerName;
+	}
+	public void setPlayerName(String playerName) {
+		this.playerName = playerName;
+	}
+	public int getClientVersion() {
+		return clientVersion;
+	}
+	public void setClientVersion(int clientVersion) {
+		this.clientVersion = clientVersion;
+	}
+	public String getClientType() {
+		return clientType;
+	}
+	public void setClientType(String clientType) {
+		this.clientType = clientType;
 	}
 	
 }

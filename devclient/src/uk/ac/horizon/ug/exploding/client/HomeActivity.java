@@ -3,8 +3,10 @@ package uk.ac.horizon.ug.exploding.client;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -84,14 +86,26 @@ public class HomeActivity extends Activity implements ClientStateListener {
 	protected Dialog onCreateDialog(int id) {
 		if (id==DialogId.CONNECTING.ordinal()) {
 			connectingPd = new ProgressDialog(this);
-			connectingPd.setCancelable(false);
+			connectingPd.setCancelable(true);
 			connectingPd.setMessage("Connecting...");
+			connectingPd.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					BackgroundThread.cancel(HomeActivity.this);
+				}
+			});
 			return connectingPd;
 		}
 		if (id==DialogId.GETTING_STATE.ordinal()) {
 			gettingStatePd = new ProgressDialog(this);
-			gettingStatePd.setCancelable(false);
+			gettingStatePd.setCancelable(true);
 			gettingStatePd.setMessage("Getting Information...");
+			gettingStatePd.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					BackgroundThread.cancel(HomeActivity.this);
+				}
+			});
 			return gettingStatePd;
 		}
 		// TODO Auto-generated method stub
@@ -122,6 +136,7 @@ public class HomeActivity extends Activity implements ClientStateListener {
 		case ERROR_GETTING_STATE:
 		case ERROR_DOING_LOGIN:
 		case ERROR_IN_SERVER_URL:
+		case CANCELLED_BY_USER:
 			enableRetry = true;
 			break;
 		default:
@@ -148,6 +163,12 @@ public class HomeActivity extends Activity implements ClientStateListener {
 		// update status
 		TextView gameStatusTextView = (TextView)findViewById(R.id.main_game_status_text_view);
 		gameStatusTextView.setText(clientState.getGameStatus().name());
+		// update login status
+		TextView loginStatusTextView = (TextView)findViewById(R.id.main_login_status_text_view);
+		loginStatusTextView.setText(clientState.getLoginStatus().name());
+		// update login message
+		TextView loginMessageTextView = (TextView)findViewById(R.id.main_login_message_text_view);
+		loginMessageTextView.setText(clientState.getLoginMessage());
 	}
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onPause()
