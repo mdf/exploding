@@ -213,6 +213,11 @@ public class HomeActivity extends Activity implements ClientStateListener {
 		TextView urlTextView = (TextView)findViewById(R.id.main_server_url_text_view);
 		// preferences edited by PreferencesActivity
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean shutdownClient = preferences.getBoolean("shutdownClient", false);
+		if (shutdownClient) {
+			BackgroundThread.shutdown(this);
+			preferences.edit().putBoolean("shutdownClient", false).commit();
+		}
 		boolean restartClient = preferences.getBoolean("restartClient", false);
 		if (restartClient) {
 			BackgroundThread.restart(this);

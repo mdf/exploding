@@ -133,7 +133,7 @@ public class BackgroundThread implements Runnable {
 	private String conversationId;
 	//private static String server
 	/** attempt login - called from background thread, unsync. */
-	private Context getContext() {
+	private static Context getContext() {
 		// TODO Auto-generated method stub
 		if (contextRef==null)
 		{
@@ -338,6 +338,16 @@ public class BackgroundThread implements Runnable {
 	}
 	/** fire event listeners */
 	private static void fireClientStateChanged(ClientState clientState) {
+		switch(clientState.getClientStatus()) {
+		case CANCELLED_BY_USER:
+		case ERROR_DOING_LOGIN:
+		case ERROR_IN_SERVER_URL:
+		case ERROR_GETTING_STATE:
+			LocationUtils.updateRequired(getContext(), false);
+			break;
+		default:
+			LocationUtils.updateRequired(getContext(), true);	
+		}
 		for (WeakReference<ClientStateListener> listenerRef : listeners) {
 			ClientStateListener listener = listenerRef.get();
 			if (listener!=null) {
@@ -376,7 +386,7 @@ public class BackgroundThread implements Runnable {
 		return currentClientState.clone();
 	}
 	/** restart client */
-	public static void restart(Context context) {
+	public static synchronized void restart(Context context) {
 		Log.i(TAG, "Restart client - explicit request");
 		currentClientState = new ClientState(ClientStatus.NEW, GameStatus.UNKNOWN);
 		if (singleton!=null && singleton.isAlive()) 
@@ -385,7 +395,7 @@ public class BackgroundThread implements Runnable {
 		singleton.start();			
 	}
 	/** retry client */
-	public static void retry(Context context) {
+	public static synchronized void retry(Context context) {
 		checkThread(context);
 		Log.i(TAG, "Retry client - explicit request (state "+currentClientState.getClientStatus());
 		synchronized (BackgroundThread.class) {
@@ -403,7 +413,7 @@ public class BackgroundThread implements Runnable {
 			}			
 		}
 	}
-	public static void cancel(Context context) {
+	public static synchronized void cancel(Context context) {
 		checkThread(context);
 		Log.i(TAG, "Cancel client - explicit request (state "+currentClientState.getClientStatus());
 		synchronized (BackgroundThread.class) {
@@ -421,5 +431,15 @@ public class BackgroundThread implements Runnable {
 				// no op
 			}
 		}
+	}
+	public static synchronized void shutdown(Context context) {
+		checkThread(context);
+		Log.i(TAG, "Shutdown client - explicit request (state "+currentClientState.getClientStatus());
+		Log.i(TAG, "Cancel from "+currentClientState.getClientStatus()+" to CANCELLED_BY_USER");
+		if (singleton!=null && singleton.isAlive())
+			singleton.interrupt();
+		currentClientState.setLoginMessage("Stopped by user");
+		currentClientState.setClientStatus(ClientStatus.CANCELLED_BY_USER);
+		fireClientStateChanged(currentClientState.clone());
 	}
 }

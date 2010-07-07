@@ -1,0 +1,47 @@
+I/LocationUtils( 3316): Found 3 location providers
+I/LocationUtils( 3316): Provider network enabled
+I/LocationUtils( 3316): Last Location, provider=network, lat=52.891801980000004, long=-1.15711056, bearing=NA, speed=NA, accuracy=75.0, alt=NA
+D/WifiService(   86): acquireWifiLockLocked: WifiLock{NetworkLocationProvider type=2 binder=android.os.Binder@44bba150}
+I/LocationUtils( 3316): Provider passive enabled
+I/LocationUtils( 3316): Last Location, provider=network, lat=52.891801980000004, long=-1.15711056, bearing=NA, speed=NA, accuracy=75.0, alt=NA
+I/LocationUtils( 3316): Provider gps enabled
+
+I/LocationUtils( 3316): GpsStatus 1 (started
+I/LocationUtils( 3316): GpsStatus timeToFirstFix=0
+
+I/LocationUtils( 3316): Location provider=network, lat=52.891922066666666, long=-1.1570675666666668, bearing=NA, speed=NA, accuracy=75.0, alt=NA
+I/LocationUtils( 3316): Location provider=network, lat=52.891922066666666, long=-1.1570675666666668, bearing=NA, speed=NA, accuracy=75.0, alt=NA
+I/LocationUtils( 3316): GpsStatus 4 (Satelite status
+I/LocationUtils( 3316): GpsStatus timeToFirstFix=0
+
+I/LocationUtils( 3316): GpsStatus 4 (Satelite status
+I/LocationUtils( 3316): GpsStatus timeToFirstFix=0
+I/LocationUtils( 3316): GpsSatellite snr=20.6, used=false, azimuth=196.0, elevation=34.0, almanac=true, ephemeris=false, prn=24
+
+I/LocationUtils( 3316): GpsStatus 3 (First fix
+I/LocationUtils( 3316): GpsStatus timeToFirstFix=34278
+I/LocationUtils( 3316): GpsSatellite snr=33.1, used=false, azimuth=268.0, elevation=28.0, almanac=true, ephemeris=false, prn=3
+I/LocationUtils( 3316): GpsSatellite snr=33.0, used=false, azimuth=265.0, elevation=45.0, almanac=true, ephemeris=false, prn=6
+I/LocationUtils( 3316): GpsSatellite snr=16.2, used=false, azimuth=336.0, elevation=4.0, almanac=true, ephemeris=false, prn=7
+I/LocationUtils( 3316): GpsSatellite snr=21.9, used=false, azimuth=302.0, elevation=4.0, almanac=true, ephemeris=false, prn=13
+I/LocationUtils( 3316): GpsSatellite snr=32.3, used=false, azimuth=265.0, elevation=74.0, almanac=true, ephemeris=false, prn=16
+I/LocationUtils( 3316): GpsSatellite snr=16.0, used=false, azimuth=125.0, elevation=17.0, almanac=true, ephemeris=false, prn=18
+I/LocationUtils( 3316): GpsSatellite snr=19.4, used=false, azimuth=260.0, elevation=2.0, almanac=true, ephemeris=false, prn=19
+I/LocationUtils( 3316): GpsSatellite snr=17.9, used=false, azimuth=102.0, elevation=64.0, almanac=true, ephemeris=false, prn=21
+I/LocationUtils( 3316): GpsSatellite snr=22.8, used=false, azimuth=195.0, elevation=33.0, almanac=true, ephemeris=false, prn=24
+I/LocationUtils( 3316): GpsSatellite snr=14.1, used=false, azimuth=80.0, elevation=20.0, almanac=true, ephemeris=false, prn=29
+I/LocationUtils( 3316): GpsSatellite snr=26.8, used=false, azimuth=194.0, elevation=10.0, almanac=true, ephemeris=false, prn=31
+I/LocationUtils( 3316): Location provider=gps, lat=52.892024517059326, long=-1.1572498083114624, bearing=242.57813, speed=0.0, accuracy=32.0, alt=89.0
+I/LocationUtils( 3316): Location provider=gps, lat=52.892024517059326, long=-1.1572498083114624, bearing=242.57813, speed=0.0, accuracy=32.0, alt=89.0
+I/LocationUtils( 3316): GpsStatus 4 (Satelite status
+I/LocationUtils( 3316): GpsStatus timeToFirstFix=34278
+...
+
+Mock (ddms [both providers nominally enabled in settings]):
+
+I/LocationUtils(  213): Found 1 location providers
+I/LocationUtils(  213): Provider gps enabled
+
+I/LocationUtils(  213): GpsStatus 3 (First fix
+I/LocationUtils(  213): GpsStatus timeToFirstFix=38710
+I/LocationUtils(  213): Location provider=gps, lat=37.422006, long=-122.084095, bearing=NA, speed=NA, accuracy=NA, alt=0.0
