@@ -5,4 +5,5 @@
 <CheckBoxPreference android:key="restartClient" android:title="Restart Client" android:summary="Restart client when next opened from Home"></CheckBoxPreference>
 
 <EditTextPreference android:key="clientId" android:title="Device ID" android:summary="Unique device ID"></EditTextPreference>
+<ListPreference android:key="pollInterval" android:title="Poll Interval" android:summary="Time between getting updates from server" android:entries="@array/preferences_poll_interval_names" android:entryValues="@array/preferences_poll_interval_values" android:defaultValue="15000"></ListPreference>
 </PreferenceScreen>

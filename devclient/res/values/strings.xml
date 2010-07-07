@@ -9,4 +9,13 @@
     <string name="hello">Hello World, HomeActivity!</string>
     <string name="app_name">ExplodingPlaces</string>
 
+<string-array name="preferences_poll_interval_names"><item>Short (5s)</item>
+<item>Medium (15s)</item>
+<item>Long (30s)</item>
+</string-array>
+
+<string-array name="preferences_poll_interval_values"><item>5000</item>
+<item>15000</item>
+<item>30000</item>
+</string-array>
 </resources>

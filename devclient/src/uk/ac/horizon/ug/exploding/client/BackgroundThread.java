@@ -42,19 +42,22 @@ public class BackgroundThread implements Runnable {
 	private static final String CLIENT_TYPE = "AndroidDevclient";
 	private static final String LOGIN_PATH = "login";
 	private static final String MESSAGES_PATH = "messages";
+	// 10 seconds for testing?!
+	private static final int POLL_INTERVAL_MS = 10000;
 	/** cons - private */
 	private BackgroundThread() {
 		super();
 	}
 	/** singleton */
 	private static Thread singleton;
+	private long lastPollTime;
 	/** run method */
 	@Override
 	public void run() {
 		mainloop:
 		while (Thread.currentThread()==singleton) {
 			try {
-				boolean doLogin = false, doGetState = false;
+				boolean doLogin = false, doGetState = false, doPoll = false;
 				ClientState clientStateEvent = null;
 				synchronized (BackgroundThread.class) {
 					// Synchronized!
@@ -75,6 +78,23 @@ public class BackgroundThread implements Runnable {
 					case GETTING_STATE:
 						doGetState = true;
 						break;
+					case POLLING:
+					case IDLE:
+					case ERROR_AFTER_STATE: {
+						int pollInterval = POLL_INTERVAL_MS;
+						SharedPreferences preferences = getSharedPreferences();
+						if (preferences!=null) {
+ 							try {
+								pollInterval = Integer.parseInt(preferences.getString("pollInterval", ""+pollInterval));
+							}
+ 							catch (NumberFormatException e) {
+ 								Log.e(TAG, "Getting pollInterval", e);
+ 							}
+						}
+						if (System.currentTimeMillis()-lastPollTime > pollInterval) {
+							doPoll = true;
+						}
+					}
 					}
 					// End Synchronized!
 				}
@@ -85,6 +105,10 @@ public class BackgroundThread implements Runnable {
 					doLogin();
 				else if (doGetState)
 					doGetState();
+				else if (doPoll) {
+					lastPollTime = System.currentTimeMillis();
+					doPoll();
+				}
 				else
 					Thread.sleep(THREAD_SLEEP_MS);
 			}
@@ -233,12 +257,29 @@ public class BackgroundThread implements Runnable {
 		}
 		try {
 			client.poll();
+			lastPollTime = System.currentTimeMillis();
 			// success = good
 			setClientStatus(ClientStatus.POLLING, "Ready to play");
 		}
 		catch (Exception e) {
 			Log.e(TAG, "Doing first poll", e);
 			setClientStatus(ClientStatus.ERROR_GETTING_STATE, "Could not join the game\n("+e.getMessage()+")");
+			return;						
+		}
+	}
+	private void doPoll() {
+		String serverUrl = getServerUrl();
+		if (serverUrl==null)
+			return;
+		try {
+			setClientStatus(ClientStatus.POLLING, "Trying to get updates");			
+			client.poll();
+			// success = good
+			setClientStatus(ClientStatus.IDLE, "Ready to play");			
+		}
+		catch (Exception e) {
+			Log.e(TAG, "Doing (later) poll", e);
+			setClientStatus(ClientStatus.ERROR_AFTER_STATE, "Could not get updates\n("+e.getMessage()+")");
 			return;						
 		}
 	}
@@ -350,6 +391,7 @@ public class BackgroundThread implements Runnable {
 			case ERROR_GETTING_STATE:
 			case ERROR_IN_SERVER_URL:
 			case CANCELLED_BY_USER:
+			case ERROR_AFTER_STATE:
 				Log.i(TAG, "Retry from "+currentClientState.getClientStatus()+" to NEW");
 				restart(context);
 				break;

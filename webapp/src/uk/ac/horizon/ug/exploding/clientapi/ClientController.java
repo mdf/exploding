@@ -167,7 +167,7 @@ public class ClientController {
     	cc.setClientType(login.getClientType());
     	cc.setClientVersion(login.getClientVersion());
     	cc.setCreationTime(System.currentTimeMillis());
-    	cc.setNextSeqNo(0);
+    	cc.setNextSeqNo(1);
     	cc.setLastContactTime(0L);
     	cc.setGameID(game.getID());
     	cc.setPlayerID(player.getID());
@@ -364,10 +364,10 @@ public class ClientController {
 				mtc.setAckedByClient(time);
 
 				// delete on ack? - we only have clientLifetime or not at the mo.
-//				if (!mtc.isSetClientLifetime() || mtc.getClientLifetime()==false) .getLifetime()!=null && mtc.getLifetime()==ClientSubscriptionLifetimeType.UNTIL_ACKNOWLEDGED) {
-//					em.remove(mtc);
-//					removed ++;
-//				}
+				if (!mtc.isSetClientLifetime() || mtc.getClientLifetime()==false) {
+					session.remove(mtc);
+					removed ++;
+				}
 			}
 			if (mtcs.length>0) {
 				logger.info("Acked "+mtcs.length+" messages to "+conversation.getClientID()+" (seq<="+ackSeq+") - "+removed+" removed");
