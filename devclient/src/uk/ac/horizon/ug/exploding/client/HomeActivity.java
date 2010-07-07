@@ -132,6 +132,11 @@ public class HomeActivity extends Activity implements ClientStateListener {
 		//if (clientState.getClientStatus()!=ClientStatus.LOGGING_IN && clientState.getClientStatus()!=ClientStatus.GETTING_STATE)
 		//Toast.makeText(this, "State: "+clientState.getClientStatus(), Toast.LENGTH_SHORT).show();
 	
+		updateDialogs(clientState);
+	}
+
+	/** update visible dialogs */
+	private void updateDialogs(ClientState clientState) {
 		switch (clientState.getClientStatus()) {
 		case ERROR_GETTING_STATE:
 		case ERROR_DOING_LOGIN:
@@ -143,11 +148,7 @@ public class HomeActivity extends Activity implements ClientStateListener {
 			enableRetry = false;
 			break;
 		}
-		updateDialogs(clientState);
-	}
 
-	/** update visible dialogs */
-	private void updateDialogs(ClientState clientState) {
 		if (clientState.getClientStatus()==ClientStatus.LOGGING_IN) 
 			showDialog(DialogId.CONNECTING.ordinal());
 		else if (connectingPd!=null && connectingPd.isShowing())

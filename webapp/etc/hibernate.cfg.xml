@@ -55,6 +55,8 @@
 		<!--<mapping resource="uk/ac/horizon/ug/exploding/db/StatsModifier.hbm.xml"/>-->
 		<mapping resource="uk/ac/horizon/ug/exploding/db/TimelineEvent.hbm.xml"/>
 		<mapping resource="uk/ac/horizon/ug/exploding/db/Zone.hbm.xml"/>
+		<!--  client rpc -->
+		<mapping resource="uk/ac/horizon/ug/exploding/db/ClientConversation.hbm.xml"/>
 	
 	</session-factory>
     

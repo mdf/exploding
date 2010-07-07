@@ -33,6 +33,7 @@
   
   	_allClassNames = new String[] {
    		// all class names to appear on forms go here
+		"uk.ac.horizon.ug.exploding.db.ClientConversation",
 		"uk.ac.horizon.ug.exploding.db.ContentGroup",
 		"uk.ac.horizon.ug.exploding.db.Game",
 		"uk.ac.horizon.ug.exploding.db.Member",

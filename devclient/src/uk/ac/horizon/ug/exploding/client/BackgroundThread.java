@@ -40,6 +40,8 @@ public class BackgroundThread implements Runnable {
 	private static final String DEFAULT_PLAYER = "defaultPlayerName";
 	public static final int CLIENT_VERSION = 1;
 	private static final String CLIENT_TYPE = "AndroidDevclient";
+	private static final String LOGIN_PATH = "login";
+	private static final String MESSAGES_PATH = "messages";
 	/** cons - private */
 	private BackgroundThread() {
 		super();
@@ -49,6 +51,7 @@ public class BackgroundThread implements Runnable {
 	/** run method */
 	@Override
 	public void run() {
+		mainloop:
 		while (Thread.currentThread()==singleton) {
 			try {
 				boolean doLogin = false;
@@ -57,6 +60,12 @@ public class BackgroundThread implements Runnable {
 					// Synchronized!
 					//Log.d(TAG, "Background action on state "+currentClientState);
 					switch(currentClientState.getClientStatus()) {
+					case CANCELLED_BY_USER:
+					case ERROR_DOING_LOGIN:
+					case ERROR_GETTING_STATE:
+					case ERROR_IN_SERVER_URL:
+						Log.i(TAG, "Background thread give up on state "+currentClientState.getClientStatus());
+						break mainloop;
 					case NEW:
 						// TODO log in
 						currentClientState.setClientStatus(ClientStatus.LOGGING_IN);
@@ -122,6 +131,7 @@ public class BackgroundThread implements Runnable {
         HttpClient httpClient = getHttpClient();
 		HttpPost request = null;
 		try {
+			serverUrl = serverUrl+LOGIN_PATH;
 			request = new HttpPost(new URI(serverUrl));
 		} catch (Exception e) {
 			Log.e(TAG, "parsing serverUrl "+serverUrl, e);
@@ -150,11 +160,11 @@ public class BackgroundThread implements Runnable {
 			Log.d(TAG, "Http status on login: "+statusLine);
 			if (statusLine.getStatusCode()!=200) {
 				Log.e(TAG, "Error - Http status on login: "+statusLine);
-				setClientStatus(ClientStatus.ERROR_DOING_LOGIN);				
+				setClientStatus(ClientStatus.ERROR_DOING_LOGIN, "Error logging in!\n("+statusLine.getReasonPhrase()+")");				
 				return;
 			}
 			LoginReplyMessage reply = (LoginReplyMessage )xs.fromXML(response.getEntity().getContent());
-			
+			Log.d(TAG,"Reply: "+reply);
 			synchronized (BackgroundThread.class) {
 				checkCurrentThread();
 

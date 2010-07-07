@@ -7,9 +7,24 @@
 		<property name="mappings">
 			<props>
 				<prop key="/index.html">filenameViewController</prop>
+				<prop key="/login">clientMultiController</prop>
+				<prop key="/messages">clientMultiController</prop>
 			</props>
 		</property>
 	</bean>
+
+	<!-- client controller -->
+	<bean id="internalPathMethodNameResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver"/>
+
+	<bean id="clientMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+		<property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+		<property name="delegate"><ref bean="clientController"/></property>
+	</bean>
+
+	<bean id="clientController" class="uk.ac.horizon.ug.exploding.clientapi.ClientController">
+		<property name="dataspace"><ref bean="dataspace"/></property>
+	</bean>
+
 
 	<!-- generic htm/html to jsp mapper -->
 	<bean id="webFilenameViewController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>

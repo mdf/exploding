@@ -256,6 +256,19 @@
 			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/TimelineEvent.hbm.xml"/>
 		</java>		
 	
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.ClientConversation.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/ClientConversation.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.ClientConversation.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/ClientConversation_helper.java"/>
+			<arg value="${equip2home}/etc/bean2hibernatehbm.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.ClientConversation.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/ClientConversation.hbm.xml"/>
+		</java>		
+	
 		<!-- NextID is a special-case which is just used for Database ID allocation -->
 		<mkdir dir="${generated}/equip2/spring/db"/>
 		<java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
