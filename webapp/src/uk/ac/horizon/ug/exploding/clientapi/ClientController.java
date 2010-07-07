@@ -20,6 +20,8 @@ import uk.ac.horizon.ug.exploding.db.ClientConversation;
 import uk.ac.horizon.ug.exploding.db.Game;
 import uk.ac.horizon.ug.exploding.db.MessageToClient;
 import uk.ac.horizon.ug.exploding.db.Player;
+import uk.ac.horizon.ug.exploding.db.Position;
+import uk.ac.horizon.ug.exploding.db.Zone;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -63,11 +65,14 @@ public class ClientController {
 	}
 
 	static XStream getXStream() {
-    	XStream xs = new XStream(new DomDriver());
+    	XStream xs = new XStream(/*new DomDriver()*/);
 		xs.alias("login", LoginMessage.class);
 		xs.alias("reply", LoginReplyMessage.class);
 		xs.alias("list", LinkedList.class);    	
 		xs.alias("message", Message.class);
+		// game-specific types
+		xs.alias("zone", Zone.class);
+		xs.alias("position", Position.class);
 		return xs;
 	}
 	/** client login 

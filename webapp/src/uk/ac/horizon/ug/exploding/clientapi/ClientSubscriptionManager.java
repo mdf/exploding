@@ -8,7 +8,9 @@ import org.apache.log4j.Logger;
 import com.thoughtworks.xstream.XStream;
 
 import uk.ac.horizon.ug.exploding.db.ClientConversation;
+import uk.ac.horizon.ug.exploding.db.Game;
 import uk.ac.horizon.ug.exploding.db.MessageToClient;
+import uk.ac.horizon.ug.exploding.db.Zone;
 
 import equip2.core.IDataspace;
 import equip2.core.ISession;
@@ -97,7 +99,19 @@ public class ClientSubscriptionManager {
     	insertMessageToClient(cc, MessageType.NEW_CONV.ordinal(), false, null, null, session);
     	
     	// TODO initialise initial message/value(s)
+    	// TODO abstract/generalise
+    	// replicate Zones...
+    	Game game = (Game) session.get(Game.class, cc.getGameID());
+    	//ContentGroup contentgame.getContentGroupID()
+    	QueryTemplate q = new QueryTemplate(Zone.class);
+    	q.addConstraintEq("contentGroupID", game.getContentGroupID());
+    	Object zones [] = session.match(q);
     	
+    	for (int zi=0; zi<zones.length; zi++) {
+    		Zone zone = (Zone)zones[zi];
+    		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, zone, session);
+    	}
+    	logger.info("Sent "+zones.length+" zones on new conversation");
 	}
 
 	public static Object unmarshallFact(String newVal) {

@@ -202,7 +202,7 @@ public class BackgroundThread implements Runnable {
 			login.setClientVersion(CLIENT_VERSION);
 			login.setClientType(CLIENT_TYPE);
 			// TODO XPP3 driver?
-			XStream xs = new XStream(new DomDriver());
+			XStream xs = new XStream(/*new DomDriver()*/);
 			xs.alias("login", LoginMessage.class);
 			xs.alias("reply", LoginReplyMessage.class);
 			String xmlText = xs.toXML(login);
@@ -216,9 +216,12 @@ public class BackgroundThread implements Runnable {
 			if (statusLine.getStatusCode()!=200) {
 				Log.e(TAG, "Error - Http status on login: "+statusLine);
 				setClientStatus(ClientStatus.ERROR_DOING_LOGIN, "Error logging in!\n("+statusLine.getReasonPhrase()+")");				
+				if (response.getEntity()!=null)
+					response.getEntity().consumeContent();
 				return;
 			}
 			LoginReplyMessage reply = (LoginReplyMessage )xs.fromXML(response.getEntity().getContent());
+			response.getEntity().consumeContent();
 			Log.d(TAG,"Reply: "+reply);
 			synchronized (BackgroundThread.class) {
 				checkCurrentThread();

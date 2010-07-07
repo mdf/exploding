@@ -23,6 +23,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 
+import uk.ac.horizon.ug.exploding.client.model.Position;
+import uk.ac.horizon.ug.exploding.client.model.Zone;
+
 //import org.json.JSONArray;
 //import org.json.JSONException;
 //import org.json.JSONObject;
@@ -122,10 +125,14 @@ public class Client {
 		logger.info("SendMessages to "+request.getURI()+", requestline="+request.getRequestLine());
 		request.setHeader("Content-Type", "application/xml");
 		//HttpURLConnection conn = (HttpURLConnection) conversationUrl.openConnection();
-		XStream xs = new XStream(new DomDriver());
+		XStream xs = new XStream(/*new DomDriver()*/);
 		xs.alias("list", LinkedList.class);    	
 		xs.alias("message", Message.class);
 
+		// game specific
+		xs.alias("zone", Zone.class);
+		xs.alias("position", Position.class);
+		
 		String xml = xs.toXML(messages);
 		Log.d(TAG, "Sent: "+xml);
 		request.setEntity(new StringEntity(xml));
@@ -134,10 +141,14 @@ public class Client {
 		StatusLine statusLine = reply.getStatusLine();
 		int status = statusLine.getStatusCode();
 		if (status!=200) {
+			if (reply.getEntity()!=null)
+				reply.getEntity().consumeContent();
 			throw new IOException("Error response ("+status+") from server: "+statusLine.getReasonPhrase());
 		}
 		//Log.d(TAG, "Http status on login: "+statusLine);
 		messages = (List<Message>)xs.fromXML(reply.getEntity().getContent());
+		reply.getEntity().consumeContent();
+
 		logger.info("Response "+messages.size()+" messages: "+messages);
 
 		// check status(es)
