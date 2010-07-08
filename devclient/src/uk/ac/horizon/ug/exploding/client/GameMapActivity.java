@@ -48,7 +48,7 @@ public class GameMapActivity extends MapActivity /*implements LocationListener*/
 		@Override
 		public Drawable getMarker(int stateBitset) {
 			// TODO Auto-generated method stub
-			Log.d(TAG,"getmarker("+stateBitset+")="+this.mMarker);
+			//Log.d(TAG,"getmarker("+stateBitset+")="+this.mMarker);
 			return this.mMarker;
 			//return super.getMarker(stateBitset);
 		}
