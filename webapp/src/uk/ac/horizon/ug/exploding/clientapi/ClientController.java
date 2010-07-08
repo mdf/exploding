@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
 
+import uk.ac.horizon.ug.exploding.db.Member;
+//import uk.ac.horizon.ug.exploding.db.Message;
 import uk.ac.horizon.ug.exploding.clientapi.LoginReplyMessage.Status;
 import uk.ac.horizon.ug.exploding.db.ClientConversation;
 import uk.ac.horizon.ug.exploding.db.Game;
@@ -73,6 +75,9 @@ public class ClientController {
 		// game-specific types
 		xs.alias("zone", Zone.class);
 		xs.alias("position", Position.class);
+		xs.alias("player", Player.class);
+		xs.alias("member", uk.ac.horizon.ug.exploding.db.Member.class);
+		xs.alias("msg", uk.ac.horizon.ug.exploding.db.Message.class);
 		return xs;
 	}
 	/** client login 
@@ -333,6 +338,8 @@ public class ClientController {
 
 		// APPLICATION-SPECIFIC SPECIAL CASES
 		if (newVal instanceof Player) {
+			if (message.getType()!=MessageType.UPD_FACT)
+				throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Attempted "+message.getType()+" on Player (can only update)");
 			Player newPlayer = (Player)newVal;
 			if (newPlayer.getID()==null) {
 				// assume this player
@@ -348,36 +355,55 @@ public class ClientController {
 				}
 				// nothing else should be updated!
 			}
+			return;
 		}
+		
+		if (newVal instanceof Member) {
+			if (message.getType()!=MessageType.ADD_FACT)
+				throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Attempted "+message.getType()+" on Member (can only add)");
+			Member newMember = (Member)newVal;
+			newMember.setID(IDAllocator.getNewID(session, Member.class, "M", null));
+			newMember.setPlayerID(conversation.getPlayerID());
+			newMember.setGameID(conversation.getGameID());
+			newMember.setCarried(false);
+			newMember.unsetParentMemberID();
+			// check fields
+			if (!newMember.isSetAction() || !newMember.isSetBrains() || !newMember.isSetHealth() || ! newMember.isSetPosition() || !newMember.isSetZone()) 
+				throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "new Member is missing required fields: "+newMember);
+			session.add(newMember);
+			logger.info("Adding new Member "+newMember+" for player "+conversation.getPlayerID());
+			return;
+		}		
 
+		logger.warn("Unhandled fact operation "+message.getType()+" "+message.getOldVal()+" -> "+message.getNewVal());
 		// generic
-		switch (message.getType()) {
-		case ADD_FACT: {
-			if (oldVal!=null || newVal==null)
-				throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "ADD_FACT with incorrect parameters: old="+oldVal+", new="+newVal);
-			session.add(newVal);
-			responses.add(createAckMessage(message));
-			break;
-		}
-		case DEL_FACT: {
-			if (oldVal==null || newVal!=null)
-				throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "DEL_FACT with incorrect parameters: old="+oldVal+", new="+newVal);
-			session.remove(oldVal);
-			responses.add(createAckMessage(message));
-			break;
-		}
-		case UPD_FACT: {
-			if (oldVal==null || newVal==null)
-				throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "UPD_FACT with incorrect parameters: old="+oldVal+", new="+newVal);
-			session.remove(oldVal);
-			session.add(newVal);
-			// TODO use update if fixed in JPA drools
-			responses.add(createAckMessage(message));
-			break;
-		}
-		default:
-			throw new RuntimeException("handleFactOperation called for message type "+message.getType());
-		}
+//		switch (message.getType()) {
+//		case ADD_FACT: {
+//			if (oldVal!=null || newVal==null)
+//				throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "ADD_FACT with incorrect parameters: old="+oldVal+", new="+newVal);
+//			session.add(newVal);
+//			responses.add(createAckMessage(message));
+//			break;
+//		}
+//		case DEL_FACT: {
+//			if (oldVal==null || newVal!=null)
+//				throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "DEL_FACT with incorrect parameters: old="+oldVal+", new="+newVal);
+//			session.remove(oldVal);
+//			responses.add(createAckMessage(message));
+//			break;
+//		}
+//		case UPD_FACT: {
+//			if (oldVal==null || newVal==null)
+//				throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "UPD_FACT with incorrect parameters: old="+oldVal+", new="+newVal);
+//			session.remove(oldVal);
+//			session.add(newVal);
+//			// TODO use update if fixed in JPA drools
+//			responses.add(createAckMessage(message));
+//			break;
+//		}
+//		default:
+//			throw new RuntimeException("handleFactOperation called for message type "+message.getType());
+//		}
 		// TODO record of client action
 	}
 

@@ -14,5 +14,7 @@ public class ModelUtils {
 		xs.alias("zone", Zone.class);
 		xs.alias("position", Position.class);
 		xs.alias("player", Player.class);
+		xs.alias("member", Member.class);
+		xs.alias("msg", Message.class);
 	}
 }

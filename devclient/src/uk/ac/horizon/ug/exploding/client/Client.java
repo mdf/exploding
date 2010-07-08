@@ -118,7 +118,7 @@ public class Client {
 	/** add fact message */
 	public Message updateFactMessage(Object oldVal, Object newVal) {
 		Message msg = new Message();
-		msg.setType(MessageType.ADD_FACT.name());
+		msg.setType(MessageType.UPD_FACT.name());
 		msg.setSeqNo(seqNo++);
 		msg.setOldVal(oldVal);
 		msg.setNewVal(newVal);
