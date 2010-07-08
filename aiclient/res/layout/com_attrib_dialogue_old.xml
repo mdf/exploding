@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+  <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_weight="1">
+    <TextView
+        android:text="{Member name}"
+        android:textSize="10pt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="20px"
+        android:layout_marginTop="20px"/>
+        
+  </LinearLayout>
+
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:background="#ffFFFFFF">
+      <TextView
+          android:text="Created: {Created Date}"
+          android:gravity="left"
+
+          android:layout_width="wrap_content"
+          android:layout_weight="1"
+          android:layout_marginLeft="20px"
+          android:textColor="#ff000000" android:layout_height="20px"/>
+      <TextView
+          android:text="{Status}"
+          android:gravity="left"
+          android:layout_width="wrap_content"
+          android:layout_weight="1"
+          android:background="#ffFFFFFF"
+          android:textColor="#ff000000" android:layout_height="30px"/>
+
+  </LinearLayout>
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="15px"
+      android:layout_marginRight="20px">
+      <TextView
+          android:text="Health"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="20px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+
+          android:gravity="right"
+          android:layout_width="150px"
+          android:layout_height="30px"
+          android:background="#ff00aeef"
+          android:textColor="#ff000000"/>
+                <TextView
+
+          android:gravity="right"
+          android:layout_width="100px"
+          android:layout_height="30px"
+          android:background="#ffCCCCCC"
+         />
+
+  </LinearLayout>
+      <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="10px"
+      android:layout_marginRight="20px">
+      <TextView
+          android:text="Wealth"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="20px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+          android:gravity="right"
+          android:layout_width="75px"
+          android:layout_height="30px"
+          android:background="#ffFFCC00"
+          android:textColor="#ff000000"/>
+                          <TextView
+
+          android:gravity="right"
+          android:layout_width="175px"
+          android:layout_height="30px"
+          android:background="#ffCCCCCC"
+         />
+
+  </LinearLayout>
+      <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="10px"
+      android:layout_marginRight="20px">
+      <TextView
+          android:text="Knowledge"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="20px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+
+
+          android:gravity="right"
+          android:layout_width="25px"
+          android:layout_height="30px"
+          android:background="#ffFF6633"
+          android:textColor="#ff000000"/>
+                          <TextView
+
+          android:gravity="right"
+          android:layout_width="225px"
+          android:layout_height="30px"
+          android:background="#ffCCCCCC"
+         />
+
+  </LinearLayout>
+      <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="10px"
+      android:layout_marginRight="20px">
+      <TextView
+          android:text="Participation"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="20px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+
+          android:gravity="right"
+          android:layout_width="250px"
+          android:layout_height="30px"
+          android:background="#ff999933"
+          android:textColor="#ff000000"/>
+                          <TextView
+
+          android:gravity="right"
+          android:layout_width="0px"
+          android:layout_height="30px"
+          android:background="#ffCCCCCC"
+         />
+
+  </LinearLayout>
+  
+
+        
+
+
+</LinearLayout>

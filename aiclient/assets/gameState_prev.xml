@@ -1,0 +1,3431 @@
+<?xml version="1.0"?>
+<gameState version="1.0">
+<location>Woolwich</location>
+<startYear>1900</startYear>
+<endYear>2020</endYear>
+	<timeEvents>
+	  <timeEvent ref="0EHVUW">
+	    <id>1</id>
+	    <name>1900</name>
+	    <description>The year 1900</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178AQG">
+	                  <attributeSet ref="177ZOO">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>0</startTime>
+	    <endTime>100</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="0EHX2G">
+	    <id>2</id>
+	    <name>1901</name>
+	    <description>The year 1901</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178AMW">
+	                  <attributeSet ref="177ZMW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>100</startTime>
+	    <endTime>200</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="0EU048">
+	    <id>3</id>
+	    <name>1902</name>
+	    <description>The year 1902</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178A9K">
+	                  <attributeSet ref="177Z60">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>200</startTime>
+	    <endTime>300</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="0EU01K">
+	    <id>4</id>
+	    <name>1903</name>
+	    <description>The year 1903</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178A08">
+	                  <attributeSet ref="177Z48">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>300</startTime>
+	    <endTime>400</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="0EKZGO">
+	    <id>5</id>
+	    <name>1904</name>
+	    <description>The year 1904</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EHSRS">
+	                  <attributeSet ref="177YX4">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>400</startTime>
+	    <endTime>500</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178FMG">
+	    <id>6</id>
+	    <name>1905</name>
+	    <description>The year 1905</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EHYEG">
+	                  <attributeSet ref="177YVC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>500</startTime>
+	    <endTime>600</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178FP4">
+	    <id>7</id>
+	    <name>1906</name>
+	    <description>The year 1906</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EUS7S">
+	                  <attributeSet ref="177YQ0">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>600</startTime>
+	    <endTime>700</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178FRS">
+	    <id>8</id>
+	    <name>1907</name>
+	    <description>The year 1907</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="177T7S">
+	                  <attributeSet ref="177YO8">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>700</startTime>
+	    <endTime>800</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178FUG">
+	    <id>9</id>
+	    <name>1908</name>
+	    <description>The year 1908</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="177SS8">
+	                  <attributeSet ref="177YAW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>800</startTime>
+	    <endTime>900</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178FX4">
+	    <id>10</id>
+	    <name>1909</name>
+	    <description>The year 1909</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="177RZC">
+	                  <attributeSet ref="177Y94">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>900</startTime>
+	    <endTime>1000</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178FZS">
+	    <id>11</id>
+	    <name>1910</name>
+	    <description>The year 1910</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="177R54">
+	                  <attributeSet ref="177Y7C">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1000</startTime>
+	    <endTime>1100</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178G2G">
+	    <id>12</id>
+	    <name>1911</name>
+	    <description>The year 1911</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="177QUW">
+	                  <attributeSet ref="177Y4O">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1100</startTime>
+	    <endTime>1200</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178G54">
+	    <id>13</id>
+	    <name>1912</name>
+	    <description>The year 1912</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="177QNC">
+	                  <attributeSet ref="177XS8">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1200</startTime>
+	    <endTime>1300</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178G7S">
+	    <id>14</id>
+	    <name>1913</name>
+	    <description>The year 1913</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F0FDK">
+	                  <attributeSet ref="177XQG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1300</startTime>
+	    <endTime>1400</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178GAG">
+	    <id>15</id>
+	    <name>1914</name>
+	    <description>The year 1914</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F17FS">
+	                  <attributeSet ref="177XOO">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1400</startTime>
+	    <endTime>1500</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178GD4">
+	    <id>16</id>
+	    <name>1915</name>
+	    <description>The year 1915</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EVF48">
+	                  <attributeSet ref="177XM0">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1500</startTime>
+	    <endTime>1600</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178GFS">
+	    <id>17</id>
+	    <name>1916</name>
+	    <description>The year 1916</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERZ48">
+	                  <attributeSet ref="177XGO">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1600</startTime>
+	    <endTime>1700</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178GIG">
+	    <id>18</id>
+	    <name>1917</name>
+	    <description>The year 1917</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EHQ48">
+	                  <attributeSet ref="177XEW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1700</startTime>
+	    <endTime>1800</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178GL4">
+	    <id>19</id>
+	    <name>1918</name>
+	    <description>The year 1918</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EUUQ0">
+	                  <attributeSet ref="177X9K">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1800</startTime>
+	    <endTime>1900</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178GNS">
+	    <id>20</id>
+	    <name>1919</name>
+	    <description>The year 1919</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERLVS">
+	                  <attributeSet ref="177X7S">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1900</startTime>
+	    <endTime>2000</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178GQG">
+	    <id>21</id>
+	    <name>1920</name>
+	    <description>The year 1920</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EREXK">
+	                  <attributeSet ref="177X2G">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>2000</startTime>
+	    <endTime>2100</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178GT4">
+	    <id>22</id>
+	    <name>1921</name>
+	    <description>The year 1921</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EW7JC">
+	                  <attributeSet ref="177X0O">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>2100</startTime>
+	    <endTime>2200</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178GVS">
+	    <id>23</id>
+	    <name>1922</name>
+	    <description>The year 1922</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EW4ZC">
+	                  <attributeSet ref="177WVC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>2200</startTime>
+	    <endTime>2300</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178GYG">
+	    <id>24</id>
+	    <name>1923</name>
+	    <description>The year 1923</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F16ZS">
+	                  <attributeSet ref="177WTK">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>2300</startTime>
+	    <endTime>2400</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178H14">
+	    <id>25</id>
+	    <name>1924</name>
+	    <description>The year 1924</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F1588">
+	                  <attributeSet ref="177WNC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>2400</startTime>
+	    <endTime>2500</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178H3S">
+	    <id>26</id>
+	    <name>1925</name>
+	    <description>The year 1925</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F1548">
+	                  <attributeSet ref="177WLK">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>2500</startTime>
+	    <endTime>2600</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178H6G">
+	    <id>27</id>
+	    <name>1926</name>
+	    <description>The year 1926</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F14UG">
+	                  <attributeSet ref="177WFC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>2600</startTime>
+	    <endTime>2700</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178H94">
+	    <id>28</id>
+	    <name>1927</name>
+	    <description>The year 1927</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F146W">
+	                  <attributeSet ref="177WDK">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>2700</startTime>
+	    <endTime>2800</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178HBS">
+	    <id>29</id>
+	    <name>1928</name>
+	    <description>The year 1928</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F13OO">
+	                  <attributeSet ref="177W14">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>2800</startTime>
+	    <endTime>2900</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178HEG">
+	    <id>30</id>
+	    <name>1929</name>
+	    <description>The year 1929</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F1448">
+	                  <attributeSet ref="177VZC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>2900</startTime>
+	    <endTime>3000</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178HH4">
+	    <id>31</id>
+	    <name>1930</name>
+	    <description>The year 1930</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F156W">
+	                  <attributeSet ref="177VXK">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>3000</startTime>
+	    <endTime>3100</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178HJS">
+	    <id>32</id>
+	    <name>1931</name>
+	    <description>The year 1931</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EW70O">
+	                  <attributeSet ref="177VUW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>3100</startTime>
+	    <endTime>3200</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178HMG">
+	    <id>33</id>
+	    <name>1932</name>
+	    <description>The year 1932</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F17M0">
+	                  <attributeSet ref="177VHK">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>3200</startTime>
+	    <endTime>3300</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178HP4">
+	    <id>34</id>
+	    <name>1933</name>
+	    <description>The year 1933</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERJRS">
+	                  <attributeSet ref="177VFS">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>3300</startTime>
+	    <endTime>3400</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178HRS">
+	    <id>35</id>
+	    <name>1934</name>
+	    <description>The year 1934</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="177QIG">
+	                  <attributeSet ref="177VE0">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>3400</startTime>
+	    <endTime>3500</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178HUG">
+	    <id>36</id>
+	    <name>1935</name>
+	    <description>The year 1935</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="177RDK">
+	                  <attributeSet ref="177VBC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>3500</startTime>
+	    <endTime>3600</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178HX4">
+	    <id>37</id>
+	    <name>1936</name>
+	    <description>The year 1936</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="177THK">
+	                  <attributeSet ref="177UYW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>3600</startTime>
+	    <endTime>3700</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178HZS">
+	    <id>38</id>
+	    <name>1937</name>
+	    <description>The year 1937</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="1789X4">
+	                  <attributeSet ref="177UX4">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>3700</startTime>
+	    <endTime>3800</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178I2G">
+	    <id>39</id>
+	    <name>1938</name>
+	    <description>The year 1938</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178B08">
+	                  <attributeSet ref="177UVC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>3800</startTime>
+	    <endTime>3900</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178I54">
+	    <id>40</id>
+	    <name>1939</name>
+	    <description>The year 1939</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178BG8">
+	                  <attributeSet ref="177USO">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>3900</startTime>
+	    <endTime>4000</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178I7S">
+	    <id>41</id>
+	    <name>1940</name>
+	    <description>The year 1940</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178BO8">
+	                  <attributeSet ref="177UEG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>4000</startTime>
+	    <endTime>4100</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178IAG">
+	    <id>42</id>
+	    <name>1941</name>
+	    <description>The year 1941</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178BS8">
+	                  <attributeSet ref="177UCO">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>4100</startTime>
+	    <endTime>4200</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178ID4">
+	    <id>43</id>
+	    <name>1942</name>
+	    <description>The year 1942</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178BW8">
+	                  <attributeSet ref="177UAW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>4200</startTime>
+	    <endTime>4300</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178IFS">
+	    <id>44</id>
+	    <name>1943</name>
+	    <description>The year 1943</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178BXK">
+	                  <attributeSet ref="177U88">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>4300</startTime>
+	    <endTime>4400</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178IIG">
+	    <id>45</id>
+	    <name>1944</name>
+	    <description>The year 1944</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EVGE0">
+	                  <attributeSet ref="177U2W">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>4400</startTime>
+	    <endTime>4500</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178IL4">
+	    <id>46</id>
+	    <name>1945</name>
+	    <description>The year 1945</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EVHEW">
+	                  <attributeSet ref="177U14">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>4500</startTime>
+	    <endTime>4600</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178INS">
+	    <id>47</id>
+	    <name>1946</name>
+	    <description>The year 1946</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="1785RS">
+	                  <attributeSet ref="177TUW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>4600</startTime>
+	    <endTime>4700</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178IQG">
+	    <id>48</id>
+	    <name>1947</name>
+	    <description>The year 1947</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178CUG">
+	                  <attributeSet ref="177TT4">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>4700</startTime>
+	    <endTime>4800</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178IT4">
+	    <id>49</id>
+	    <name>1948</name>
+	    <description>The year 1948</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178CVS">
+	                  <attributeSet ref="0F0QAG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>4800</startTime>
+	    <endTime>4900</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178IVS">
+	    <id>50</id>
+	    <name>1949</name>
+	    <description>The year 1949</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178CX4">
+	                  <attributeSet ref="0F0V2W">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>4900</startTime>
+	    <endTime>5000</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178IYG">
+	    <id>51</id>
+	    <name>1950</name>
+	    <description>The year 1950</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178CYG">
+	                  <attributeSet ref="0F0VA0">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>5000</startTime>
+	    <endTime>5100</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178J14">
+	    <id>52</id>
+	    <name>1951</name>
+	    <description>The year 1951</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178D08">
+	                  <attributeSet ref="0F0X4O">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>5100</startTime>
+	    <endTime>5200</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178J3S">
+	    <id>53</id>
+	    <name>1952</name>
+	    <description>The year 1952</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178D20">
+	                  <attributeSet ref="0F0O6G">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>5200</startTime>
+	    <endTime>5300</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178J6G">
+	    <id>54</id>
+	    <name>1953</name>
+	    <description>The year 1953</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178D3C">
+	                  <attributeSet ref="0F0O3S">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>5300</startTime>
+	    <endTime>5400</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178J94">
+	    <id>55</id>
+	    <name>1954</name>
+	    <description>The year 1954</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178D4O">
+	                  <attributeSet ref="0F0NLK">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>5400</startTime>
+	    <endTime>5500</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178JBS">
+	    <id>56</id>
+	    <name>1955</name>
+	    <description>The year 1955</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EUSRC">
+	                  <attributeSet ref="0F0N6G">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>5500</startTime>
+	    <endTime>5600</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178JEG">
+	    <id>57</id>
+	    <name>1956</name>
+	    <description>The year 1956</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EUT5K">
+	                  <attributeSet ref="0F0MAG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>5600</startTime>
+	    <endTime>5700</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178JH4">
+	    <id>58</id>
+	    <name>1957</name>
+	    <description>The year 1957</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EW5RC">
+	                  <attributeSet ref="0F0M6W">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>5700</startTime>
+	    <endTime>5800</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178JJS">
+	    <id>59</id>
+	    <name>1958</name>
+	    <description>The year 1958</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F0C88">
+	                  <attributeSet ref="0F0JGO">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>5800</startTime>
+	    <endTime>5900</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178JMG">
+	    <id>60</id>
+	    <name>1959</name>
+	    <description>The year 1959</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F12ZS">
+	                  <attributeSet ref="0F0IH4">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>5900</startTime>
+	    <endTime>6000</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178JP4">
+	    <id>61</id>
+	    <name>1960</name>
+	    <description>The year 1960</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERKM0">
+	                  <attributeSet ref="0F0IFC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>6000</startTime>
+	    <endTime>6100</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178JRS">
+	    <id>62</id>
+	    <name>1961</name>
+	    <description>The year 1961</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EZLMW">
+	                  <attributeSet ref="0F0I6G">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>6100</startTime>
+	    <endTime>6200</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178JUG">
+	    <id>63</id>
+	    <name>1962</name>
+	    <description>The year 1962</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EZJG8">
+	                  <attributeSet ref="0F0GEW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>6200</startTime>
+	    <endTime>6300</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178JX4">
+	    <id>64</id>
+	    <name>1963</name>
+	    <description>The year 1963</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EZI54">
+	                  <attributeSet ref="0F0GD4">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>6300</startTime>
+	    <endTime>6400</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178JZS">
+	    <id>65</id>
+	    <name>1964</name>
+	    <description>The year 1964</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERNRS">
+	                  <attributeSet ref="0F0FRC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>6400</startTime>
+	    <endTime>6500</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178K2G">
+	    <id>66</id>
+	    <name>1965</name>
+	    <description>The year 1965</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EWBVS">
+	                  <attributeSet ref="0F0HIG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>6500</startTime>
+	    <endTime>6600</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178K54">
+	    <id>67</id>
+	    <name>1966</name>
+	    <description>The year 1966</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EWBAG">
+	                  <attributeSet ref="177DEW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>6600</startTime>
+	    <endTime>6700</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178K7S">
+	    <id>68</id>
+	    <name>1967</name>
+	    <description>The year 1967</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EWAPK">
+	                  <attributeSet ref="0F0D2W">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>6700</startTime>
+	    <endTime>6800</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178KAG">
+	    <id>69</id>
+	    <name>1968</name>
+	    <description>The year 1968</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ETOW8">
+	                  <attributeSet ref="0F0D4O">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>6800</startTime>
+	    <endTime>6900</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178KD4">
+	    <id>70</id>
+	    <name>1969</name>
+	    <description>The year 1969</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EWA7C">
+	                  <attributeSet ref="0F0DEG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>6900</startTime>
+	    <endTime>7000</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178KFS">
+	    <id>71</id>
+	    <name>1970</name>
+	    <description>The year 1970</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EWA0O">
+	                  <attributeSet ref="0F0DG8">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>7000</startTime>
+	    <endTime>7100</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178KIG">
+	    <id>72</id>
+	    <name>1971</name>
+	    <description>The year 1971</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERRDK">
+	                  <attributeSet ref="0F0DRS">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>7100</startTime>
+	    <endTime>7200</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178KL4">
+	    <id>73</id>
+	    <name>1972</name>
+	    <description>The year 1972</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EROMG">
+	                  <attributeSet ref="0F0ED4">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>7200</startTime>
+	    <endTime>7300</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178KNS">
+	    <id>74</id>
+	    <name>1973</name>
+	    <description>The year 1973</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERKMG">
+	                  <attributeSet ref="0F0EUG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>7300</startTime>
+	    <endTime>7400</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178KQG">
+	    <id>75</id>
+	    <name>1974</name>
+	    <description>The year 1974</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERJCO">
+	                  <attributeSet ref="0F0EX4">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>7400</startTime>
+	    <endTime>7500</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178KT4">
+	    <id>76</id>
+	    <name>1975</name>
+	    <description>The year 1975</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EHN60">
+	                  <attributeSet ref="0EWPT4">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>7500</startTime>
+	    <endTime>7600</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178KVS">
+	    <id>77</id>
+	    <name>1976</name>
+	    <description>The year 1976</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERM4O">
+	                  <attributeSet ref="1774C8">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>7600</startTime>
+	    <endTime>7700</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178KYG">
+	    <id>78</id>
+	    <name>1977</name>
+	    <description>The year 1977</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERDEG">
+	                  <attributeSet ref="1778Y0">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>7700</startTime>
+	    <endTime>7800</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178L14">
+	    <id>79</id>
+	    <name>1978</name>
+	    <description>The year 1978</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EHLQW">
+	                  <attributeSet ref="17797C">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>7800</startTime>
+	    <endTime>7900</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178L3S">
+	    <id>80</id>
+	    <name>1979</name>
+	    <description>The year 1979</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EHMQG">
+	                  <attributeSet ref="177ACO">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>7900</startTime>
+	    <endTime>8000</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178L6G">
+	    <id>81</id>
+	    <name>1980</name>
+	    <description>The year 1980</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ETPNC">
+	                  <attributeSet ref="177AUG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>8000</startTime>
+	    <endTime>8100</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178L94">
+	    <id>82</id>
+	    <name>1981</name>
+	    <description>The year 1981</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EUSNS">
+	                  <attributeSet ref="177D7S">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>8100</startTime>
+	    <endTime>8200</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178LBS">
+	    <id>83</id>
+	    <name>1982</name>
+	    <description>The year 1982</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F0CKO">
+	                  <attributeSet ref="177DC8">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>8200</startTime>
+	    <endTime>8300</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178LEG">
+	    <id>84</id>
+	    <name>1983</name>
+	    <description>The year 1983</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EZIDK">
+	                  <attributeSet ref="0F0GMW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>8300</startTime>
+	    <endTime>8400</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178LH4">
+	    <id>85</id>
+	    <name>1984</name>
+	    <description>The year 1984</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178D5K">
+	                  <attributeSet ref="0F0H88">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>8400</startTime>
+	    <endTime>8500</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178LJS">
+	    <id>86</id>
+	    <name>1985</name>
+	    <description>The year 1985</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0F0CLK">
+	                  <attributeSet ref="0F0HA0">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>8500</startTime>
+	    <endTime>8600</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178LMG">
+	    <id>87</id>
+	    <name>1986</name>
+	    <description>The year 1986</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EVFZC">
+	                  <attributeSet ref="0F0HGO">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>8600</startTime>
+	    <endTime>8700</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178LP4">
+	    <id>88</id>
+	    <name>1987</name>
+	    <description>The year 1987</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="1785QW">
+	                  <attributeSet ref="178LRS">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>8700</startTime>
+	    <endTime>8800</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178LTK">
+	    <id>89</id>
+	    <name>1988</name>
+	    <description>The year 1988</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EWBW8">
+	                  <attributeSet ref="178LW8">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>8800</startTime>
+	    <endTime>8900</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178LY0">
+	    <id>90</id>
+	    <name>1989</name>
+	    <description>The year 1989</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="1785RC">
+	                  <attributeSet ref="178M0O">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>8900</startTime>
+	    <endTime>9000</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178M2G">
+	    <id>91</id>
+	    <name>1990</name>
+	    <description>The year 1990</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178D60">
+	                  <attributeSet ref="178M54">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>9000</startTime>
+	    <endTime>9100</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178M6W">
+	    <id>92</id>
+	    <name>1991</name>
+	    <description>The year 1991</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EW620">
+	                  <attributeSet ref="178M9K">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>9100</startTime>
+	    <endTime>9200</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178MBC">
+	    <id>93</id>
+	    <name>1992</name>
+	    <description>The year 1992</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EHKNC">
+	                  <attributeSet ref="178ME0">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>9200</startTime>
+	    <endTime>9300</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178MFS">
+	    <id>94</id>
+	    <name>1993</name>
+	    <description>The year 1993</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EHYGO">
+	                  <attributeSet ref="178MIG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>9300</startTime>
+	    <endTime>9400</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178MK8">
+	    <id>95</id>
+	    <name>1994</name>
+	    <description>The year 1994</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERPJC">
+	                  <attributeSet ref="178MMW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>9400</startTime>
+	    <endTime>9500</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178MOO">
+	    <id>96</id>
+	    <name>1995</name>
+	    <description>The year 1995</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EWAMG">
+	                  <attributeSet ref="178MRC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>9500</startTime>
+	    <endTime>9600</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178MT4">
+	    <id>97</id>
+	    <name>1996</name>
+	    <description>The year 1996</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EWASO">
+	                  <attributeSet ref="178MVS">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>9600</startTime>
+	    <endTime>9700</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178MXK">
+	    <id>98</id>
+	    <name>1997</name>
+	    <description>The year 1997</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EVHS8">
+	                  <attributeSet ref="178N08">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>9700</startTime>
+	    <endTime>9800</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178N20">
+	    <id>99</id>
+	    <name>1998</name>
+	    <description>The year 1998</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EZMI0">
+	                  <attributeSet ref="178N4O">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>9800</startTime>
+	    <endTime>9900</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178N6G">
+	    <id>100</id>
+	    <name>1999</name>
+	    <description>The year 1999</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EVG7S">
+	                  <attributeSet ref="178N94">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>9900</startTime>
+	    <endTime>10000</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178NAW">
+	    <id>101</id>
+	    <name>2000</name>
+	    <description>The year 2000</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EUTAG">
+	                  <attributeSet ref="178NDK">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>10000</startTime>
+	    <endTime>10100</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178NJC">
+	    <id>102</id>
+	    <name>2001</name>
+	    <description>The year 2001</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EUSUW">
+	                  <attributeSet ref="178NM0">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>10100</startTime>
+	    <endTime>10200</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178NRS">
+	    <id>103</id>
+	    <name>2002</name>
+	    <description>The year 2002</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178D54">
+	                  <attributeSet ref="178NUG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>10200</startTime>
+	    <endTime>10300</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178O08">
+	    <id>104</id>
+	    <name>2003</name>
+	    <description>The year 2003</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178D3S">
+	                  <attributeSet ref="178O2W">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>10300</startTime>
+	    <endTime>10400</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178O8O">
+	    <id>105</id>
+	    <name>2004</name>
+	    <description>The year 2004</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178D2G">
+	                  <attributeSet ref="178OBC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>10400</startTime>
+	    <endTime>10500</endTime>
+	    <track>0</track>
+	    <rgb>255</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178OH4">
+	    <id>106</id>
+	    <name>2005</name>
+	    <description>The year 2005</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178D0O">
+	                  <attributeSet ref="178OJS">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>10500</startTime>
+	    <endTime>10600</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178OPK">
+	    <id>107</id>
+	    <name>2006</name>
+	    <description>The year 2006</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178CYW">
+	                  <attributeSet ref="178OS8">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>10600</startTime>
+	    <endTime>10700</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178OY0">
+	    <id>108</id>
+	    <name>2007</name>
+	    <description>The year 2007</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178CXK">
+	                  <attributeSet ref="178P0O">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>10700</startTime>
+	    <endTime>10800</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178P6G">
+	    <id>109</id>
+	    <name>2008</name>
+	    <description>The year 2008</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178CW8">
+	                  <attributeSet ref="178P94">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>10800</startTime>
+	    <endTime>10900</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178PEW">
+	    <id>110</id>
+	    <name>2009</name>
+	    <description>The year 2009</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178CUW">
+	                  <attributeSet ref="178PIG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>10900</startTime>
+	    <endTime>11000</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178PSO">
+	    <id>111</id>
+	    <name>2010</name>
+	    <description>The year 2010</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EVG1K">
+	                  <attributeSet ref="178PY0">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>11000</startTime>
+	    <endTime>11100</endTime>
+	    <track>0</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178Q88">
+	    <id>112</id>
+	    <name>2011</name>
+	    <description>The year 2011</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0ERLP4">
+	                  <attributeSet ref="178QDK">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>11100</startTime>
+	    <endTime>11200</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178QNS">
+	    <id>113</id>
+	    <name>2012</name>
+	    <description>The year 2012</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EVGOO">
+	                  <attributeSet ref="178QT4">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>11200</startTime>
+	    <endTime>11300</endTime>
+	    <track>0</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178R3C">
+	    <id>114</id>
+	    <name>2013</name>
+	    <description>The year 2013</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="0EZ448">
+	                  <attributeSet ref="178R8O">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>11300</startTime>
+	    <endTime>11400</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178RIW">
+	    <id>115</id>
+	    <name>2014</name>
+	    <description>The year 2014</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178BWO">
+	                  <attributeSet ref="178RO8">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>11400</startTime>
+	    <endTime>11500</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178RYG">
+	    <id>116</id>
+	    <name>2015</name>
+	    <description>The year 2015</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178BVC">
+	                  <attributeSet ref="178S3S">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>11500</startTime>
+	    <endTime>11600</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178SE0">
+	    <id>117</id>
+	    <name>2016</name>
+	    <description>The year 2016</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178BOO">
+	                  <attributeSet ref="178SJC">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>11600</startTime>
+	    <endTime>11700</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178STK">
+	    <id>118</id>
+	    <name>2017</name>
+	    <description>The year 2017</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178BGO">
+	                  <attributeSet ref="178SYW">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>11700</startTime>
+	    <endTime>11800</endTime>
+	    <track>0</track>
+	    <rgb>65535</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178T94">
+	    <id>119</id>
+	    <name>2018</name>
+	    <description>The year 2018</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178BA0">
+	                  <attributeSet ref="178TEG">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>11800</startTime>
+	    <endTime>11900</endTime>
+	    <track>0</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178TOO">
+	    <id>120</id>
+	    <name>2019</name>
+	    <description>The year 2019</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="178A6G">
+	                  <attributeSet ref="178TU0">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>11900</startTime>
+	    <endTime>12000</endTime>
+	    <track>0</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178U48">
+	    <id>121</id>
+	    <name>2020</name>
+	    <description>The year 2020</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="177TP4">
+	                  <attributeSet ref="178U9K">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>12000</startTime>
+	    <endTime>12100</endTime>
+	    <track>0</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="17KAVC">
+	    <id>122</id>
+	    <name>Wedding</name>
+	    <description>The first wedding in your community took place on Sunday Afternoon.Both bride and groom came to Woolwich over 3 years ago.After the ceremony the bridal party returned to their home, were breakfast and dinner were served and dancing engaged in.</description>
+	    <zone>2</zone>
+	    <enabled>1</enabled>
+	    <absolute>0</absolute>
+	      <indexList ref="17KG20">
+	                  <attributeSet ref="179ERS">
+	                    <health>4</health>
+	                    <wealth>5</wealth>
+	                    <brains>4</brains>
+	                    <action>5</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>504</startTime>
+	    <endTime>554</endTime>
+	    <track>1</track>
+	    <rgb>16744512</rgb>
+	  </timeEvent>
+	  <timeEvent ref="178XMW">
+	    <id>123</id>
+	    <name>Arrival</name>
+	    <description>You have arrived in the town of Woolwich, on the outskirts of London, England.  It has been a long journey and you are far from home.  You need to find a place to stay and settle for awhile in this new place.</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>0</absolute>
+	      <indexList ref="17KL14">
+	                  <attributeSet ref="179ASO">
+	                    <health>-4</health>
+	                    <wealth>-4</wealth>
+	                    <brains>4</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>55</startTime>
+	    <endTime>105</endTime>
+	    <track>1</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="17L34O">
+	    <id>125</id>
+	    <name>Arsenal Football team moves</name>
+	    <description>Now a professional football team, the Arsenal team started by workers at the Gunners factory at the Aresnal moves to North London.</description>
+	    <zone>3</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="1797IG">
+	                  <attributeSet ref="1795CO">
+	                    <health>0</health>
+	                    <wealth>-5</wealth>
+	                    <brains>-5</brains>
+	                    <action>-5</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1293</startTime>
+	    <endTime>1343</endTime>
+	    <track>1</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	  <timeEvent ref="17L2MW">
+	    <id>126</id>
+	    <name>Haleys Comet</name>
+	    <description>The Great Daylight Comet is sighted in the skies over London. Warning to the Inhabitants of the City:  Close your windows and keep indoors for the Earth will soon pass through the Tail of the terrible Comet and its poisonous gases will fill the heavens! </description>
+	    <zone>1</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="17KECO">
+	                  <attributeSet ref="179EKO">
+	                    <health>-5</health>
+	                    <wealth>0</wealth>
+	                    <brains>-5</brains>
+	                    <action>5</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1022</startTime>
+	    <endTime>1072</endTime>
+	    <track>1</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="17KASO">
+	    <id>127</id>
+	    <name>World War One</name>
+	    <description>WW1 has been declared</description>
+	    <zone>0</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="22KO2G">
+	                  <attributeSet ref="17955K">
+	                    <health>-5</health>
+	                    <wealth>5</wealth>
+	                    <brains>5</brains>
+	                    <action>5</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1217</startTime>
+	    <endTime>1267</endTime>
+	    <track>1</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="17L320">
+	    <id>128</id>
+	    <name>Jobs For Women at the Arsenal!</name>
+	    <description>Since 1872 women had been banned from working in the Arsenal, but with the start of WW1 all our boys are going to war. For the duration of the war women munitions workers are required.</description>
+	    <zone>3</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="17KMUW">
+	                  <attributeSet ref="1796X4">
+	                    <health>-1</health>
+	                    <wealth>4</wealth>
+	                    <brains>5</brains>
+	                    <action>5</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>1349</startTime>
+	    <endTime>1399</endTime>
+	    <track>1</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="21LKFS">
+	    <id>135</id>
+	    <name>Houses for 6 pounds a week</name>
+	    <description>Cheap housing is available for newcomers to Woolwich, some local shops, some rundown cottages near Dairy Lane and Frances Street. Take care of the vagrants and overcrowding in this area.</description>
+	    <zone>5</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="22KOC8">
+	                  <attributeSet ref="178YK8">
+	                    <health>-5</health>
+	                    <wealth>-5</wealth>
+	                    <brains>-5</brains>
+	                    <action>5</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>44</startTime>
+	    <endTime>94</endTime>
+	    <track>2</track>
+	    <rgb>16711680</rgb>
+	  </timeEvent>
+	  <timeEvent ref="3B3H2W">
+	    <id>136</id>
+	    <name>Wellington Cottages</name>
+	    <description>The local policemen have moved into this area and it is therefore regarded as a safe place to live.  </description>
+	    <zone>8</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="17KCTK">
+	                  <attributeSet ref="3B3ITK">
+	                    <health>0</health>
+	                    <wealth>5</wealth>
+	                    <brains>0</brains>
+	                    <action>5</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>99</startTime>
+	    <endTime>149</endTime>
+	    <track>2</track>
+	    <rgb>65280</rgb>
+	  </timeEvent>
+	  <timeEvent ref="17L2K8">
+	    <id>137</id>
+	    <name>Jobs Available in the Arsenal</name>
+	    <description>Jobs are available at the Arsenal for the men in your community.  Houses are available for the Arsenal workers in Plumstead and near the common. Beware temptation in the many public houses. It is an eight hour day and overtime to be had.</description>
+	    <zone>9</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="22KETK">
+	                  <attributeSet ref="3B3KQ0">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>102</startTime>
+	    <endTime>152</endTime>
+	    <track>4</track>
+	    <rgb>16776960</rgb>
+	  </timeEvent>
+	  <timeEvent ref="21L9X4">
+	    <id>138</id>
+	    <name>Jobs Available In The Arsenal</name>
+	    <description>Jobs are available at the Arsenal for the men in your community.  Houses are available for the Arsenal workers in Plumstead and near the common. Beware temptation in the many public houses. It is an eight hour day and overtime to be had.</description>
+	    <zone>3</zone>
+	    <enabled>1</enabled>
+	    <absolute>1</absolute>
+	      <indexList ref="22KVNS">
+	                  <attributeSet ref="3B3KKO">
+	                    <health>0</health>
+	                    <wealth>0</wealth>
+	                    <brains>0</brains>
+	                    <action>0</action>
+	                    <instant>1</instant>
+	                    <flags>15</flags>
+	                    <absolute>1</absolute>
+	                  </attributeSet>
+	      </indexList>
+	    <startTime>53</startTime>
+	    <endTime>103</endTime>
+	    <track>3</track>
+	    <rgb>9319919</rgb>
+	  </timeEvent>
+	</timeEvents>
+	<zones>
+
+	  <zone ref="21M4RS">
+	    <id>2</id>
+	    <name>centre</name>
+	    <field name="attributes" type="attributeSet">
+	      <attributeSet ref="179760">
+	        <health>0</health>
+	        <wealth>0</wealth>
+	        <brains>0</brains>
+	        <action>0</action>
+	        <instant>1</instant>
+	        <flags>15</flags>
+	        <absolute>1</absolute>
+	        <field name="healthOp" type="attributeOp"/>
+	        <field name="wealthOp" type="attributeOp"/>
+	        <field name="brainsOp" type="attributeOp"/>
+	        <field name="actionOp" type="attributeOp"/>
+	      </attributeSet>
+	    </field>
+	    <polygon>1</polygon>
+	    <radius>0.000000000</radius>
+	    <field name="coords">0.063708,51.491564,0 
+	0.064266,51.49083,0 
+	0.06345,51.490469,0 
+	0.064566,51.489226,0 
+	0.065918,51.489226,0 
+	0.066712,51.488585,0 
+	0.0686,51.490001,0 
+	0.069845,51.489507,0 
+	0.070274,51.489734,0 
+	0.070639,51.490255,0 
+	0.072119,51.489948,0 
+	0.071883,51.49107,0 
+	0.070188,51.491391,0 
+	0.068536,51.491711,0 
+	0.06727,51.491792,0 
+	0.066025,51.492353,0 
+	0.065296,51.49262,0 
+	0.063171,51.493368,0 
+	0.062506,51.493168,0 
+	0.062249,51.49278,0 
+	0.063837,51.492259,0 
+	0.063708,51.491564,0</field>
+	  </zone>
+	  <zone ref="22KGW8">
+	    <id>3</id>
+	    <name>arsenal</name>
+	    <field name="attributes" type="attributeSet">
+	      <attributeSet ref="17979K">
+	        <health>0</health>
+	        <wealth>0</wealth>
+	        <brains>0</brains>
+	        <action>0</action>
+	        <instant>1</instant>
+	        <flags>15</flags>
+	        <absolute>1</absolute>
+	        <field name="healthOp" type="attributeOp"/>
+	        <field name="wealthOp" type="attributeOp"/>
+	        <field name="brainsOp" type="attributeOp"/>
+	        <field name="actionOp" type="attributeOp"/>
+	      </attributeSet>
+	    </field>
+	    <polygon>1</polygon>
+	    <radius>0.000000000</radius>
+	    <field name="coords">0.065467,51.494744,0 
+	0.065532,51.493862,0 
+	0.065918,51.493662,0 
+	0.066948,51.492847,0 
+	0.067527,51.49242,0 
+	0.068107,51.492045,0 
+	0.068579,51.491725,0 
+	0.070424,51.491391,0 
+	0.072291,51.490977,0 
+	0.073535,51.490776,0 
+	0.07405,51.49087,0 
+	0.077612,51.49115,0 
+	0.077956,51.492045,0 
+	0.078578,51.493876,0 
+	0.07802,51.494944,0 
+	0.076411,51.494744,0 
+	0.076196,51.495305,0 
+	0.075896,51.495746,0 
+	0.076132,51.49584,0 
+	0.075853,51.49608,0</field>
+	  </zone>
+	  <zone ref="22KM20">
+	    <id>4</id>
+	    <name>dusthole</name>
+	    <field name="attributes" type="attributeSet">
+	      <attributeSet ref="17972G">
+	        <health>0</health>
+	        <wealth>0</wealth>
+	        <brains>0</brains>
+	        <action>0</action>
+	        <instant>1</instant>
+	        <flags>15</flags>
+	        <absolute>1</absolute>
+	        <field name="healthOp" type="attributeOp"/>
+	        <field name="wealthOp" type="attributeOp"/>
+	        <field name="brainsOp" type="attributeOp"/>
+	        <field name="actionOp" type="attributeOp"/>
+	      </attributeSet>
+	    </field>
+	    <polygon>1</polygon>
+	    <radius>0.000000000</radius>
+	    <field name="coords">0.061004,51.494651,0 
+	0.061369,51.494009,0 
+	0.061648,51.493675,0 
+	0.061433,51.493475,0 
+	0.061176,51.493141,0 
+	0.062184,51.492794,0 
+	0.062528,51.493221,0 
+	0.06315,51.493381,0 
+	0.064888,51.492794,0 
+	0.066068,51.492379,0 
+	0.067313,51.491792,0 
+	0.068386,51.491792,0 
+	0.066926,51.492847,0 
+	0.066261,51.493361,0 
+	0.065918,51.493635,0 
+	0.06551,51.493842,0 
+	0.061004,51.494651,0 
+	0.061369,51.494009,0 
+	0.061648,51.493675,0 
+	0.061433,51.493475,0 
+	0.061176,51.493141,0 
+	0.062184,51.492794,0 
+	0.062528,51.493221,0 
+	0.06315,51.493381,0 
+	0.064888,51.492794,0 
+	0.066068,51.492379,0 
+	0.067313,51.491792,0 
+	0.068386,51.491792,0 
+	0.066926,51.492847,0 
+	0.066261,51.493361,0 
+	0.065918,51.493635,0 
+	0.06551,51.493842,0 
+	0.065489,51.494303,0 
+	0.065382,51.494757,0 
+	0.063901,51.494744,0 
+	0.062528,51.494504,0 
+	0.062099,51.494918,0 
+	0.063107,51.495292,0 
+	0.062656,51.495345,0 
+	0.062184,51.495305,0 
+	0.061498,51.495252,0 
+	0.061219,51.495172,0 
+	0.061004,51.494651,0 </field>
+	  </zone>
+	  <zone ref="21MB9K">
+	    <id>5</id>
+	    <name>charlton</name>
+	    <field name="attributes" type="attributeSet">
+	      <attributeSet ref="179748">
+	        <health>0</health>
+	        <wealth>0</wealth>
+	        <brains>0</brains>
+	        <action>0</action>
+	        <instant>1</instant>
+	        <flags>15</flags>
+	        <absolute>1</absolute>
+	        <field name="healthOp" type="attributeOp"/>
+	        <field name="wealthOp" type="attributeOp"/>
+	        <field name="brainsOp" type="attributeOp"/>
+	        <field name="actionOp" type="attributeOp"/>
+	      </attributeSet>
+	    </field>
+	    <polygon>1</polygon>
+	    <radius>0.000000000</radius>
+	    <field name="coords">0.048709,51.490736,0 
+	0.050511,51.492126,0 
+	0.05064,51.492259,0 
+	0.052314,51.493034,0 
+	0.053129,51.493301,0 
+	0.054116,51.493595,0 
+	0.054245,51.494637,0 
+	0.057571,51.494444,0 
+	0.060961,51.494671,0 
+	0.061584,51.493682,0 
+	0.061111,51.493154,0 
+	0.063772,51.492273,0 
+	0.063751,51.491885,0 
+	0.063643,51.491551,0 
+	0.064234,51.490856,0 
+	0.06345,51.490509,0 
+	0.06448,51.489213,0 
+	0.061047,51.487757,0 
+	0.056391,51.487342,0 
+	0.054052,51.487129,0 
+	0.052249,51.486434,0 
+	0.051413,51.486167,0 
+	0.050168,51.488946,0 
+	0.048709,51.490736,0 </field>
+	  </zone>
+	  <zone ref="23A5K8">
+	    <id>6</id>
+	    <name>barracks</name>
+	    <field name="attributes" type="attributeSet">
+	      <attributeSet ref="179520">
+	        <health>0</health>
+	        <wealth>0</wealth>
+	        <brains>0</brains>
+	        <action>0</action>
+	        <instant>1</instant>
+	        <flags>15</flags>
+	        <absolute>1</absolute>
+	        <field name="healthOp" type="attributeOp"/>
+	        <field name="wealthOp" type="attributeOp"/>
+	        <field name="brainsOp" type="attributeOp"/>
+	        <field name="actionOp" type="attributeOp"/>
+	      </attributeSet>
+	    </field>
+	    <polygon>1</polygon>
+	    <radius>0.000000000</radius>
+	    <field name="coords">0.054052,51.487129,0 
+	0.051563,51.48614,0 
+	0.053751,51.485619,0 
+	0.053623,51.484577,0 
+	0.054202,51.48316,0 
+	0.054524,51.482986,0 
+	0.055146,51.482946,0 
+	0.054181,51.481583,0 
+	0.053236,51.480902,0 
+	0.053022,51.480648,0 
+	0.052979,51.480354,0 
+	0.054803,51.480594,0 
+	0.05667,51.480942,0 
+	0.057614,51.480822,0 
+	0.05918,51.480087,0 
+	0.059652,51.479459,0 
+	0.059824,51.479392,0 
+	0.06006,51.479686,0 
+	0.061519,51.481797,0 
+	0.062377,51.482185,0 
+	0.063386,51.482439,0 
+	0.063429,51.48312,0 
+	0.062957,51.483414,0 
+	0.062227,51.483588,0 
+	0.063214,51.484951,0 
+	0.06403,51.485592,0 
+	0.063429,51.486888,0 
+	0.063536,51.487276,0 
+	0.063257,51.487917,0 
+	0.062828,51.488492,0 
+	0.060961,51.487757,0 
+	0.058815,51.48753,0 
+	0.054052,51.487129,0 </field>
+	  </zone>
+	  <zone ref="22KIG8">
+	    <id>7</id>
+	    <name>marshes</name>
+	    <field name="attributes" type="attributeSet">
+	      <attributeSet ref="1791BS">
+	        <health>0</health>
+	        <wealth>0</wealth>
+	        <brains>0</brains>
+	        <action>0</action>
+	        <instant>1</instant>
+	        <flags>15</flags>
+	        <absolute>1</absolute>
+	        <field name="healthOp" type="attributeOp"/>
+	        <field name="wealthOp" type="attributeOp"/>
+	        <field name="brainsOp" type="attributeOp"/>
+	        <field name="actionOp" type="attributeOp"/>
+	      </attributeSet>
+	    </field>
+	    <polygon>1</polygon>
+	    <radius>0.000000000</radius>
+	    <field name="coords">0.081539,51.496681,0 
+	0.08141,51.496654,0 
+	0.081282,51.496548,0 
+	0.081003,51.496347,0 
+	0.080552,51.496361,0 
+	0.079908,51.496855,0 
+	0.081646,51.49767,0 
+	0.081046,51.498324,0 
+	0.078814,51.497336,0 
+	0.076561,51.49628,0 
+	0.076604,51.49592,0 
+	0.076218,51.495826,0 
+	0.076025,51.495666,0 
+	0.076261,51.495345,0 
+	0.076454,51.494744,0 
+	0.077956,51.495011,0 
+	0.078664,51.493902,0 
+	0.078063,51.492005,0 
+	0.07772,51.491164,0 
+	0.077763,51.491003,0 
+	0.07978,51.49099,0 
+	0.081174,51.49087,0 
+	0.082548,51.490536,0 
+	0.082548,51.489721,0 
+	0.085037,51.489747,0 
+	0.085166,51.490081,0 
+	0.085702,51.490442,0 
+	0.086088,51.490923,0 
+	0.086088,51.491792,0 
+	0.086088,51.492286,0 
+	0.085917,51.492553,0 
+	0.084758,51.4927,0 
+	0.083535,51.492486,0 
+	0.081668,51.494223,0 
+	0.082827,51.494744,0 
+	0.083299,51.496481,0 
+	0.081539,51.496681,0 </field>
+	  </zone>
+	  <zone ref="21M6YW">
+	    <id>8</id>
+	    <name>common</name>
+	    <field name="attributes" type="attributeSet">
+	      <attributeSet ref="17938O">
+	        <health>0</health>
+	        <wealth>0</wealth>
+	        <brains>0</brains>
+	        <action>0</action>
+	        <instant>1</instant>
+	        <flags>15</flags>
+	        <absolute>1</absolute>
+	        <field name="healthOp" type="attributeOp"/>
+	        <field name="wealthOp" type="attributeOp"/>
+	        <field name="brainsOp" type="attributeOp"/>
+	        <field name="actionOp" type="attributeOp"/>
+	      </attributeSet>
+	    </field>
+	    <polygon>1</polygon>
+	    <radius>0.000000000</radius>
+	    <field name="coords">0.060253,51.479672,0 
+	0.061755,51.481864,0 
+	0.063643,51.482479,0 
+	0.063515,51.482853,0 
+	0.063558,51.483254,0 
+	0.062399,51.483601,0 
+	0.062828,51.484243,0 
+	0.063343,51.484777,0 
+	0.063858,51.485258,0 
+	0.063643,51.486861,0 
+	0.063043,51.488465,0 
+	0.064545,51.48916,0 
+	0.065832,51.48916,0 
+	0.066562,51.488545,0 
+	0.067248,51.488946,0 
+	0.067935,51.48948,0 
+	0.068364,51.489721,0 
+	0.068579,51.489747,0 
+	0.070767,51.490122,0 
+	0.072184,51.489881,0 
+	0.072055,51.490923,0 
+	0.073214,51.49079,0 
+	0.075874,51.49095,0 
+	0.078149,51.491003,0 
+	0.08038,51.49095,0 
+	0.081453,51.490763,0 
+	0.082355,51.490442,0 
+	0.082397,51.489747,0 
+	0.08287,51.489774,0 
+	0.082526,51.489454,0 
+	0.083685,51.489747,0 
+	0.084629,51.489747,0 
+	0.085444,51.489534,0 
+	0.085702,51.489507,0 
+	0.084672,51.487396,0 
+	0.078406,51.484697,0 
+	0.077806,51.483387,0 
+	0.077033,51.481329,0 
+	0.06227,51.479271,0 
+	0.062099,51.479165,0 </field>
+	  </zone>
+	  <zone ref="22JRTK">
+	    <id>9</id>
+	    <name>plumstead</name>
+	    <field name="attributes" type="attributeSet">
+	      <attributeSet ref="1793C8">
+	        <health>0</health>
+	        <wealth>0</wealth>
+	        <brains>0</brains>
+	        <action>0</action>
+	        <instant>1</instant>
+	        <flags>15</flags>
+	        <absolute>1</absolute>
+	        <field name="healthOp" type="attributeOp"/>
+	        <field name="wealthOp" type="attributeOp"/>
+	        <field name="brainsOp" type="attributeOp"/>
+	        <field name="actionOp" type="attributeOp"/>
+	      </attributeSet>
+	    </field>
+	    <polygon>1</polygon>
+	    <radius>0.000000000</radius>
+	    <field name="coords">0.083256,51.486808,0 
+	0.084887,51.487423,0 
+	0.087118,51.486995,0 
+	0.086432,51.485418,0 
+	0.086346,51.485311,0 
+	0.087204,51.485098,0 
+	0.08553,51.482692,0 
+	0.085788,51.482559,0 
+	0.085573,51.48141,0 
+	0.083771,51.481597,0 
+	0.084629,51.480661,0 
+	0.084758,51.480635,0 
+	0.084715,51.480234,0 
+	0.080166,51.480875,0 
+	0.078063,51.480955,0 
+	0.077248,51.481276,0 
+	0.077333,51.482292,0 
+	0.077848,51.483548,0 
+	0.078578,51.48475,0 
+	0.083256,51.486808,0 </field>
+	  </zone>
+	</zones>
+</gameState>

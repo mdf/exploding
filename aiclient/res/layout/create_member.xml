@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Create member" android:id="@+id/TextView01"></TextView><SurfaceView android:id="@+id/SurfaceView01" android:layout_width="fill_parent" android:layout_height="600px"></SurfaceView><LinearLayout android:id="@+id/LinearLayout01" android:layout_width="fill_parent" android:layout_weight="1" android:orientation="horizontal" android:layout_height="fill_parent"><Button android:id="@+id/Button01" android:layout_weight="1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:background="#ff00aeef" android:text="H"></Button><Button android:id="@+id/Button01" android:layout_weight="1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:text="W" android:background="#ffFFCC00"></Button><Button android:id="@+id/Button01" android:layout_weight="1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:text="K" android:background="#ffFF6633"></Button><Button android:id="@+id/Button01" android:layout_weight="1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:text="P" android:background="#ff999933"></Button><Button android:id="@+id/Button01" android:layout_weight="1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:text="Done"></Button></LinearLayout>
+
+
+
+</LinearLayout>

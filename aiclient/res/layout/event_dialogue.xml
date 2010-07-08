@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+  <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="1">
+    <TextView
+        android:text="1921"
+        android:textSize="15pt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="20px"
+         android:layout_marginTop="10px"
+        android:typeface="serif" android:textStyle="italic" android:id="@+id/year"/>
+        
+  </LinearLayout>
+
+  <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:background="#ffFFFFFF" android:layout_weight="1">
+      <TextView
+          android:text="{Title of Event}"
+ 			android:textSize="10pt"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="20px"
+          android:layout_marginBottom="10px"
+          android:layout_marginTop="10px"
+          android:textColor="#ff000000" android:id="@+id/name"/>
+ 
+
+ 
+      <TextView
+          android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse nec mi odio, euismod suscipit elit. Praesent accumsan tellus dignissim quam consectetur quis vehicula metus suscipit. Fusce venenatis congue egestas. Donec feugiat leo id velit consectetur non malesuada est pretium.Donec condimentum, lorem vestibulum tincidunt interdum, urna sapien tincidunt tortor, quis ullamcorper orci dolor eget felis."
+ 		  android:textSize="5.5pt"
+          android:layout_width="wrap_content"
+          android:layout_height="fill_parent"
+          android:layout_marginLeft="20px"
+           android:layout_marginRight="20px"
+          android:textColor="#ff000000" android:id="@+id/description"/>
+ 
+
+  </LinearLayout>
+
+      <LinearLayout
+    	android:orientation="horizontal"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_marginLeft="20px"
+    	android:layout_marginRight="20px"
+    	android:layout_marginBottom="10px"
+    	android:layout_marginTop="10px">
+	    <Button
+android:text="OK"
+android:typeface="serif"
+android:layout_height="fill_parent"
+android:layout_width="fill_parent" android:id="@+id/dismiss_button">
+</Button>
+
+		
+    </LinearLayout>
+
+        
+
+
+</LinearLayout>

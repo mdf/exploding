@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:orientation="vertical">
+  <ImageView
+  android:layout_marginTop="20px"
+  android:layout_marginLeft="20px"
+  android:layout_marginRight="20px"
+  android:layout_marginBottom="10px"
+android:id="@+id/blobby_man"
+android:layout_width="fill_parent"
+android:layout_height="400px"
+android:src="@drawable/blobby_man">
+</ImageView>
+      <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="15px"
+      android:layout_marginRight="40px">
+      <TextView
+          android:text="Health"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="40px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+
+          android:gravity="right"
+          android:layout_width="150px"
+          android:layout_height="30px"
+          android:background="#ff00aeef"
+          android:textColor="#ff000000"/>
+                <TextView
+
+          android:gravity="right"
+          android:layout_width="100px"
+          android:layout_height="30px"
+          android:background="#ffCCCCCC"
+         />
+
+  </LinearLayout>
+      <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="10px"
+      android:layout_marginRight="40px">
+      <TextView
+          android:text="Wealth"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="40px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+          android:gravity="right"
+          android:layout_width="75px"
+          android:layout_height="30px"
+          android:background="#ffFFCC00"
+          android:textColor="#ff000000"/>
+                          <TextView
+
+          android:gravity="right"
+          android:layout_width="175px"
+          android:layout_height="30px"
+          android:background="#ffCCCCCC"
+         />
+
+  </LinearLayout>
+      <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="10px"
+      android:layout_marginRight="40px">
+      <TextView
+          android:text="Knowledge"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="40px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+
+
+          android:gravity="right"
+          android:layout_width="25px"
+          android:layout_height="30px"
+          android:background="#ffFF6633"
+          android:textColor="#ff000000"/>
+                          <TextView
+
+          android:gravity="right"
+          android:layout_width="225px"
+          android:layout_height="30px"
+          android:background="#ffCCCCCC"
+         />
+
+  </LinearLayout>
+      <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="10px"
+      android:layout_marginRight="40px">
+      <TextView
+          android:text="Participation"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="40px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+
+          android:gravity="right"
+          android:layout_width="250px"
+          android:layout_height="30px"
+          android:background="#ff999933"
+          android:textColor="#ff000000"/>
+                          <TextView
+
+          android:gravity="right"
+          android:layout_width="0px"
+          android:layout_height="30px"
+          android:background="#ffCCCCCC"
+         />
+
+  </LinearLayout>
+
+     <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="0px"
+      android:layout_marginRight="40px"
+      android:layout_marginLeft="40px">
+     
+  <EditText
+android:id="@+id/title_input"
+android:text="Please Add A Name"
+android:typeface="serif"
+android:layout_height="fill_parent"
+android:layout_width="260px">
+</EditText>
+ <Button
+android:id="@+id/submit_story_button"
+android:layout_width="140px"
+android:typeface="serif"
+android:layout_height="fill_parent" android:text="Place">
+</Button>
+
+  </LinearLayout>
+  
+</LinearLayout>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+android:id="@+id/main_layout"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:orientation="vertical"
+xmlns:android="http://schemas.android.com/apk/res/android"
+>
+<ImageView
+android:id="@+id/title_img"
+android:layout_width="fill_parent"
+android:layout_height="40px"
+android:src="@drawable/ep_title">
+</ImageView>
+<TableLayout
+android:id="@+id/form_layout"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:orientation="vertical"
+>
+<TableRow
+android:id="@+id/title_row"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:layout_marginTop="10px"
+android:layout_marginBottom="10px"
+android:layout_marginLeft="40px"
+android:layout_marginRight="40px"
+android:orientation="horizontal"
+>
+<TextView
+android:id="@+id/story_title"
+android:layout_height="wrap_content"
+android:layout_marginTop="5px"
+
+android:text="Story Title"
+android:layout_marginBottom="5px"
+android:layout_width="fill_parent">
+</TextView>
+</TableRow>
+<TableRow
+android:id="@+id/title_input_row"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+android:layout_marginLeft="40px"
+android:layout_marginRight="40px"
+>
+<EditText
+android:id="@+id/title_input"
+android:padding="5px"
+android:text="Add Title"
+android:typeface="serif"
+android:layout_height="70px"
+android:layout_width="380px">
+</EditText>
+</TableRow>
+<TableRow
+android:id="@+id/desc_row"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+android:layout_marginLeft="40px"
+android:layout_marginRight="40px"
+>
+<TextView
+android:id="@+id/story_desc"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:text="Description" 
+android:layout_marginTop="5px"
+android:layout_marginBottom="10px">
+</TextView>
+</TableRow>
+<TableRow
+android:id="@+id/desc_input_row"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+android:layout_marginLeft="40px"
+android:layout_marginRight="40px"
+>
+<EditText
+android:id="@+id/desc_input"
+android:padding="5px"
+android:typeface="serif" 
+android:layout_height="200px" 
+android:layout_width="fill_parent" 
+android:text="Add Description">
+</EditText>
+</TableRow>
+<TableRow
+android:id="@+id/attributes_row"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:layout_marginLeft="40px"
+android:layout_marginRight="40px"
+android:orientation="horizontal"
+>
+<TextView
+android:id="@+id/attributes"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:layout_marginTop="10px"
+android:layout_marginBottom="5px"
+android:text="Attributes"
+>
+</TextView>
+
+</TableRow>
+</TableLayout>
+ <LinearLayout
+    	android:orientation="horizontal"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_marginLeft="40px">
+    	
+	    <TextView
+	    	android:text="health"
+	    	android:layout_width="130px"
+	    	android:background="#ff00aeef"
+	    	android:layout_height="wrap_content"
+	    	android:layout_marginRight="20px"
+	    	android:padding="5px"
+	    	android:textColor="#ff000000"
+	    	android:layout_marginTop="5px" />
+	    	
+	    	
+		<SeekBar android:layout_width="225px"
+	    	android:layout_height="wrap_content"
+			android:layout_weight="1" android:paddingLeft="10px" android:scrollbarStyle="insideInset" android:id="@+id/HealthSeekBar">
+		</SeekBar>
+		
+    </LinearLayout>
+    <LinearLayout
+    	android:orientation="horizontal"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_marginLeft="40px">
+	    <TextView
+	    	android:text="wealth"
+	    	android:layout_width="130px"
+	    	android:padding="5px"
+	    	android:layout_height="wrap_content"
+	    	android:layout_marginRight="20px"
+	    	android:background="#ffFFCC00"
+	    	android:textColor="#ff000000"
+	    	android:layout_marginTop="5px" />
+	    	
+	    	
+		<SeekBar android:layout_width="225px"
+	    	android:layout_height="wrap_content"
+			android:layout_weight="1" android:paddingLeft="10px" android:id="@+id/WealthSeekBar">
+		</SeekBar>
+		
+    </LinearLayout>
+    <LinearLayout
+    	android:orientation="horizontal"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_marginLeft="40px">
+	    <TextView
+	    	android:text="knowledge"
+	    	android:layout_width="130px"
+	    	android:padding="5px"
+	    	android:layout_height="wrap_content"
+	    	android:background="#ffFF6633"
+	    	android:layout_marginRight="20px"
+	    	android:textColor="#ff000000"
+	    	android:layout_marginTop="5px" />
+	    	
+	    	
+		<SeekBar android:layout_width="225px"
+	    	android:layout_height="wrap_content"
+			android:layout_weight="1" android:paddingLeft="10px" android:id="@+id/BrainsSeekBar">
+		</SeekBar>
+		
+    </LinearLayout>
+    <LinearLayout
+    	android:orientation="horizontal"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_marginLeft="40px">
+	    <TextView
+	    	android:text="participation"
+	    	android:layout_width="130px"
+	    	android:padding="5px"
+	    	android:layout_height="wrap_content"
+	    	android:background="#ff999933"
+	    	android:layout_marginRight="20px"
+	    	android:textColor="#ff000000"
+	    	android:layout_marginTop="5px" />
+	    	
+	    	
+		<SeekBar android:layout_width="225px"
+	    	android:layout_height="wrap_content"
+			android:layout_weight="1" android:paddingLeft="10px" android:id="@+id/ActionSeekBar">
+		</SeekBar>
+		
+    </LinearLayout>
+      <LinearLayout
+    	android:orientation="horizontal"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_marginLeft="35px"
+    	android:layout_marginTop="20px">
+	    <Button
+android:id="@+id/submit_story_button"
+android:layout_width="285px"
+android:text="Submit Story"
+android:typeface="serif"
+android:layout_height="fill_parent">
+</Button>
+ <Button
+android:layout_width="fill_parent"
+android:text="Cancel"
+android:typeface="serif"
+android:layout_height="fill_parent" android:id="@+id/cancel_button">
+</Button>
+		
+    </LinearLayout>
+</LinearLayout>
+
