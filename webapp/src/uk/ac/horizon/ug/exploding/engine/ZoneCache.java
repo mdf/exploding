@@ -45,7 +45,7 @@ public class ZoneCache
 	{
     	 if(this.polygon == false)
     	 {
-    		 // zone xml doesn't contain central point?!
+    		 // FIXME zone xml doesn't contain central point?!
     		 return false;
     	 }
     	 else
@@ -65,5 +65,15 @@ public class ZoneCache
 
     		 return oddTransitions;
     	 }	
-	} 
+	}
+	
+	public static double distanceBetweenPoints(Position p1, Position p2)
+	{
+		// FIXME - calculate in metres, not degrees!
+		// sodding non-cartesian coordinates...
+		
+		double dx = p1.getLongitude() - p2.getLongitude();
+		double dy = p1.getLatitude() - p2.getLatitude();
+		return Math.sqrt(dx*dx + dy*dy);
+	}
 }
