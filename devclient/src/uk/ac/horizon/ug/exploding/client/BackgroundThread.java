@@ -375,10 +375,13 @@ public class BackgroundThread implements Runnable {
 		case ERROR_DOING_LOGIN:
 		case ERROR_IN_SERVER_URL:
 		case ERROR_GETTING_STATE:
+		case STOPPED:
 			LocationUtils.updateRequired(getContext(), false);
+			AudioUtils.autoPause();
 			break;
 		default:
 			LocationUtils.updateRequired(getContext(), true);	
+			AudioUtils.autoResume();
 		}
 		for (WeakReference<ClientStateListener> listenerRef : listeners) {
 			ClientStateListener listener = listenerRef.get();

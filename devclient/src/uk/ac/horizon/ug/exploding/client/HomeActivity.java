@@ -1,5 +1,6 @@
 package uk.ac.horizon.ug.exploding.client;
 
+import uk.ac.horizon.ug.exploding.client.AudioUtils.SoundAttributes;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -32,6 +33,9 @@ public class HomeActivity extends Activity implements ClientStateListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         BackgroundThread.addClientStateListener(this, this);
+        
+        //AudioUtils.addSoundFile(this, R.raw.buzzing, new SoundAttributes(1.0f, 1.0f, true, 1.0f));
+        //AudioUtils.play(R.raw.buzzing);
     }
     /** create menu */
     @Override
@@ -200,6 +204,7 @@ public class HomeActivity extends Activity implements ClientStateListener {
 		// TODO Auto-generated method stub
 		super.onPause();
 		Log.d(TAG, "onPause()");
+		AudioUtils.autoPause();
 	}
 
 	/* (non-Javadoc)
@@ -236,6 +241,10 @@ public class HomeActivity extends Activity implements ClientStateListener {
 			preferences.edit().putBoolean("restartClient", false).commit();
 		}
 		urlTextView.setText(preferences.getString("serverUrl", "(not set)"));
+		
+		//AudioUtils.autoResume();
+		// TEST
+        //AudioUtils.play(R.raw.buzzing);
 	}
 
 	/* (non-Javadoc)
