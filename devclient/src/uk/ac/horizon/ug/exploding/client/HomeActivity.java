@@ -48,7 +48,8 @@ public class HomeActivity extends Activity implements ClientStateListener {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.findItem(R.id.main_menu_retry).setEnabled(enableRetry);
-		menu.findItem(R.id.main_menu_play).setEnabled(enablePlay);
+		// FIXME - currently allowing "play" at any time
+		menu.findItem(R.id.main_menu_play).setEnabled(true/*enablePlay*/);
 		return super.onPrepareOptionsMenu(menu);
 	}
 	/* (non-Javadoc)
@@ -58,8 +59,12 @@ public class HomeActivity extends Activity implements ClientStateListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.main_menu_play:
-			// TODO
+		{
+			Intent intent = new Intent();
+			intent.setClass(this, GameMapActivity.class);
+			startActivity(intent);
 			return true;
+		}			
 		case R.id.main_menu_retry:
 			BackgroundThread.retry(this);
 			return true;	

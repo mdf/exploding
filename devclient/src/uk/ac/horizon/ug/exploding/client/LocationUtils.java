@@ -80,13 +80,15 @@ public class LocationUtils {
 			}
 			else {
 				Location loc = locationManager.getLastKnownLocation(provider);
-				long age = System.currentTimeMillis()-loc.getTime();
-				if (age > MAX_CURRENT_LOCATION_AGE_MS) {
-					Log.w(TAG, "Location provider "+provider+" last location is too old ("+age+" ms)");
-				}
-				else {
-					// TODO accuracy requirement?
-					return loc;
+				if (loc!=null) {
+					long age = System.currentTimeMillis()-loc.getTime();
+					if (age > MAX_CURRENT_LOCATION_AGE_MS) {
+						Log.w(TAG, "Location provider "+provider+" last location is too old ("+age+" ms)");
+					}
+					else {
+						// TODO accuracy requirement?
+						return loc;
+					}
 				}
 			}
 		}
@@ -106,9 +108,9 @@ public class LocationUtils {
 					boolean required = locationRequired;
 					Log.d(TAG,"Checking in thread ("+required+" vs "+locating+")");
 					if (required && !locating) 
-						registerOnThread();
+						registerOnThread(context, locationCallback, /*locationCallback*/null);
 					else if (!required && locating)
-						unregisterOnThread();
+						unregisterOnThread(context, locationCallback, /*locationCallback*/null);
 					locating = required;
 					// dont rush?!
 				}
@@ -136,42 +138,46 @@ public class LocationUtils {
 		void check() {
 			checkDelayed(0);
 		}
-		private void registerOnThread() {
-			LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-			List<String> providers = locationManager.getAllProviders();
-			Log.i(TAG,"Found "+providers.size()+" location providers");
-			for (String provider : providers) {
-				if (locationManager.isProviderEnabled(provider)) {
-					Log.i(TAG,"Provider "+provider+" enabled");
-				}
-				else {
-					Log.i(TAG,"Provider "+provider+" disabled");	
-				}
+	}
+	public static void registerOnThread(Context context, LocationListener locationCallback, Listener listener) {
+		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+		List<String> providers = locationManager.getAllProviders();
+		Log.i(TAG,"Found "+providers.size()+" location providers");
+		for (String provider : providers) {
+			if (locationManager.isProviderEnabled(provider)) {
+				Log.i(TAG,"Provider "+provider+" enabled");
 			}
-			for (int pi=0; pi<PROVIDERS.length; pi++) {
-				String provider = PROVIDERS[pi];
-				if (locationManager.isProviderEnabled(provider)) {
-					Log.i(TAG,"Registering with provider "+provider);
-					Location loc = locationManager.getLastKnownLocation(provider);
-					if (loc!=null)
-						Log.i(TAG,"Last Location, provider="+loc.getProvider()+", lat="+loc.getLatitude()+", long="+loc.getLongitude()+", bearing="+(loc.hasBearing() ? ""+loc.getBearing() : "NA")+", speed="+(loc.hasSpeed() ? ""+loc.getSpeed() : "NA")+", accuracy="+(loc.hasAccuracy() ? ""+loc.getAccuracy() : "NA")+", alt="+(loc.hasAltitude() ? ""+loc.getAltitude() : "NA"));
-					//if (!"passive".equals(provider))
+			else {
+				Log.i(TAG,"Provider "+provider+" disabled");	
+			}
+		}
+		for (int pi=0; pi<PROVIDERS.length; pi++) {
+			String provider = PROVIDERS[pi];
+			if (locationManager.isProviderEnabled(provider)) {
+				Log.i(TAG,"Registering with provider "+provider);
+				Location loc = locationManager.getLastKnownLocation(provider);
+				if (loc!=null)
+					Log.i(TAG,"Last Location, provider="+loc.getProvider()+", lat="+loc.getLatitude()+", long="+loc.getLongitude()+", bearing="+(loc.hasBearing() ? ""+loc.getBearing() : "NA")+", speed="+(loc.hasSpeed() ? ""+loc.getSpeed() : "NA")+", accuracy="+(loc.hasAccuracy() ? ""+loc.getAccuracy() : "NA")+", alt="+(loc.hasAltitude() ? ""+loc.getAltitude() : "NA"));
+				//if (!"passive".equals(provider))
+				if (locationCallback!=null)
 					locationManager.requestLocationUpdates(provider, 0/*minTime*/, 0/*minDistance*/, locationCallback);
-				}
-				else
-					Log.e(TAG,"Required provider "+provider+" not enabled!");
 			}
-			//locationManager.addGpsStatusListener(locationCallback);
+			else
+				Log.e(TAG,"Required provider "+provider+" not enabled!");
 		}
-		private void unregisterOnThread() {
-			Log.i(TAG,"Unregister for location events");
-			LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+		if (listener!=null)
+			locationManager.addGpsStatusListener(listener);
+	}
+	public static void unregisterOnThread(Context context, LocationListener locationCallback, Listener listener) {
+		Log.i(TAG,"Unregister for location events");
+		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+		if (locationCallback!=null)
 			locationManager.removeUpdates(locationCallback);
-			locationManager.removeGpsStatusListener(locationCallback);
-		}
+		if (listener!=null)
+			locationManager.removeGpsStatusListener(listener);
 	}
 	private static LocationCallback locationCallback;
-	static class LocationCallback implements LocationListener, Listener {
+	static class LocationCallback implements LocationListener, GpsStatus.Listener {
 		private Context context;
 		LocationCallback(Context context) {
 			this.context = context;

@@ -21,6 +21,8 @@
 <category android:name="android.intent.category.LAUNCHER"></category>
 </intent-filter>
 </activity>
+<activity android:label="Game Map" android:name=".GameMapActivity"></activity>
+<uses-library android:name="com.google.android.maps" android:required="true"></uses-library>
 </application>
 
 
