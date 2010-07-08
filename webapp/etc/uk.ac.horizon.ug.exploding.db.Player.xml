@@ -11,6 +11,8 @@
 	
 	<property name="position" javatype="uk.ac.horizon.ug.exploding.db.Position" />
 	
+	<property name="positionUpdateTime" javatype="java.lang.Long" />
+	
 	<property name="points" javatype="java.lang.Integer" />
 	
 	<property name="canAuthor" javatype="java.lang.Boolean" />

@@ -232,6 +232,7 @@ public class ClientController {
 		session.begin();
 		
 		ClientConversation conversation = (ClientConversation) session.get(ClientConversation.class, conversationID);
+		Game game = conversation!=null ? (Game)session.get(Game.class, conversation.getGameID())  : null;
 		session.end();
 
 		if (conversation==null) {
@@ -239,9 +240,19 @@ public class ClientController {
     		response.sendError(HttpServletResponse.SC_NOT_FOUND, "conversation "+conversationID+" unknown");			
     		return null;
 		}
-		if (!conversation.isSetActive() && conversation.getActive()) {
+		if (game==null) {
+			logger.warn("conversation "+conversationID+" references unknown game "+conversation.getGameID());
+    		response.sendError(HttpServletResponse.SC_MOVED_PERMANENTLY, "conversation "+conversationID+" references unknown game "+conversation.getGameID());			
+    		return null;			
+		}
+		if (!game.isSetActive() || !game.getActive()) {
+			logger.warn("Game "+game.getID()+" (conversation "+conversationID+") now inactive");
+    		response.sendError(HttpServletResponse.SC_GONE, "game "+game.getID()+" now inactive");			
+    		return null;			
+		}
+		if (!conversation.isSetActive() || !conversation.getActive()) {
 			logger.warn("conversation "+conversationID+" now inactive");
-    		response.sendError(HttpServletResponse.SC_GONE, "conversation "+conversationID+" now inactive");			
+    		response.sendError(HttpServletResponse.SC_MOVED_PERMANENTLY, "conversation "+conversationID+" now inactive");			
     		return null;			
 		}
 		
@@ -294,7 +305,7 @@ public class ClientController {
 			case ADD_FACT:// request to add fact
 			case UPD_FACT:// request to update fact
 			case DEL_FACT:// request to delete fact
-				handleFactOperation(message, newResponses, session);
+				handleFactOperation(conversation, message, newResponses, session);
 				break;
 				//ERROR(false, true), // error response, e.g. to add/update/delete request
 			case SUBS_EN:// enable a subscription
@@ -314,12 +325,32 @@ public class ClientController {
 			responses.add(createErrorMessage(message, MessageStatusType.INTERNAL_ERROR, "Exception: "+e));			
 		}
 	}
-	private void handleFactOperation(Message message, List<Message> responses, ISession session) throws IllegalArgumentException, ClientAPIException, InstantiationException, IllegalAccessException {
-		// TODO Auto-generated method stub
-		
+	private void handleFactOperation(ClientConversation conversation, Message message, List<Message> responses, ISession session) throws IllegalArgumentException, ClientAPIException, InstantiationException, IllegalAccessException {
+
 		// ....
 		Object oldVal = message.getOldVal();//!=null ? ClientSubscriptionManager.unmarshallFact(message.getOldVal()) : null;
 		Object newVal = message.getNewVal();//!=null ? ClientSubscriptionManager.unmarshallFact(message.getNewVal()) : null;
+
+		// APPLICATION-SPECIFIC SPECIAL CASES
+		if (newVal instanceof Player) {
+			Player newPlayer = (Player)newVal;
+			if (newPlayer.getID()==null) {
+				// assume this player
+				Player player = (Player)session.get(Player.class, conversation.getPlayerID());
+				if (player==null) {
+					throw new ClientAPIException(MessageStatusType.INTERNAL_ERROR, "conversation Player "+conversation.getPlayerID()+" not found");
+				}
+				// position update?!
+				if (newPlayer.getPosition()!=null) {
+					logger.info("Updating position for player "+player.getID()+" to "+newPlayer.getPosition());
+					player.setPosition(newPlayer.getPosition());
+					player.setPositionUpdateTime(System.currentTimeMillis());
+				}
+				// nothing else should be updated!
+			}
+		}
+
+		// generic
 		switch (message.getType()) {
 		case ADD_FACT: {
 			if (oldVal!=null || newVal==null)
