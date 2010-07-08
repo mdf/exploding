@@ -4,4 +4,5 @@
 <item android:visible="true" android:id="@+id/main_menu_retry" android:titleCondensed="@string/main_menu_retry_short" android:title="@string/main_menu_retry" android:enabled="false"></item>
 <item android:visible="true" android:id="@+id/main_menu_play" android:titleCondensed="@string/main_menu_play_short" android:title="@string/main_menu_play" android:enabled="false"></item>
 <item android:id="@+id/main_menu_preferences" android:title="@string/main_menu_preferences" android:visible="true" android:enabled="true" android:titleCondensed="@string/main_menu_preferences_short"></item>
+<item android:id="@+id/main_menu_gps" android:titleCondensed="GPS" android:menuCategory="secondary" android:title="GPS Status" android:icon="@drawable/gps"></item>
 </menu>

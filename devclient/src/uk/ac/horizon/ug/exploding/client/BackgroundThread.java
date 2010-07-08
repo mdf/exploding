@@ -3,6 +3,7 @@
  */
 package uk.ac.horizon.ug.exploding.client;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URL;
@@ -10,6 +11,7 @@ import java.util.LinkedList;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -22,6 +24,9 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
+
+import uk.ac.horizon.ug.exploding.client.model.Player;
+import uk.ac.horizon.ug.exploding.client.model.Position;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -173,6 +178,14 @@ public class BackgroundThread implements Runnable {
 		Context context = getContext();
 		if (context==null)
 			return;
+		// check location providers
+		boolean providersOk = LocationUtils.locationProviderEnabled(context);
+		if (!providersOk) {
+			String error = LocationUtils.getLocationProviderError(context);
+			Log.e(TAG, "Location provider error: "+error);
+			setClientStatus(ClientStatus.ERROR_DOING_LOGIN, error);
+			return;			
+		}
         // get device unique ID(s)
 		clientId = ExplodingPreferences.getDeviceId(context);
 		String serverUrl = getServerUrl();
@@ -259,6 +272,7 @@ public class BackgroundThread implements Runnable {
 			return;			
 		}
 		try {
+			updatePlayer();
 			client.poll();
 			lastPollTime = System.currentTimeMillis();
 			// success = good
@@ -271,11 +285,9 @@ public class BackgroundThread implements Runnable {
 		}
 	}
 	private void doPoll() {
-		String serverUrl = getServerUrl();
-		if (serverUrl==null)
-			return;
 		try {
-			setClientStatus(ClientStatus.POLLING, "Trying to get updates");			
+			setClientStatus(ClientStatus.POLLING, "Trying to get updates");	
+			updatePlayer();
 			client.poll();
 			// success = good
 			setClientStatus(ClientStatus.IDLE, "Ready to play");			
@@ -285,6 +297,26 @@ public class BackgroundThread implements Runnable {
 			setClientStatus(ClientStatus.ERROR_AFTER_STATE, "Could not get updates\n("+e.getMessage()+")");
 			return;						
 		}
+	}
+	private void updatePlayer() throws IOException {
+		// APPLICATION-SPECIFIC
+		Context context = getContext();
+		if (context==null)
+			return;
+		Player player = new Player();
+		Location loc = LocationUtils.getCurrentLocation(context);
+		if (loc!=null) {
+			Position pos = new Position();
+			pos.setLatitude(loc.getLatitude());
+			pos.setLongitude(loc.getLongitude());
+			if (loc.hasAltitude())
+				pos.setElevation(loc.getAltitude());	
+			else
+				pos.setElevation(0.0);
+			player.setPosition(pos);
+		}
+		// relying on this being handled as a special case - no old value, no ID!
+		client.sendMessage(client.updateFactMessage(null, player));
 	}
 	/** listeners */
 	private static LinkedList<WeakReference<ClientStateListener>> listeners = new LinkedList<WeakReference<ClientStateListener>>();

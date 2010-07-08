@@ -23,6 +23,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 
+import uk.ac.horizon.ug.exploding.client.model.ModelUtils;
+import uk.ac.horizon.ug.exploding.client.model.Player;
 import uk.ac.horizon.ug.exploding.client.model.Position;
 import uk.ac.horizon.ug.exploding.client.model.Zone;
 
@@ -106,11 +108,20 @@ public class Client {
 //		return true;
 //	}	
 	/** add fact message */
-	public Message addFactMessage(Object json) {
+	public Message addFactMessage(Object object) {
 		Message msg = new Message();
 		msg.setType(MessageType.ADD_FACT.name());
 		msg.setSeqNo(seqNo++);
-		msg.setNewVal(json);
+		msg.setNewVal(object);
+		return msg;
+	}
+	/** add fact message */
+	public Message updateFactMessage(Object oldVal, Object newVal) {
+		Message msg = new Message();
+		msg.setType(MessageType.ADD_FACT.name());
+		msg.setSeqNo(seqNo++);
+		msg.setOldVal(oldVal);
+		msg.setNewVal(newVal);
 		return msg;
 	}
 	/** internal async send */
@@ -130,8 +141,7 @@ public class Client {
 		xs.alias("message", Message.class);
 
 		// game specific
-		xs.alias("zone", Zone.class);
-		xs.alias("position", Position.class);
+		ModelUtils.addAliases(xs);
 		
 		String xml = xs.toXML(messages);
 		Log.d(TAG, "Sent: "+xml);

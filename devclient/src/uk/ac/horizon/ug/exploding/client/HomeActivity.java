@@ -70,6 +70,13 @@ public class HomeActivity extends Activity implements ClientStateListener {
 			startActivity(intent);
 			return true;
 		}
+		case R.id.main_menu_gps:
+		{
+			Intent intent = new Intent();
+			intent.setClass(this, GpsStatusActivity.class);
+			startActivity(intent);
+			return true;
+		}			
 		default:
 			return super.onOptionsItemSelected(item);			
 		}

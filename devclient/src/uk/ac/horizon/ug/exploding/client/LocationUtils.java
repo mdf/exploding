@@ -25,8 +25,12 @@ import android.util.Log;
  */
 public class LocationUtils {
 	private static String TAG = "LocationUtils";
-	private static boolean locationRequired = false;
+	private static transient boolean locationRequired = false;
 	private static LocationThread locationThread;
+	private static String PROVIDERS[] = new String [] { "gps" };
+	private static int MAX_CURRENT_LOCATION_AGE_MS = 30000;
+	private static long lastCheck = 0;
+	private static int MIN_CHECK_INTERVAL = 1000;
 	public static synchronized void updateRequired(Context context, boolean req) {
 		Log.d(TAG,"updateRequired("+req+")");
 		if (locationCallback==null) {
@@ -36,8 +40,57 @@ public class LocationUtils {
 			locationThread = new LocationThread(context);
 			locationThread.start();
 		}
-		locationRequired = req;
-		locationThread.check();
+		if (locationRequired!=req || lastCheck==0) {
+			locationRequired = req;
+			long elapsed = System.currentTimeMillis()-lastCheck;
+			if (elapsed < MIN_CHECK_INTERVAL) {
+				lastCheck = lastCheck+MIN_CHECK_INTERVAL;
+				locationThread.checkDelayed(MIN_CHECK_INTERVAL-elapsed);
+			}
+			else {
+				locationThread.check();
+				lastCheck = System.currentTimeMillis();
+			}
+		}
+	}
+	public static boolean locationProviderEnabled(Context context) {
+		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+		for (int pi=0; pi<PROVIDERS.length; pi++) {
+			String provider = PROVIDERS[pi];
+			if (!locationManager.isProviderEnabled(provider)) 
+				return false;
+		}
+		return true;
+	}
+	public static String getLocationProviderError(Context context) {
+		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+		for (int pi=0; pi<PROVIDERS.length; pi++) {
+			String provider = PROVIDERS[pi];
+			if (!locationManager.isProviderEnabled(provider)) 
+				return "Please enable location provider \""+provider+"\"";
+		}
+		return null;		
+	}
+	public static Location getCurrentLocation(Context context) {
+		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+		for (int pi=0; pi<PROVIDERS.length; pi++) {
+			String provider = PROVIDERS[pi];
+			if (!locationManager.isProviderEnabled(provider)) {
+				Log.e(TAG,"Required location provider "+provider+" disabled (getCurrentLocation)");				
+			}
+			else {
+				Location loc = locationManager.getLastKnownLocation(provider);
+				long age = System.currentTimeMillis()-loc.getTime();
+				if (age > MAX_CURRENT_LOCATION_AGE_MS) {
+					Log.w(TAG, "Location provider "+provider+" last location is too old ("+age+" ms)");
+				}
+				else {
+					// TODO accuracy requirement?
+					return loc;
+				}
+			}
+		}
+		return null;		
 	}
 	static class LocationThread extends Thread {
 		private Context context;
@@ -45,6 +98,27 @@ public class LocationUtils {
 		private boolean locating = false;
 		LocationThread(Context context) {
 			this.context = context;			
+		}
+		public void checkDelayed(long l) {
+			waitForHandler();
+			Runnable r = new Runnable() {
+				public void run() {
+					boolean required = locationRequired;
+					Log.d(TAG,"Checking in thread ("+required+" vs "+locating+")");
+					if (required && !locating) 
+						registerOnThread();
+					else if (!required && locating)
+						unregisterOnThread();
+					locating = required;
+					// dont rush?!
+				}
+			};
+			if (l<=0)
+				handler.post(r);
+			else {
+				Log.d(TAG,"Cleck delayed by "+l);
+				handler.postDelayed(r, l);
+			}
 		}
 		public void run() {
 			Looper.prepare();
@@ -60,18 +134,7 @@ public class LocationUtils {
 			} catch (InterruptedException ie) { /*ignore?*/ }
 		}
 		void check() {
-			waitForHandler();
-			handler.post(new Runnable() {
-				public void run() {
-					boolean required = locationRequired;
-					Log.d(TAG,"Checking in thread ("+locationRequired+" vs "+locating+")");
-					if (required && !locating) 
-						registerOnThread();
-					else if (!required && locating)
-						unregisterOnThread();
-					locating = required;
-				}
-			});
+			checkDelayed(0);
 		}
 		private void registerOnThread() {
 			LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
@@ -84,13 +147,21 @@ public class LocationUtils {
 				else {
 					Log.i(TAG,"Provider "+provider+" disabled");	
 				}
-				Location loc = locationManager.getLastKnownLocation(provider);
-				if (loc!=null)
-					Log.i(TAG,"Last Location, provider="+loc.getProvider()+", lat="+loc.getLatitude()+", long="+loc.getLongitude()+", bearing="+(loc.hasBearing() ? ""+loc.getBearing() : "NA")+", speed="+(loc.hasSpeed() ? ""+loc.getSpeed() : "NA")+", accuracy="+(loc.hasAccuracy() ? ""+loc.getAccuracy() : "NA")+", alt="+(loc.hasAltitude() ? ""+loc.getAltitude() : "NA"));
-				if (!"passive".equals(provider))
-					locationManager.requestLocationUpdates(provider, 0/*minTime*/, 0/*minDistance*/, locationCallback);
 			}
-			locationManager.addGpsStatusListener(locationCallback);
+			for (int pi=0; pi<PROVIDERS.length; pi++) {
+				String provider = PROVIDERS[pi];
+				if (locationManager.isProviderEnabled(provider)) {
+					Log.i(TAG,"Registering with provider "+provider);
+					Location loc = locationManager.getLastKnownLocation(provider);
+					if (loc!=null)
+						Log.i(TAG,"Last Location, provider="+loc.getProvider()+", lat="+loc.getLatitude()+", long="+loc.getLongitude()+", bearing="+(loc.hasBearing() ? ""+loc.getBearing() : "NA")+", speed="+(loc.hasSpeed() ? ""+loc.getSpeed() : "NA")+", accuracy="+(loc.hasAccuracy() ? ""+loc.getAccuracy() : "NA")+", alt="+(loc.hasAltitude() ? ""+loc.getAltitude() : "NA"));
+					//if (!"passive".equals(provider))
+					locationManager.requestLocationUpdates(provider, 0/*minTime*/, 0/*minDistance*/, locationCallback);
+				}
+				else
+					Log.e(TAG,"Required provider "+provider+" not enabled!");
+			}
+			//locationManager.addGpsStatusListener(locationCallback);
 		}
 		private void unregisterOnThread() {
 			Log.i(TAG,"Unregister for location events");

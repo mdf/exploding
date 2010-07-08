@@ -16,6 +16,11 @@
 <category android:name="android.intent.category.LAUNCHER"></category>
 </intent-filter>
 </activity>
+<activity android:icon="@drawable/gps" android:name=".GpsStatusActivity" android:label="Gps Status" android:allowTaskReparenting="true" android:clearTaskOnLaunch="true" android:noHistory="true" android:enabled="true" android:exported="true" android:launchMode="standard"><intent-filter android:label="Gps Status">
+<action android:name="android.intent.action.MAIN"></action>
+<category android:name="android.intent.category.LAUNCHER"></category>
+</intent-filter>
+</activity>
 </application>
 
 

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent">
+<LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
+
+<TextView android:text="GPS enabled" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_enabled_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Status" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_status_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Time to first fix" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_time_to_fix_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Last Loc. Time" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_loc_time_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Time" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_time_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Latitude" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_latitude_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Longitude" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_longitude_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Altitude" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_altitude_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Accuracy" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_accuracy_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Satellite Number Total" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_sat_number_total_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Satellite Number Fix" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_sat_number_fix_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Satellite SNR" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="-" android:id="@+id/gps_sat_snr_text_view" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+</LinearLayout>
+</ScrollView>
+</LinearLayout>
