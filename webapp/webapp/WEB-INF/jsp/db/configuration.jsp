@@ -47,6 +47,16 @@
     _listProperties = new HashMap();
     // Map<String(classname),String[](propertyname)>
     // Player list views show 
+	_listProperties.put(uk.ac.horizon.ug.exploding.db.ClientConversation.class.getName(), 
+		new String[] { "active", "clientID", "gameID", "playerID" });
+	_listProperties.put(uk.ac.horizon.ug.exploding.db.MessageToClient.class.getName(), 
+			new String[] { "conversationID", "clientID", "gameID", "time", "type" });
+	_listProperties.put(uk.ac.horizon.ug.exploding.db.Message.class.getName(), 
+			new String[] { "playerID", "type", "message", "createTime", "handled" });
+	_listProperties.put(uk.ac.horizon.ug.exploding.db.Player.class.getName(), 
+			new String[] { "gameID", "name", "positionUpdateTime" });
+	_listProperties.put(uk.ac.horizon.ug.exploding.db.Member.class.getName(), 
+			new String[] { "gameID", "playerID", "zone", "parentMemberID", "carried" });
 	/*
 	_listProperties.put(mrl.compliant.db.Player.class.getName(), 
 		new String[] { "name", "stateID", "active", "phoneID" });

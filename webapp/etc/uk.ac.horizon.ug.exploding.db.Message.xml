@@ -11,4 +11,10 @@
 	
 	<property name="message" javatype="java.lang.String" />
 	
+	<property name="createTime" javatype="java.lang.Long" />
+	
+	<property name="handled" javatype="java.lang.Boolean" />
+	
+	<property name="handledTime" javatype="java.lang.Long" />
+	
 </bean>

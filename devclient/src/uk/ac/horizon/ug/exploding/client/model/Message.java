@@ -163,6 +163,108 @@ public class Message
     this._message = null; 
   }
 
+  /** internal value - 
+   */
+  protected java.lang.Long _createTime;
+  
+  /** getter - 
+   */
+  public java.lang.Long getCreateTime()
+  {
+  
+    return _createTime;
+    
+  }
+
+  /** setter - 
+   */
+  public void setCreateTime(java.lang.Long createTime)
+  {
+  
+    this._createTime = createTime;
+    
+  }
+
+  /** is set?
+   */
+  public boolean isSetCreateTime() {
+    return this._createTime != null; 
+  }
+
+  /** unset
+   */
+  public void unsetCreateTime()  {
+    this._createTime = null; 
+  }
+
+  /** internal value - 
+   */
+  protected java.lang.Boolean _handled;
+  
+  /** getter - 
+   */
+  public java.lang.Boolean getHandled()
+  {
+  
+    return _handled;
+    
+  }
+
+  /** setter - 
+   */
+  public void setHandled(java.lang.Boolean handled)
+  {
+  
+    this._handled = handled;
+    
+  }
+
+  /** is set?
+   */
+  public boolean isSetHandled() {
+    return this._handled != null; 
+  }
+
+  /** unset
+   */
+  public void unsetHandled()  {
+    this._handled = null; 
+  }
+
+  /** internal value - 
+   */
+  protected java.lang.Long _handledTime;
+  
+  /** getter - 
+   */
+  public java.lang.Long getHandledTime()
+  {
+  
+    return _handledTime;
+    
+  }
+
+  /** setter - 
+   */
+  public void setHandledTime(java.lang.Long handledTime)
+  {
+  
+    this._handledTime = handledTime;
+    
+  }
+
+  /** is set?
+   */
+  public boolean isSetHandledTime() {
+    return this._handledTime != null; 
+  }
+
+  /** unset
+   */
+  public void unsetHandledTime()  {
+    this._handledTime = null; 
+  }
+
   /** equals */
   public boolean equals(Object o) {
     if (o==null) return false;
@@ -184,6 +286,18 @@ public class Message
         (_message==null || oo._message==null ||
          !_message.equals(oo._message)))
       return false;
+    if (_createTime!=oo._createTime &&
+        (_createTime==null || oo._createTime==null ||
+         !_createTime.equals(oo._createTime)))
+      return false;
+    if (_handled!=oo._handled &&
+        (_handled==null || oo._handled==null ||
+         !_handled.equals(oo._handled)))
+      return false;
+    if (_handledTime!=oo._handledTime &&
+        (_handledTime==null || oo._handledTime==null ||
+         !_handledTime.equals(oo._handledTime)))
+      return false;
 
     return true;
   }
@@ -194,6 +308,9 @@ public class Message
     if (_playerID!=null) val = val ^ _playerID.hashCode();
     if (_type!=null) val = val ^ _type.hashCode();
     if (_message!=null) val = val ^ _message.hashCode();
+    if (_createTime!=null) val = val ^ _createTime.hashCode();
+    if (_handled!=null) val = val ^ _handled.hashCode();
+    if (_handledTime!=null) val = val ^ _handledTime.hashCode();
 
     return val;
   }
@@ -228,6 +345,27 @@ public class Message
 	str.append("message=");
 	if (_message!=null) {
 	    str.append(_message.toString());
+	} else {
+	    str.append("null");
+	}
+    str.append(",");
+	str.append("createTime=");
+	if (_createTime!=null) {
+	    str.append(_createTime.toString());
+	} else {
+	    str.append("null");
+	}
+    str.append(",");
+	str.append("handled=");
+	if (_handled!=null) {
+	    str.append(_handled.toString());
+	} else {
+	    str.append("null");
+	}
+    str.append(",");
+	str.append("handledTime=");
+	if (_handledTime!=null) {
+	    str.append(_handledTime.toString());
 	} else {
 	    str.append("null");
 	}

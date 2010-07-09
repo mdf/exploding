@@ -51,6 +51,7 @@
 		<mapping resource="uk/ac/horizon/ug/exploding/db/ContentGroup.hbm.xml"/>
 		<mapping resource="uk/ac/horizon/ug/exploding/db/Game.hbm.xml"/>
 		<mapping resource="uk/ac/horizon/ug/exploding/db/Member.hbm.xml"/>
+		<mapping resource="uk/ac/horizon/ug/exploding/db/Message.hbm.xml"/>
 		<mapping resource="uk/ac/horizon/ug/exploding/db/Player.hbm.xml"/>
 		<!--<mapping resource="uk/ac/horizon/ug/exploding/db/StatsModifier.hbm.xml"/>-->
 		<mapping resource="uk/ac/horizon/ug/exploding/db/TimelineEvent.hbm.xml"/>

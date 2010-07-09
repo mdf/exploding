@@ -23,6 +23,7 @@ import uk.ac.horizon.ug.exploding.db.Game;
 import uk.ac.horizon.ug.exploding.db.MessageToClient;
 import uk.ac.horizon.ug.exploding.db.Player;
 import uk.ac.horizon.ug.exploding.db.Position;
+import uk.ac.horizon.ug.exploding.db.TimelineEvent;
 import uk.ac.horizon.ug.exploding.db.Zone;
 
 import com.thoughtworks.xstream.XStream;
@@ -161,9 +162,10 @@ public class ClientController {
     		player.setID(IDAllocator.getNewID(session, uk.ac.horizon.ug.exploding.db.Player.class, "P", null));
     		player.setName(login.getPlayerName());
     		player.setGameID(game.getID());
-    		player.setCanAuthor(true); // ??
+    		player.setCanAuthor(false); // have to earn the ability
     		player.setPoints(0);
-    		// TODO
+    		player.setNewMemberQuota(1);
+    		// Client will send an update when it can with Position
     		//player.setPosition(position);
     		session.add(player);
     		logger.info("Created player "+player.getID()+" ("+player.getName()+") for client "+login.getClientId());
@@ -361,6 +363,15 @@ public class ClientController {
 		if (newVal instanceof Member) {
 			if (message.getType()!=MessageType.ADD_FACT)
 				throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Attempted "+message.getType()+" on Member (can only add)");
+			
+			Player player = (Player)session.get(Player.class, conversation.getPlayerID());
+			if (player==null) 
+				throw new ClientAPIException(MessageStatusType.INTERNAL_ERROR, "conversation Player "+conversation.getPlayerID()+" not found");
+			if (player.getNewMemberQuota()<=0) 
+				throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Player "+player.getID()+" tried to create a Member but has no newMemberQuota left");
+			// reduce quota
+			player.setNewMemberQuota(player.getNewMemberQuota()-1);
+			
 			Member newMember = (Member)newVal;
 			newMember.setID(IDAllocator.getNewID(session, Member.class, "M", null));
 			newMember.setPlayerID(conversation.getPlayerID());
@@ -375,6 +386,30 @@ public class ClientController {
 			return;
 		}		
 
+		if (newVal instanceof TimelineEvent) {
+			if (message.getType()!=MessageType.ADD_FACT)
+				throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Attempted "+message.getType()+" on TimelineEvent (can only add)");
+			Player player = (Player)session.get(Player.class, conversation.getPlayerID());
+			if (player==null) {
+				throw new ClientAPIException(MessageStatusType.INTERNAL_ERROR, "conversation Player "+conversation.getPlayerID()+" not found");
+			}
+			if (!player.getCanAuthor())
+				throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Player "+conversation.getPlayerID()+" attempted to add a TimelineEvent but is not canAuthor");
+			TimelineEvent newEvent = (TimelineEvent)newVal;
+			newEvent.setID(IDAllocator.getNewID(session, TimelineEvent.class, "TE", null));
+			Game game = (Game)session.get(Game.class, conversation.getGameID());
+			if (game==null) 
+				throw new ClientAPIException(MessageStatusType.INTERNAL_ERROR, "conversation Game "+conversation.getGameID()+" not found");
+			newEvent.setContentGroupID(game.getContentGroupID());
+			// TODO validity check?
+			// TODO flags?
+			newEvent.setEnabled(0);
+			session.add(newEvent);
+			
+			logger.info("Adding player("+player.getID()+")-authored TimelineEvent "+newEvent);
+			return;
+		}
+		
 		logger.warn("Unhandled fact operation "+message.getType()+" "+message.getOldVal()+" -> "+message.getNewVal());
 		// generic
 //		switch (message.getType()) {
@@ -425,11 +460,12 @@ public class ClientController {
 				MessageToClient mtc = (MessageToClient)mtcs[mi];
 				mtc.setAckedByClient(time);
 
-				// delete on ack? - we only have clientLifetime or not at the mo.
-				if (!mtc.isSetClientLifetime() || mtc.getClientLifetime()==false) {
-					session.remove(mtc);
-					removed ++;
-				}
+				// delete on ack - we only have clientLifetime or not at the mo.
+				// (most messages are regenerated on new client)
+				//if (!mtc.isSetClientLifetime() || mtc.getClientLifetime()==false) {
+				session.remove(mtc);
+				removed ++;
+				//}
 			}
 			if (mtcs.length>0) {
 				logger.info("Acked "+mtcs.length+" messages to "+conversation.getClientID()+" (seq<="+ackSeq+") - "+removed+" removed");

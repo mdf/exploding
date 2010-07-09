@@ -17,4 +17,6 @@
 	
 	<property name="canAuthor" javatype="java.lang.Boolean" />
 
+	<property name="newMemberQuota" javatype="java.lang.Integer" />
+
 </bean>

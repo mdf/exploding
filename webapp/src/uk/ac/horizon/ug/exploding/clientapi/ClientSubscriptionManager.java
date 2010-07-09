@@ -13,6 +13,7 @@ import uk.ac.horizon.ug.exploding.db.ClientConversation;
 import uk.ac.horizon.ug.exploding.db.Game;
 import uk.ac.horizon.ug.exploding.db.Member;
 import uk.ac.horizon.ug.exploding.db.MessageToClient;
+import uk.ac.horizon.ug.exploding.db.Player;
 import uk.ac.horizon.ug.exploding.db.Zone;
 
 import equip2.core.DataspaceObjectEvent;
@@ -43,13 +44,18 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 		logger.info("Intialising ClientSubscriptionManager listener(s)");
 		// unhandled messages
 		QueryTemplate q= new QueryTemplate(uk.ac.horizon.ug.exploding.db.Message.class);
-		// TODO unhandled
-		// add only!
+		q.addConstraintNe("handled", true);
+		// add only! (includes initial listener add because handled will suppress duplicates)
 		dataspace.getEventManagement().addIDataspaceObjectsListener(this, q, DataspaceObjectsEvent.OBJECT_ADDED_MASK | DataspaceObjectsEvent.LISTENER_ADDED_MASK );
-		// Members
+		// Members - don't send initial on listener add because these should
+		// already be queued previously / on converation join
 		q = new QueryTemplate(uk.ac.horizon.ug.exploding.db.Member.class);
 		// add/update/delete
-		dataspace.getEventManagement().addIDataspaceObjectsListener(this, q);
+		dataspace.getEventManagement().addIDataspaceObjectsListener(this, q, DataspaceObjectsEvent.OBJECT_ADDED_MASK | DataspaceObjectsEvent.OBJECT_MODIFIED_MASK | DataspaceObjectsEvent.OBJECT_REMOVED_MASK);
+		// Players 
+		q = new QueryTemplate(uk.ac.horizon.ug.exploding.db.Player.class);
+		// Changes only (sent to own client; sent on intial join)
+		dataspace.getEventManagement().addIDataspaceObjectsListener(this, q, DataspaceObjectsEvent.OBJECT_MODIFIED_MASK);
 	}
 
 	public IDataspace getDataspace()
@@ -137,7 +143,11 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 	}
 	private void handleSubscriptions(ClientConversation cc, ISession session) {
 
-		// TODO abstract/generalise
+		// APPLICATION_SPECIFIC
+    	// own Player
+    	Player player = (Player)session.get(Player.class, cc.getPlayerID());
+		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, player, session);
+
     	// replicate Zones...
     	Game game = (Game) session.get(Game.class, cc.getGameID());
     	//ContentGroup contentgame.getContentGroupID()
@@ -146,11 +156,22 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
     	sendInitialValues(cc, session, q);
     	
     	// initial messages
-    	// TODO unhandled only, time ordered
+    	// unhandled only, time ordered
     	q = new QueryTemplate(uk.ac.horizon.ug.exploding.db.Message.class);
     	q.addConstraintEq("playerID", cc.getPlayerID());
-    	// TODO mark as handled
-    	sendInitialValues(cc, session, q);
+    	q.addConstraintNe("handled", true);
+    	q.addOrder("createTime", false);
+    	// mark as handled
+    	long now = System.currentTimeMillis();
+    	Object match[] = session.match(q);
+    	for (int zi=0; zi<match.length; zi++) {
+    		uk.ac.horizon.ug.exploding.db.Message m = (uk.ac.horizon.ug.exploding.db.Message)match[zi];
+    		m.setHandled(true);
+    		m.setHandledTime(now);
+    		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, m, session);
+    	}
+    	logger.info("Sent "+match.length+" unhandled Messages on new conversation");
+    	//sendInitialValues(cc, session, q);
     	
     	// initial members of game
     	q = new QueryTemplate(Member.class);
@@ -230,7 +251,9 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 				// APPLICATION-SPECIFIC
 				if (matchObject instanceof uk.ac.horizon.ug.exploding.db.Message) {
 					uk.ac.horizon.ug.exploding.db.Message message = (uk.ac.horizon.ug.exploding.db.Message)matchObject;
-					// TODO handled
+					// handled
+					message.setHandled(true);
+					message.setHandledTime(System.currentTimeMillis());
 					session.addOrUpdate(message);
 					clientLifetime = true;
 				}
@@ -247,15 +270,24 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 
 	private boolean matches(Object matchObject, ClientConversation conversation) {
 		// APPLICATION-SPECIFIC
+		// tell own (Player's) Messages
 		if (matchObject instanceof uk.ac.horizon.ug.exploding.db.Message) {
 			uk.ac.horizon.ug.exploding.db.Message message = (uk.ac.horizon.ug.exploding.db.Message)matchObject;
 			if (message.getPlayerID()!=null && message.getPlayerID().equals(conversation.getPlayerID()))
 				return true;
 			return false;
 		}
+		// tell game's Members
 		if (matchObject instanceof Member) {
 			Member member = (Member)matchObject;
 			if (member.getGameID()!=null && member.getGameID().equals(conversation.getGameID()))
+				return true;
+			return false;
+		}
+		// tell own Player
+		if (matchObject instanceof Player) {
+			Player player = (Player)matchObject;
+			if (player.getID()!=null && player.getID().equals(conversation.getPlayerID()))
 				return true;
 			return false;
 		}

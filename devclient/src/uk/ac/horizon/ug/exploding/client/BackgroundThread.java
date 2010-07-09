@@ -65,6 +65,9 @@ public class BackgroundThread implements Runnable {
 				boolean doLogin = false, doGetState = false, doPoll = false;
 				ClientState clientStateEvent = null;
 				synchronized (BackgroundThread.class) {
+					// recheck in sync block
+					if (Thread.currentThread()!=singleton)
+						break;
 					// Synchronized!
 					//Log.d(TAG, "Background action on state "+currentClientState);
 					switch(currentClientState.getClientStatus()) {
@@ -318,17 +321,30 @@ public class BackgroundThread implements Runnable {
 		// relying on this being handled as a special case - no old value, no ID!
 		client.sendMessage(client.updateFactMessage(null, player));
 	}
+	/** listener info */
+	private static class ListenerInfo {
+		WeakReference<ClientStateListener> listener;
+		int flags;
+	}
 	/** listeners */
-	private static LinkedList<WeakReference<ClientStateListener>> listeners = new LinkedList<WeakReference<ClientStateListener>>();
+	private static LinkedList<ListenerInfo> listeners = new LinkedList<ListenerInfo>();
 	/** add listener */
 	public static void addClientStateListener(ClientStateListener listener, Context context) {
+		addClientStateListener(listener , context, ClientState.Part.ALL.flag());
+	}
+	/** add listener */
+	public static void addClientStateListener(ClientStateListener listener, Context context, int flags) {
 		checkThread(context);
-		listeners.add(new WeakReference<ClientStateListener>(listener));
+		ListenerInfo li = new ListenerInfo();
+		li.listener = new WeakReference<ClientStateListener>(listener);
+		li.flags = flags;
+		listeners.add(li);
 	}
 	/** add listener */
 	public static void removeClientStateListener(ClientStateListener listener) {
 		for (int i=0; i<listeners.size(); i++) {
-			if (listeners.get(i).get()==listener) {
+			ClientStateListener l = listeners.get(i).listener.get();
+			if (l==null || l==listener) {
 				listeners.remove(i);
 				i--;
 			}
@@ -383,15 +399,20 @@ public class BackgroundThread implements Runnable {
 			LocationUtils.updateRequired(getContext(), true);	
 			AudioUtils.autoResume();
 		}
-		for (WeakReference<ClientStateListener> listenerRef : listeners) {
-			ClientStateListener listener = listenerRef.get();
+		for (ListenerInfo li : listeners) {
+			ClientStateListener listener = li.listener.get();
 			if (listener!=null) {
-				try {
-					// TODO GUI thread?
-					listener.clientStateChanged(clientState);
-				}
-				catch (Exception e) {
-					Log.e(TAG, "Error calling listener "+listener, e);
+				if ((clientState.isLocationChanged() && ((li.flags & ClientState.Part.LOCATION.flag())!=0)) ||
+						(clientState.isZoneChanged() && ((li.flags & ClientState.Part.ZONE.flag())!=0)) ||
+						(clientState.isStatusChanged() && ((li.flags & ClientState.Part.STATUS.flag())!=0)))
+				{
+					try {
+						// TODO GUI thread?
+						listener.clientStateChanged(clientState);
+					}
+					catch (Exception e) {
+						Log.e(TAG, "Error calling listener "+listener, e);
+					}
 				}
 			}
 		}

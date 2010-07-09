@@ -32,7 +32,7 @@ public class HomeActivity extends Activity implements ClientStateListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        BackgroundThread.addClientStateListener(this, this);
+        BackgroundThread.addClientStateListener(this, this, ClientState.Part.STATUS.flag());
         
         //AudioUtils.addSoundFile(this, R.raw.buzzing, new SoundAttributes(1.0f, 1.0f, true, 1.0f));
         //AudioUtils.play(R.raw.buzzing);
@@ -148,7 +148,8 @@ public class HomeActivity extends Activity implements ClientStateListener {
 		//if (clientState.getClientStatus()!=ClientStatus.LOGGING_IN && clientState.getClientStatus()!=ClientStatus.GETTING_STATE)
 		//Toast.makeText(this, "State: "+clientState.getClientStatus(), Toast.LENGTH_SHORT).show();
 	
-		updateDialogs(clientState);
+		if (clientState.isStatusChanged())
+			updateDialogs(clientState);
 	}
 
 	/** update visible dialogs */

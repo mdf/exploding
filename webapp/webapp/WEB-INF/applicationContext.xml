@@ -117,6 +117,22 @@
          property (if any) should be allocated using the IDAllocator. -->
     <property name="idAllocations">
       <map>
+      	<!-- Exploding -->
+		<entry key="uk.ac.horizon.ug.exploding.db.Member">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="M"/>
+	      </bean>
+	    </entry>
+		<entry key="uk.ac.horizon.ug.exploding.db.Message">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="MS"/>
+	      </bean>
+	    </entry>
+		<entry key="uk.ac.horizon.ug.exploding.db.Player">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="P"/>
+	      </bean>
+	    </entry>
       	<!-- Compliant -->
 		<entry key="mrl.compliant.db.Annotation">
 	      <bean class="equip2.spring.IDAllocationBean">

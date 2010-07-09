@@ -165,6 +165,40 @@ public class Player
 
   /** internal value - 
    */
+  protected java.lang.Long _positionUpdateTime;
+  
+  /** getter - 
+   */
+  public java.lang.Long getPositionUpdateTime()
+  {
+  
+    return _positionUpdateTime;
+    
+  }
+
+  /** setter - 
+   */
+  public void setPositionUpdateTime(java.lang.Long positionUpdateTime)
+  {
+  
+    this._positionUpdateTime = positionUpdateTime;
+    
+  }
+
+  /** is set?
+   */
+  public boolean isSetPositionUpdateTime() {
+    return this._positionUpdateTime != null; 
+  }
+
+  /** unset
+   */
+  public void unsetPositionUpdateTime()  {
+    this._positionUpdateTime = null; 
+  }
+
+  /** internal value - 
+   */
   protected java.lang.Integer _points;
   
   /** getter - 
@@ -231,6 +265,40 @@ public class Player
     this._canAuthor = null; 
   }
 
+  /** internal value - 
+   */
+  protected java.lang.Integer _newMemberQuota;
+  
+  /** getter - 
+   */
+  public java.lang.Integer getNewMemberQuota()
+  {
+  
+    return _newMemberQuota;
+    
+  }
+
+  /** setter - 
+   */
+  public void setNewMemberQuota(java.lang.Integer newMemberQuota)
+  {
+  
+    this._newMemberQuota = newMemberQuota;
+    
+  }
+
+  /** is set?
+   */
+  public boolean isSetNewMemberQuota() {
+    return this._newMemberQuota != null; 
+  }
+
+  /** unset
+   */
+  public void unsetNewMemberQuota()  {
+    this._newMemberQuota = null; 
+  }
+
   /** equals */
   public boolean equals(Object o) {
     if (o==null) return false;
@@ -252,6 +320,10 @@ public class Player
         (_position==null || oo._position==null ||
          !_position.equals(oo._position)))
       return false;
+    if (_positionUpdateTime!=oo._positionUpdateTime &&
+        (_positionUpdateTime==null || oo._positionUpdateTime==null ||
+         !_positionUpdateTime.equals(oo._positionUpdateTime)))
+      return false;
     if (_points!=oo._points &&
         (_points==null || oo._points==null ||
          !_points.equals(oo._points)))
@@ -259,6 +331,10 @@ public class Player
     if (_canAuthor!=oo._canAuthor &&
         (_canAuthor==null || oo._canAuthor==null ||
          !_canAuthor.equals(oo._canAuthor)))
+      return false;
+    if (_newMemberQuota!=oo._newMemberQuota &&
+        (_newMemberQuota==null || oo._newMemberQuota==null ||
+         !_newMemberQuota.equals(oo._newMemberQuota)))
       return false;
 
     return true;
@@ -270,8 +346,10 @@ public class Player
     if (_name!=null) val = val ^ _name.hashCode();
     if (_gameID!=null) val = val ^ _gameID.hashCode();
     if (_position!=null) val = val ^ _position.hashCode();
+    if (_positionUpdateTime!=null) val = val ^ _positionUpdateTime.hashCode();
     if (_points!=null) val = val ^ _points.hashCode();
     if (_canAuthor!=null) val = val ^ _canAuthor.hashCode();
+    if (_newMemberQuota!=null) val = val ^ _newMemberQuota.hashCode();
 
     return val;
   }
@@ -310,6 +388,13 @@ public class Player
 	    str.append("null");
 	}
     str.append(",");
+	str.append("positionUpdateTime=");
+	if (_positionUpdateTime!=null) {
+	    str.append(_positionUpdateTime.toString());
+	} else {
+	    str.append("null");
+	}
+    str.append(",");
 	str.append("points=");
 	if (_points!=null) {
 	    str.append(_points.toString());
@@ -320,6 +405,13 @@ public class Player
 	str.append("canAuthor=");
 	if (_canAuthor!=null) {
 	    str.append(_canAuthor.toString());
+	} else {
+	    str.append("null");
+	}
+    str.append(",");
+	str.append("newMemberQuota=");
+	if (_newMemberQuota!=null) {
+	    str.append(_newMemberQuota.toString());
 	} else {
 	    str.append("null");
 	}
