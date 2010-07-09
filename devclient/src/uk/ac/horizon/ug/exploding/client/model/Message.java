@@ -131,36 +131,104 @@ public class Message
 
   /** internal value - 
    */
-  protected java.lang.String _message;
+  protected java.lang.String _year;
   
   /** getter - 
    */
-  public java.lang.String getMessage()
+  public java.lang.String getYear()
   {
   
-    return _message;
+    return _year;
     
   }
 
   /** setter - 
    */
-  public void setMessage(java.lang.String message)
+  public void setYear(java.lang.String year)
   {
   
-    this._message = message;
+    this._year = year;
     
   }
 
   /** is set?
    */
-  public boolean isSetMessage() {
-    return this._message != null; 
+  public boolean isSetYear() {
+    return this._year != null; 
   }
 
   /** unset
    */
-  public void unsetMessage()  {
-    this._message = null; 
+  public void unsetYear()  {
+    this._year = null; 
+  }
+
+  /** internal value - 
+   */
+  protected java.lang.String _title;
+  
+  /** getter - 
+   */
+  public java.lang.String getTitle()
+  {
+  
+    return _title;
+    
+  }
+
+  /** setter - 
+   */
+  public void setTitle(java.lang.String title)
+  {
+  
+    this._title = title;
+    
+  }
+
+  /** is set?
+   */
+  public boolean isSetTitle() {
+    return this._title != null; 
+  }
+
+  /** unset
+   */
+  public void unsetTitle()  {
+    this._title = null; 
+  }
+
+  /** internal value - 
+   */
+  protected java.lang.String _description;
+  
+  /** getter - 
+   */
+  public java.lang.String getDescription()
+  {
+  
+    return _description;
+    
+  }
+
+  /** setter - 
+   */
+  public void setDescription(java.lang.String description)
+  {
+  
+    this._description = description;
+    
+  }
+
+  /** is set?
+   */
+  public boolean isSetDescription() {
+    return this._description != null; 
+  }
+
+  /** unset
+   */
+  public void unsetDescription()  {
+    this._description = null; 
   }
 
   /** internal value - 
@@ -282,9 +350,17 @@ public class Message
         (_type==null || oo._type==null ||
          !_type.equals(oo._type)))
       return false;
-    if (_message!=oo._message &&
-        (_message==null || oo._message==null ||
-         !_message.equals(oo._message)))
+    if (_year!=oo._year &&
+        (_year==null || oo._year==null ||
+         !_year.equals(oo._year)))
+      return false;
+    if (_title!=oo._title &&
+        (_title==null || oo._title==null ||
+         !_title.equals(oo._title)))
+      return false;
+    if (_description!=oo._description &&
+        (_description==null || oo._description==null ||
+         !_description.equals(oo._description)))
       return false;
     if (_createTime!=oo._createTime &&
         (_createTime==null || oo._createTime==null ||
@@ -307,7 +383,9 @@ public class Message
       if (_ID!=null) val = val ^ _ID.hashCode();
     if (_playerID!=null) val = val ^ _playerID.hashCode();
     if (_type!=null) val = val ^ _type.hashCode();
-    if (_message!=null) val = val ^ _message.hashCode();
+    if (_year!=null) val = val ^ _year.hashCode();
+    if (_title!=null) val = val ^ _title.hashCode();
+    if (_description!=null) val = val ^ _description.hashCode();
     if (_createTime!=null) val = val ^ _createTime.hashCode();
     if (_handled!=null) val = val ^ _handled.hashCode();
     if (_handledTime!=null) val = val ^ _handledTime.hashCode();
@@ -342,9 +420,23 @@ public class Message
 	    str.append("null");
 	}
     str.append(",");
-	str.append("message=");
-	if (_message!=null) {
-	    str.append(_message.toString());
+	str.append("year=");
+	if (_year!=null) {
+	    str.append(_year.toString());
+	} else {
+	    str.append("null");
+	}
+    str.append(",");
+	str.append("title=");
+	if (_title!=null) {
+	    str.append(_title.toString());
+	} else {
+	    str.append("null");
+	}
+    str.append(",");
+	str.append("description=");
+	if (_description!=null) {
+	    str.append(_description.toString());
 	} else {
 	    str.append("null");
 	}

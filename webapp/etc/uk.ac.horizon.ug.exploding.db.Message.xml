@@ -9,7 +9,11 @@
 		
 	<property name="type" javatype="java.lang.String" />
 	
-	<property name="message" javatype="java.lang.String" />
+	<property name="year" javatype="java.lang.String" />
+	
+	<property name="title" javatype="java.lang.String" />
+	
+	<property name="description" javatype="java.lang.String" />
 	
 	<property name="createTime" javatype="java.lang.Long" />
 	
