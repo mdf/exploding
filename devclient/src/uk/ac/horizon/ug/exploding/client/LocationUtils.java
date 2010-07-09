@@ -156,8 +156,12 @@ public class LocationUtils {
 			if (locationManager.isProviderEnabled(provider)) {
 				Log.i(TAG,"Registering with provider "+provider);
 				Location loc = locationManager.getLastKnownLocation(provider);
-				if (loc!=null)
+				if (loc!=null) {
 					Log.i(TAG,"Last Location, provider="+loc.getProvider()+", lat="+loc.getLatitude()+", long="+loc.getLongitude()+", bearing="+(loc.hasBearing() ? ""+loc.getBearing() : "NA")+", speed="+(loc.hasSpeed() ? ""+loc.getSpeed() : "NA")+", accuracy="+(loc.hasAccuracy() ? ""+loc.getAccuracy() : "NA")+", alt="+(loc.hasAltitude() ? ""+loc.getAltitude() : "NA"));
+					
+					ZoneService.updateLocation(context, loc);
+					
+				}
 				//if (!"passive".equals(provider))
 				if (locationCallback!=null)
 					locationManager.requestLocationUpdates(provider, 0/*minTime*/, 0/*minDistance*/, locationCallback);
@@ -185,6 +189,7 @@ public class LocationUtils {
 		@Override
 		public void onLocationChanged(Location loc) {
 			Log.i(TAG,"Location provider="+loc.getProvider()+", lat="+loc.getLatitude()+", long="+loc.getLongitude()+", bearing="+(loc.hasBearing() ? ""+loc.getBearing() : "NA")+", speed="+(loc.hasSpeed() ? ""+loc.getSpeed() : "NA")+", accuracy="+(loc.hasAccuracy() ? ""+loc.getAccuracy() : "NA")+", alt="+(loc.hasAltitude() ? ""+loc.getAltitude() : "NA"));
+			ZoneService.updateLocation(context, loc);
 		}
 
 		@Override
