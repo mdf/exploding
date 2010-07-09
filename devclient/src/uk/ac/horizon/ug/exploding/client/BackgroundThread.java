@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -268,6 +270,7 @@ public class BackgroundThread implements Runnable {
 			return;
 		try {
 			client = new Client(httpClient, serverUrl+MESSAGES_PATH+"?conversationID="+conversationId, clientId);
+			currentClientState.setCache(client);
 		}
 		catch (Exception e) {
 			Log.e(TAG, "Creating message client", e);
@@ -325,19 +328,25 @@ public class BackgroundThread implements Runnable {
 	private static class ListenerInfo {
 		WeakReference<ClientStateListener> listener;
 		int flags;
+		Set<String> types;
 	}
 	/** listeners */
 	private static LinkedList<ListenerInfo> listeners = new LinkedList<ListenerInfo>();
 	/** add listener */
 	public static void addClientStateListener(ClientStateListener listener, Context context) {
-		addClientStateListener(listener , context, ClientState.Part.ALL.flag());
+		addClientStateListener(listener , context, ClientState.Part.ALL.flag(), null);
 	}
 	/** add listener */
 	public static void addClientStateListener(ClientStateListener listener, Context context, int flags) {
+		addClientStateListener(listener, context, flags, null);
+	}
+	/** add listener */
+	public static void addClientStateListener(ClientStateListener listener, Context context, int flags, Set<String> types) {
 		checkThread(context);
 		ListenerInfo li = new ListenerInfo();
 		li.listener = new WeakReference<ClientStateListener>(listener);
 		li.flags = flags;
+		li.types = types;
 		listeners.add(li);
 	}
 	/** add listener */
@@ -402,7 +411,19 @@ public class BackgroundThread implements Runnable {
 		for (ListenerInfo li : listeners) {
 			ClientStateListener listener = li.listener.get();
 			if (listener!=null) {
-				if ((clientState.isLocationChanged() && ((li.flags & ClientState.Part.LOCATION.flag())!=0)) ||
+				boolean stateMatch = false;
+				if (li.types!=null && clientState.getChangedTypes().size()>0) {
+					for (String type : li.types)
+						if (clientState.getChangedTypes().contains(type)) {
+							stateMatch = true;
+							break;
+						}
+					if (!stateMatch) {
+						Log.d(TAG,"Skip listener "+li.listener.get()+" on types ("+li.types+" vs "+clientState.getChangedTypes());
+					}
+				}
+				if (stateMatch ||
+						(clientState.isLocationChanged() && ((li.flags & ClientState.Part.LOCATION.flag())!=0)) ||
 						(clientState.isZoneChanged() && ((li.flags & ClientState.Part.ZONE.flag())!=0)) ||
 						(clientState.isStatusChanged() && ((li.flags & ClientState.Part.STATUS.flag())!=0)))
 				{
@@ -452,7 +473,8 @@ public class BackgroundThread implements Runnable {
 	}
 	/** retry client */
 	public static synchronized void retry(Context context) {
-		checkThread(context);
+		if (currentClientState==null)
+			currentClientState = new ClientState(ClientStatus.NEW, GameStatus.UNKNOWN);
 		Log.i(TAG, "Retry client - explicit request (state "+currentClientState.getClientStatus());
 		synchronized (BackgroundThread.class) {
 			switch (currentClientState.getClientStatus()) {
@@ -470,15 +492,18 @@ public class BackgroundThread implements Runnable {
 		}
 	}
 	public static synchronized void cancel(Context context) {
-		checkThread(context);
+		if (currentClientState==null)
+			currentClientState = new ClientState(ClientStatus.NEW, GameStatus.UNKNOWN);
 		Log.i(TAG, "Cancel client - explicit request (state "+currentClientState.getClientStatus());
 		synchronized (BackgroundThread.class) {
 			switch (currentClientState.getClientStatus()) {
 			case LOGGING_IN:
 			case GETTING_STATE:
 				Log.i(TAG, "Cacnel from "+currentClientState.getClientStatus()+" to CANCELLED_BY_USER");
-				if (singleton!=null && singleton.isAlive())
+				if (singleton!=null && singleton.isAlive()) {
 					singleton.interrupt();
+					singleton = null;
+				}
 				currentClientState.setLoginMessage("Cancelled by user");
 				currentClientState.setClientStatus(ClientStatus.CANCELLED_BY_USER);
 				fireClientStateChanged(currentClientState.clone());
@@ -497,5 +522,30 @@ public class BackgroundThread implements Runnable {
 		currentClientState.setLoginMessage("Stopped by user");
 		currentClientState.setClientStatus(ClientStatus.CANCELLED_BY_USER);
 		fireClientStateChanged(currentClientState.clone());
+	}
+	/** we have received update(s) from the server */
+	public static synchronized void cachedStateChanged(Client cache, Set<String> changedTypes) {
+		if (currentClientState==null) {
+			Log.e(TAG, "cachedStateChanged called with null currentClientState");
+			return;
+		}
+		if (currentClientState.getCache()!=cache) {
+			Log.w(TAG, "cachedStateChanged called by non-current cache");
+			return;
+		}
+		Log.d(TAG,"cachedStateChanged: "+changedTypes);
+		currentClientState.getChangedTypes().addAll(changedTypes);
+		fireClientStateChanged(currentClientState.clone());
+	}
+	public static void addClientStateListener(
+			ClientStateListener listener,
+			Context context, String name) {
+		Set<String> types = new HashSet<String>();
+		types.add(name);
+		addClientStateListener(listener, context, types);
+	}
+	private static void addClientStateListener(ClientStateListener listener,
+			Context context, Set<String> types) {
+		addClientStateListener(listener, context, 0, types);
 	}
 }

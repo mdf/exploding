@@ -11,9 +11,13 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +27,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 
+import uk.ac.horizon.ug.exploding.client.model.Member;
 import uk.ac.horizon.ug.exploding.client.model.ModelUtils;
 import uk.ac.horizon.ug.exploding.client.model.Player;
 import uk.ac.horizon.ug.exploding.client.model.Position;
@@ -50,7 +55,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  */
 public class Client {
 	private static final String TAG = "Client";
-	static Logger logger = Logger.getLogger(Client.class.getName());
+	//static Logger logger = Logger.getLogger(Client.class.getName());
 	protected URI conversationUrl;
 	protected String clientId;
 	protected HttpClient httpClient;
@@ -133,7 +138,7 @@ public class Client {
 	/** internal async send */
 	public List<Message> sendMessages(List<Message> messages) throws IOException {
 		HttpPost request  = new HttpPost(conversationUrl);
-		logger.info("SendMessages to "+request.getURI()+", requestline="+request.getRequestLine());
+		Log.i(TAG,"SendMessages to "+request.getURI()+", requestline="+request.getRequestLine());
 		request.setHeader("Content-Type", "application/xml");
 		//HttpURLConnection conn = (HttpURLConnection) conversationUrl.openConnection();
 		XStream xs = new XStream(/*new DomDriver()*/);
@@ -159,7 +164,7 @@ public class Client {
 		messages = (List<Message>)xs.fromXML(reply.getEntity().getContent());
 		reply.getEntity().consumeContent();
 
-		logger.info("Response "+messages.size()+" messages: "+messages);
+		Log.i(TAG, "Response "+messages.size()+" messages: "+messages);
 
 		// check status(es)
 		for (Message response : messages) {
@@ -170,17 +175,22 @@ public class Client {
 
 		return messages;
 	}
-	protected List<Object> facts = new LinkedList<Object>();
-	public List<Object> getFacts() {
+	/** class name -> id -> fact */
+	protected HashMap<String,HashMap<Object,Object>> facts = new HashMap<String,HashMap<Object,Object>> ();
+	/** lock facts before using is a good idea */
+	public HashMap<String,HashMap<Object,Object>> getFacts() {
 		return facts;
 	}
 	public List<Object> getFacts(String typeName) {
-		LinkedList<Object> fs = new LinkedList<Object>();
-		for (Object fact : facts) {
-			if (fact.getClass().getName().equals(typeName))
-				fs.add(fact);
+		
+		synchronized (facts) {
+			LinkedList<Object> fs = new LinkedList<Object>();
+			HashMap<Object,Object> typeFacts = facts.get(typeName);
+			if (typeFacts!=null) {
+				fs.addAll(typeFacts.values());
+			}
+			return fs;
 		}
-		return fs;
 	}
 	/** poll 
 	 * @throws JSONException */
@@ -194,34 +204,87 @@ public class Client {
 		List<Message> messages = sendMessage(msg);
 		if (messages==null)
 			return messages;
-		
-		for (Message message : messages) {
-			if (message.getSeqNo()>0 && message.getSeqNo()>ackSeq)
-				ackSeq = message.getSeqNo();
-			MessageType messageType = MessageType.valueOf(message.getType());
-			if (messageType==MessageType.FACT_EX || messageType==MessageType.FACT_ADD) {
-				Object val = message.getNewVal();
-				String typeName = val.getClass().getName();
-				facts.add(val);
-			} else if (messageType==MessageType.FACT_UPD || messageType==MessageType.FACT_DEL) {
-				Object val = message.getOldVal();
-				boolean found = false;
-				for (int i=0; i<facts.size(); i++) {
-					if (val.equals(facts.get(i))) {
-						facts.remove(i);
-						found = true;
-						logger.info("Removing old fact "+val);
-						break;
+		Set<String> changedTypes = new HashSet<String>();
+		synchronized (facts) {
+			for (Message message : messages) {
+				if (message.getSeqNo()>0 && message.getSeqNo()>ackSeq)
+					ackSeq = message.getSeqNo();
+				MessageType messageType = MessageType.valueOf(message.getType());
+				if (messageType==MessageType.FACT_EX || messageType==MessageType.FACT_ADD) {
+					Object val = message.getNewVal();
+					String typeName = val.getClass().getName();
+					HashMap<Object,Object> typeFacts = facts.get(typeName);
+					if (typeFacts==null) {
+						typeFacts = new HashMap<Object,Object>();
+						facts.put(typeName,typeFacts);
 					}
-				}
-				if (!found)
-					logger.log(Level.WARNING, "Did not find old fact to remove: "+val);
-				if (messageType==MessageType.FACT_UPD) {
-					val = message.getNewVal();
-					facts.add(val);
+					typeFacts.put(getFactID(val), val);
+					Log.d(TAG,"Add fact "+val);
+					if (!changedTypes.contains(typeName))
+						changedTypes.add(typeName);
+				} else if (messageType==MessageType.FACT_UPD || messageType==MessageType.FACT_DEL) {
+					Object val = message.getOldVal();
+					String typeName = val.getClass().getName();
+					HashMap<Object,Object> typeFacts = facts.get(typeName);
+					if (typeFacts==null) {
+						typeFacts = new HashMap<Object,Object>();
+						facts.put(typeName,typeFacts);
+					}
+					Object key = getFactID(val);
+					boolean found = typeFacts.containsKey(key);
+					if (found) {
+						typeFacts.remove(key);
+						Log.i(TAG,"Removing/update old fact "+val);
+						if (!changedTypes.contains(typeName))
+							changedTypes.add(typeName);						
+					}
+					else
+						Log.i(TAG, "Did not find old fact to remove: "+val);
+					if (messageType==MessageType.FACT_UPD) {
+						val = message.getNewVal();
+						if (!val.getClass().getName().equals(typeName))
+							Log.e(TAG, "Nominal Update from class "+typeName+" to "+val.getClass().getName());
+						typeFacts = facts.get(typeName);
+						if (typeFacts==null) {
+							typeFacts = new HashMap<Object,Object>();
+							facts.put(typeName,typeFacts);
+						}
+						Object newKey = getFactID(val);
+						if (!key.equals(newKey)) 
+							Log.e(TAG,"Nominal Update from ID "+key+" to "+newKey+" for "+val);
+						typeFacts.put(newKey, val);
+						Log.i(TAG,"Update new fact "+val);
+						if (!changedTypes.contains(typeName))
+							changedTypes.add(typeName);
+					}
 				}
 			}
 		}
+		BackgroundThread.cachedStateChanged(this, changedTypes);
 		return messages;
+	}
+	private static String getFactType(Object o) {
+		return o.getClass().getName();		
+	}
+	/** HACK application specific */
+	private static Object getFactID(Object o) {
+		if (o instanceof Player) {
+			Player p = (Player)o;
+			return p.getID();
+		}
+		if (o instanceof uk.ac.horizon.ug.exploding.client.model.Message) {
+			uk.ac.horizon.ug.exploding.client.model.Message p = (uk.ac.horizon.ug.exploding.client.model.Message)o;
+			return p.getID();
+		}
+		if (o instanceof Member) {
+			Member p = (Member)o;
+			return p.getID();
+		}
+		if (o instanceof Zone) {
+			Zone p = (Zone)o;
+			return p.getID();
+		}
+		Log.d(TAG,"getFactID for unknown class "+o.getClass().getName());
+		return o; //!?!
 	}
 }

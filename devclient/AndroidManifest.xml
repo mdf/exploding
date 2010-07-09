@@ -23,6 +23,7 @@
 </activity>
 <activity android:label="Game Map" android:name=".GameMapActivity"></activity>
 <uses-library android:name="com.google.android.maps" android:required="true"></uses-library>
+<activity android:label="Player Status" android:name=".PlayerStatusActivity"></activity>
 </application>
 
 
