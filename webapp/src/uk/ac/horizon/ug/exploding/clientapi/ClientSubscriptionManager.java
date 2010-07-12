@@ -56,6 +56,13 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 		q = new QueryTemplate(uk.ac.horizon.ug.exploding.db.Player.class);
 		// Changes only (sent to own client; sent on intial join)
 		dataspace.getEventManagement().addIDataspaceObjectsListener(this, q, DataspaceObjectsEvent.OBJECT_MODIFIED_MASK);
+
+		// Game Changes only (sent to own client; sent on intial join)
+		// - state changes, current year
+		/*
+		q = new QueryTemplate(uk.ac.horizon.ug.exploding.db.Game.class);
+		dataspace.getEventManagement().addIDataspaceObjectsListener(this, q, DataspaceObjectsEvent.OBJECT_MODIFIED_MASK);
+		*/
 	}
 
 	public IDataspace getDataspace()
@@ -149,7 +156,10 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, player, session);
 
     	// replicate Zones...
+		// repliace Game
     	Game game = (Game) session.get(Game.class, cc.getGameID());
+		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, game, session);
+    	
     	//ContentGroup contentgame.getContentGroupID()
     	QueryTemplate q = new QueryTemplate(Zone.class);
     	q.addConstraintEq("contentGroupID", game.getContentGroupID());
@@ -270,6 +280,14 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 
 	private boolean matches(Object matchObject, ClientConversation conversation) {
 		// APPLICATION-SPECIFIC
+		// game
+		if (matchObject instanceof Game) {
+			Game game = (Game)matchObject;
+			if (game.getID()!=null && game.getID().equals(conversation.getGameID()))
+				return true;
+			return false;
+		}
+		
 		// tell own (Player's) Messages
 		if (matchObject instanceof uk.ac.horizon.ug.exploding.db.Message) {
 			uk.ac.horizon.ug.exploding.db.Message message = (uk.ac.horizon.ug.exploding.db.Message)matchObject;

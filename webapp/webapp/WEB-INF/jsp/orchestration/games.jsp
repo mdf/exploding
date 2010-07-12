@@ -9,7 +9,7 @@
 	<h2>Start Game</h2>
 
 	<p>
-		<form action="start.html" method="post">	
+		<form action="create.html" method="post">	
 			<select name="contentGroupID">
 				<c:forEach var="cg" items="${requestScope.contentGroups}">
 					<option value="<c:out value="${cg.ID}"/>">
@@ -18,7 +18,7 @@
 		        </c:forEach>
 			</select>
 			<input type="text" name="name">	
-			<input type="submit" value="start game">
+			<input type="submit" value="create game">
 		</form>
 	</p>
 
@@ -34,11 +34,17 @@
 		        <c:forEach var="g" items="${requestScope.games}">
 					<tr bgcolor="#eeeeee">
 						<td>
-							<c:out value="${g.ID}"/> <c:out value="${g.name}"/> <c:out value="${g.contentGroupID}"/> <c:out value="${g.gameTime}"/> <c:out value="${g.dateStarted}"/> <c:out value="${g.active}"/>
+							<c:out value="${g.ID}"/> <c:out value="${g.name}"/> <c:out value="${g.contentGroupID}"/> <c:out value="${g.timeCreated}"/> <c:out value="${g.state}"/>
+						</td>
+						<td>
+							<a href="play.html?gameID=<c:out value="${g.ID}"/>">play</a>
+						</td>
+						<td>
+							<a href="finish.html?gameID=<c:out value="${g.ID}"/>">finish</a>
 						</td>
 						<td>
 							<a href="stop.html?gameID=<c:out value="${g.ID}"/>">stop</a>
-						</td>
+						</td>						
 					</tr>
 		        </c:forEach>
 	        </tbody>

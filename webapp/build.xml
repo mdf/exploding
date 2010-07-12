@@ -182,6 +182,19 @@
 	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
 			<classpath refid="classpath_tools"/>
 			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.GameTime.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/GameTime.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.GameTime.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/GameTime_helper.java"/>
+			<arg value="${equip2home}/etc/bean2hibernatehbm.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.GameTime.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/GameTime.hbm.xml"/>
+		</java>		
+		
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
 			<arg value="etc/uk.ac.horizon.ug.exploding.db.Player.xml"/>
 			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Player.java"/>
 			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>

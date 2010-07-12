@@ -3,16 +3,20 @@ package uk.ac.horizon.ug.exploding.engine;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.Vector;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
 import uk.ac.horizon.ug.exploding.db.Game;
+import uk.ac.horizon.ug.exploding.db.GameTime;
 import uk.ac.horizon.ug.exploding.db.Member;
+import uk.ac.horizon.ug.exploding.db.Message;
 import uk.ac.horizon.ug.exploding.db.Player;
 import uk.ac.horizon.ug.exploding.db.Position;
 import uk.ac.horizon.ug.exploding.db.TimelineEvent;
@@ -30,7 +34,6 @@ public class Engine
 {
 	static Logger logger = Logger.getLogger(Engine.class.getName());
 
-	// FIXME - zones are game / content group specific
 	protected Map<Integer, ZoneCache> zoneCache = new HashMap<Integer, ZoneCache>();
 	
 	protected Random random = new Random();
@@ -164,16 +167,20 @@ public class Engine
 		zoneCache.put(zone.getOrgId(), zc);
 	}
 	
-	public Integer getZoneID(Position p)
+	public Integer getZoneID(String contentGroupID, Position p)
 	{		
 		Iterator<Entry<Integer, ZoneCache>> it = zoneCache.entrySet().iterator();
 		
 		while(it.hasNext())
 		{
 			Map.Entry<Integer, ZoneCache> pairs = (Map.Entry<Integer, ZoneCache>)it.next();
-			if(pairs.getValue().contains(p.getLatitude(), p.getLongitude()))
+			
+			if(pairs.getValue().zone.getContentGroupID().equals(contentGroupID))
 			{
-				return pairs.getKey();
+				if(pairs.getValue().contains(p.getLatitude(), p.getLongitude()))
+				{
+					return pairs.getKey();
+				}
 			}
 	    }
 
@@ -222,8 +229,7 @@ public class Engine
 							{
 								// check zones, consequences
 								memberPlaced(member);
-							}
-							
+							}							
 						}
 					}
 				}
@@ -243,7 +249,7 @@ public class Engine
 		session.begin(ISession.READ_WRITE);
 		
 		QueryTemplate gqt = new QueryTemplate(Game.class);
-		gqt.addConstraintEq("active", true);
+		gqt.addConstraintEq("state", Game.ACTIVE);
 		
 		Object [] gs = session.match(gqt);
 		
@@ -255,12 +261,19 @@ public class Engine
 						
 			if(g.getContentGroupID()!=null && g.getContentGroupID().length()>0)
 			{
+				GameTime gt = (GameTime) session.get(GameTime.class, g.getGameTimeID());
+				
+				if(gt==null)
+				{
+					continue;
+				}
+				
 				// real time elapsed
 				long elapsed = now - this.lastEventCheckTime;
-				float currentGameTime = (elapsed * this.timeRatio) + g.getGameTime();
+				float currentGameTime = (elapsed * this.timeRatio) + gt.getGameTime();
 
 			   	QueryTemplate eq = new QueryTemplate(TimelineEvent.class);
-		     	eq.addConstraintGt("startTime", g.getGameTime());
+		     	eq.addConstraintGt("startTime", gt.getGameTime());
 		     	eq.addConstraintLe("startTime", currentGameTime);
 		    	eq.addOrder("startTime");
 		    	
@@ -269,13 +282,24 @@ public class Engine
 		    	for(int j=0; j<es.length; j++)
 		    	{
 		    		TimelineEvent e = (TimelineEvent) es[j];
-		    		handleEvent(session, g, e);
+		    		
+		    		logger.info("found event: " + e.getName());
+		    		
+		    		if(e.isSetTrack() && e.getTrack()==0)
+		    		{
+		    			// year event
+		    			g.setYear(e.getName());
+		    			session.update(g);
+		    		}
+		    		else
+		    		{
+		    			handleContentEvent(session, g, e);		    			
+		    		}
 		    	}
 		    	
-		    	logger.info(g.getGameTime() + " " + currentGameTime);
+		    	logger.info(gt.getGameTime() + " " + currentGameTime);
 		    	
-		    	g.setGameTime(currentGameTime);
-		    	session.update(g);	
+		    	gt.setGameTime(currentGameTime);
 			}
 		}
 
@@ -293,13 +317,20 @@ public class Engine
 		// FIXME members entering zones with active duration events?
 		// FIXME there appear to be stat modifiers associated with Zones, this is not in the design doc.
 
-		member.setZone(this.getZoneID(member.getPosition()));
+		Game game = (Game) session.get(Game.class, member.getGameID());
+		
+		if(game==null)
+		{
+			// FIXME error
+		}		
+		
+		member.setZone(this.getZoneID(game.getContentGroupID(), member.getPosition()));
 		
 	   	QueryTemplate mq = new QueryTemplate(Member.class);
-	   	mq.addConstraintEq("gameID", member.getGameID());
+	   	mq.addConstraintEq("gameID", game.getID());
 	   	mq.addConstraintEq("carried", false);
 	   	
-	   	if(member.getZone()==0)
+	   	if(!member.isSetZone() || member.getZone()==0)
 	   	{
 	   		// they're in a "gap"
 	   		//	FIXME - does "assimilation" work across zone boundaries?
@@ -309,8 +340,6 @@ public class Engine
 
    		mq.addConstraintEq("zone", member.getZone());
 
-   		// FIXME - can't remember, need to check...
-   		// - will this match the original member now in this zone within this session?
 	   	Object [] ms = session.match(mq);
 	   	
 	   	if(ms.length==0)
@@ -329,7 +358,7 @@ public class Engine
    			}
    			member.setWealth(wealth);
 	   	}
-	   	else if(ms.length>=10)
+	   	else if(ms.length>=9) // excluding ourselves
 	   	{
 	   		// -2 health, +2 knowledge
 	   		// -2 wealth, +2 participation
@@ -356,7 +385,20 @@ public class Engine
 			   		}
 			   		else
 			   		{
-			   			// FIXME kill this member
+		   				Message msg = new Message();
+		   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+		   				msg.setCreateTime(System.currentTimeMillis());
+		   				msg.setYear(game.getYear());
+		   				msg.setType(Message.MSG_MEMBER_DIED);
+		   				msg.setPlayerID(member.getPlayerID());
+		   				msg.setHandled(false);
+
+		   				// FIXME - use these?
+		   				//msg.setTitle("");
+		   				//msg.setDescription("");
+		   			
+		   				session.add(msg);
+			   			
 			   			session.remove(other);
 			   			continue;
 			   		}
@@ -393,8 +435,6 @@ public class Engine
 	   	}
 		
 		// proximity to others
-	   	// FIXME - does "assimilate" mean kill? or steal? Let's assume it means kill members in the same zone, for now
-	   	// can we / should we "assimilate" multiple members? just the first one?
 	   	
 	   	for(int i=0; i<ms.length; i++)
 	   	{
@@ -405,11 +445,11 @@ public class Engine
 	   			continue;
 	   		}
 	   		
-	   		// FIXME - sort by proximity?
 	   		if(ZoneCache.distanceBetweenPoints(member.getPosition(), other.getPosition())<proximityRadius)
 	   		{
 	   			if(member.getAction()>other.getAction())
 	   			{
+		   			// we assimilate them
 		   			int action = member.getAction();
 		   			action += 3;
 		   			if(action>10)
@@ -422,9 +462,23 @@ public class Engine
 		   			}
 		   			member.setAction(action);	
 
-	   				// FIXME - notify players
-	   				session.remove(other);
-	   				break;
+		   			other.setPlayerID(member.getPlayerID());
+		   			other.setParentMemberID(member.getID());
+	   				session.update(other);
+	   				
+	   				Message msg = new Message();
+	   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+	   				msg.setCreateTime(System.currentTimeMillis());
+	   				msg.setYear(game.getYear());
+	   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
+	   				msg.setPlayerID(member.getPlayerID());
+	   				msg.setHandled(false);
+
+	   				// FIXME - use these?
+	   				//msg.setTitle("");
+	   				//msg.setDescription("");
+	   			
+	   				session.add(msg);
 	   			}
 	   			else if(member.getAction()==other.getAction())
 	   			{
@@ -433,9 +487,7 @@ public class Engine
 	   			}
 	   			else
 	   			{
-	   				// they kill us, after all that.
-	   				// FIXME - does it make sense to kill the member responsible for the stats changes?
-
+	   				// they assimilate us
 		   			int action = other.getAction();
 		   			action += 3;
 		   			if(action>10)
@@ -448,20 +500,29 @@ public class Engine
 		   			}
 		   			other.setAction(action);
 		   			
-	   				// FIXME - notify players
-	   				session.remove(member);
-	   				break;
+		   			member.setPlayerID(other.getPlayerID());
+		   			member.setParentMemberID(other.getID());
+	   				session.update(member);
+	   				
+	   				Message msg = new Message();
+	   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+	   				msg.setCreateTime(System.currentTimeMillis());
+	   				msg.setYear(game.getYear());
+	   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
+	   				msg.setPlayerID(member.getPlayerID());
+	   				msg.setHandled(false);
+
+	   				// FIXME - use these?
+	   				//msg.setTitle("");
+	   				//msg.setDescription("");
+	   			
+	   				session.add(msg);
 	   			}
 	   		}
 	   	}
 	   	
 	   	// finally, does this mean anyone can author ?
-	   	Game game = (Game) session.get(Game.class, member.getGameID());
-	   	
-	   	if(game!=null)
-	   	{
-		   	this.updateAuthorable(session, game);	   		
-	   	}		
+	   	this.updateAuthorable(session, game);	   		
 		
 		session.end();
 	}
@@ -500,10 +561,8 @@ public class Engine
 	}
 
 	
-	public void handleEvent(ISession session, Game game, TimelineEvent event)
-	{
-		// FIXME tell affected players about the event?!
-		
+	public void handleContentEvent(ISession session, Game game, TimelineEvent event)
+	{		
 	   	QueryTemplate mq = new QueryTemplate(Member.class);
 	   	mq.addConstraintEq("gameID", game.getID());
 	   	mq.addConstraintEq("carried", false);
@@ -515,9 +574,14 @@ public class Engine
 	   	
 	   	Object [] ms = session.match(mq);
 	   	
+	   	Set<String> playerIDs = new HashSet<String>();
+	   	
 	   	for(int i=0; i<ms.length; i++)
 	   	{
 	   		Member member = (Member) ms[i];
+	   		
+	   		// this *player* needs to be notified
+	   		playerIDs.add(member.getPlayerID());
 	   		
 	   		if(event.getAbsolute()==1)
 	   		{
@@ -546,7 +610,20 @@ public class Engine
 			   			}
 			   			else
 			   			{
-			   				// FIXME kill this member
+			   				Message msg = new Message();
+			   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+			   				msg.setCreateTime(System.currentTimeMillis());
+			   				msg.setYear(game.getYear());
+			   				msg.setType(Message.MSG_MEMBER_DIED);
+			   				msg.setPlayerID(member.getPlayerID());
+			   				msg.setHandled(false);
+			   				
+			   				// FIXME - use these?
+			   				msg.setTitle(event.getName());
+			   				//msg.setDescription("");
+			   				
+			   				session.add(msg);
+			   				
 			   				session.remove(member);
 			   				continue;
 			   			}
@@ -609,7 +686,14 @@ public class Engine
 	   					member.setWealth(4);
 		   				member.setHealth(4);
 		   				
-	   					// FIXME trigger creation process?!
+		   				Player p = (Player) session.get(Player.class, member.getPlayerID());
+		   				
+		   				if(p!=null)
+		   				{
+		   					// player notified by Player object change
+		   					p.setNewMemberQuota(p.getNewMemberQuota()+1);
+		   				}
+		   				
 	   					continue;
 	   				}
 	   				else
@@ -664,16 +748,48 @@ public class Engine
 		   				p.setLatitude(member.getPosition().getLatitude()+yoffset);
 		   				
 		   				offspring.setPosition(p);
-		   				offspring.setZone(this.getZoneID(p));
+		   				
+		   				offspring.setZone(this.getZoneID(game.getContentGroupID(), p));
 		   				
 		   				session.add(offspring);
+		   				
+		   				Message msg = new Message();
+		   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+		   				msg.setCreateTime(System.currentTimeMillis());
+		   				msg.setYear(game.getYear());
+		   				msg.setType(Message.MSG_MEMBER_CREATED);
+		   				msg.setPlayerID(member.getPlayerID());
+		   				msg.setHandled(false);
+
+		   				// FIXME - use these?
+		   				//msg.setTitle("");
+		   				//msg.setDescription("");
+		   			
+		   				session.add(msg);
 	   				}
 	   			}
 	   			
 	   			session.update(member);
 	   		}
 	   	}
-	
+	   	
+	   	Message msg = new Message();
+	   	msg.setCreateTime(System.currentTimeMillis());
+	   	msg.setYear(game.getYear());
+	   	msg.setType(Message.MSG_TIMELINE_CONTENT);
+	   	msg.setTitle(event.getName());
+	   	msg.setDescription(event.getDescription());
+	   	msg.setHandled(false);
+		
+	   	Iterator<String> it = playerIDs.iterator();
+	   	
+	   	while(it.hasNext())
+	   	{
+		   	msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+		   	msg.setPlayerID(it.next());
+			session.add(msg);
+	   	}
+	   		
 	   	this.updateAuthorable(session, game);
 	}
 }

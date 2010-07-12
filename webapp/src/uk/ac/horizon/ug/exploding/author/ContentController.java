@@ -246,6 +246,7 @@ public class ContentController extends SimpleFormController
 					t.setID(IDAllocator.getNewID(session, uk.ac.horizon.ug.exploding.db.TimelineEvent.class, "TE", null));
 					t.setContentGroupID(cg.getID());
 					t.setOrgId(te.id);
+					t.setName(te.name);
 					t.setAbsolute(te.absolute);
 					t.setDescription(te.description);
 					t.setEnabled(te.enabled);

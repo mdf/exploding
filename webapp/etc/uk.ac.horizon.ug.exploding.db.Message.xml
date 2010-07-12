@@ -21,4 +21,11 @@
 	
 	<property name="handledTime" javatype="java.lang.Long" />
 	
+	<constant name="MSG_MEMBER_CREATED" javatype="java.lang.String" value='"member_created"'/>
+	<constant name="MSG_MEMBER_ASSIMILATED" javatype="java.lang.String" value='"member_assimilated"'/>
+	<constant name="MSG_MEMBER_ASSIMILATED_OTHER" javatype="java.lang.String" value='"member_assimilated_other"'/>
+	<constant name="MSG_MEMBER_DIED" javatype="java.lang.String" value='"member_died"'/>
+	<constant name="MSG_TIMELINE_YEAR" javatype="java.lang.String" value='"timeline_year"'/>
+	<constant name="MSG_TIMELINE_CONTENT" javatype="java.lang.String" value='"timeline_content"'/>
+	
 </bean>

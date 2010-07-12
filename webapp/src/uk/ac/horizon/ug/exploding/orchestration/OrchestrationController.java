@@ -18,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.validation.BindException;
 
+import uk.ac.horizon.ug.exploding.db.Game;
+
 
 import equip2.core.IDataspace;
 import equip2.core.ISession;
@@ -71,7 +73,7 @@ public class OrchestrationController
 		model.put("contentGroups", contentGroups);
 		
 		QueryTemplate gqt = new QueryTemplate(uk.ac.horizon.ug.exploding.db.Game.class);
-		gqt.addOrder("active");
+		gqt.addOrder("timeCreated");
 		
 		Object [] gs = session.match(gqt);
 		
@@ -92,7 +94,7 @@ public class OrchestrationController
     }
 	
     
-    public ModelAndView start(HttpServletRequest request, HttpServletResponse response) throws ServletException
+    public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws ServletException
     {
     	ModelAndView mav = new ModelAndView();
     	HttpSession httpSession = request.getSession();
@@ -104,13 +106,19 @@ public class OrchestrationController
     		ISession session = dataspace.getSession();
     		session.begin(ISession.READ_WRITE);
     		
+    		uk.ac.horizon.ug.exploding.db.GameTime gameTime = new uk.ac.horizon.ug.exploding.db.GameTime();
+			gameTime.setID(IDAllocator.getNewID(session, uk.ac.horizon.ug.exploding.db.GameTime.class, "GT", null));
+			gameTime.setGameTime(0.0f);
+
+			session.add(gameTime);
+			
     		uk.ac.horizon.ug.exploding.db.Game game = new uk.ac.horizon.ug.exploding.db.Game();
 			
 			game.setID(IDAllocator.getNewID(session, uk.ac.horizon.ug.exploding.db.Game.class, "GA", null));
 			game.setName(gameName);
-			game.setActive(true);
-			game.setDateStarted(new java.util.Date());
-			game.setGameTime(0.0f);
+			game.setGameTimeID(gameTime.getID());
+			game.setState(Game.NOT_STARTED);
+			game.setTimeCreated(System.currentTimeMillis());
 			game.setContentGroupID(contentGroupID);
 			
 			session.add(game);
@@ -122,6 +130,58 @@ public class OrchestrationController
     	return mav;
     }
     
+    public ModelAndView play(HttpServletRequest request, HttpServletResponse response) throws ServletException
+    {
+    	ModelAndView mav = new ModelAndView();
+    	HttpSession httpSession = request.getSession();
+    	String gameID = request.getParameter("gameID");
+
+    	if(gameID!=null && gameID.length()>0)
+    	{    		
+    		ISession session = dataspace.getSession();
+    		session.begin(ISession.READ_WRITE);
+
+    		uk.ac.horizon.ug.exploding.db.Game game =
+    			(uk.ac.horizon.ug.exploding.db.Game) session.get(uk.ac.horizon.ug.exploding.db.Game.class, gameID);
+    		
+    		if(game!=null)
+    		{
+    			game.setState(Game.ACTIVE);
+    		}    		
+
+    		session.end();
+    	}
+    	
+    	mav.setViewName("redirect:/orchestration/games.html");
+    	return mav;
+    }
+   
+    
+    public ModelAndView finish(HttpServletRequest request, HttpServletResponse response) throws ServletException
+    {
+    	ModelAndView mav = new ModelAndView();
+    	HttpSession httpSession = request.getSession();
+    	String gameID = request.getParameter("gameID");
+
+    	if(gameID!=null && gameID.length()>0)
+    	{    		
+    		ISession session = dataspace.getSession();
+    		session.begin(ISession.READ_WRITE);
+
+    		uk.ac.horizon.ug.exploding.db.Game game =
+    			(uk.ac.horizon.ug.exploding.db.Game) session.get(uk.ac.horizon.ug.exploding.db.Game.class, gameID);
+    		
+    		if(game!=null)
+    		{
+    			game.setState(Game.ENDING);
+    		}    		
+
+    		session.end();
+    	}
+    	
+    	mav.setViewName("redirect:/orchestration/games.html");
+    	return mav;
+    }
     
     public ModelAndView stop(HttpServletRequest request, HttpServletResponse response) throws ServletException
     {
@@ -139,7 +199,7 @@ public class OrchestrationController
     		
     		if(game!=null)
     		{
-    			game.setActive(false);
+    			game.setState(Game.ENDED);
     		}    		
 
     		session.end();

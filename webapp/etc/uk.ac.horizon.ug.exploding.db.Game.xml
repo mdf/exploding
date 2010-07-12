@@ -9,10 +9,19 @@
 	
 	<property name="name" javatype="java.lang.String" />
 	
-	<property name="dateStarted" javatype="java.util.Date" />
+	<property name="timeCreated" javatype="java.lang.Long" />
 	
-	<property name="active" javatype="java.lang.Boolean" />
+	<property name="gameTimeID" type="IDType" />
 	
-	<property name="gameTime" javatype="java.lang.Float" />
+	<property name="year" javatype="java.lang.String" />
+	
+	<property name="state" javatype="java.lang.String" />
+	
+	<constant name="UNKNOWN" javatype="java.lang.String" value='"UNKNOWN"'/>
+	<constant name="NOT_STARTED" javatype="java.lang.String" value='"NOT_STARTED"'/>
+	<constant name="ACTIVE" javatype="java.lang.String" value='"ACTIVE"'/>
+	<constant name="ENDING" javatype="java.lang.String" value='"ENDING"'/>
+	<constant name="ENDED" javatype="java.lang.String" value='"ENDED"'/>
+	
 
 </bean>

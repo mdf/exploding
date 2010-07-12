@@ -8,7 +8,9 @@
 			<props>
 				<prop key="/index.html">filenameViewController</prop>
 				<prop key="/games.html">orchestrationViewMultiController</prop>
-				<prop key="/start.html">orchestrationViewMultiController</prop>
+				<prop key="/create.html">orchestrationViewMultiController</prop>
+				<prop key="/play.html">orchestrationViewMultiController</prop>
+				<prop key="/finish.html">orchestrationViewMultiController</prop>
 				<prop key="/stop.html">orchestrationViewMultiController</prop>
 			</props>
 		</property>

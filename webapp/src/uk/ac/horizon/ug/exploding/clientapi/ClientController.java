@@ -79,6 +79,7 @@ public class ClientController {
 		xs.alias("player", Player.class);
 		xs.alias("member", uk.ac.horizon.ug.exploding.db.Member.class);
 		xs.alias("msg", uk.ac.horizon.ug.exploding.db.Message.class);
+		xs.alias("game", uk.ac.horizon.ug.exploding.db.Game.class);
 		return xs;
 	}
 	/** client login 
@@ -130,7 +131,7 @@ public class ClientController {
     			logger.debug("Mark conversation "+cc.getID()+" with "+cc.getClientID()+" inactive on new login");
     			clientSubscriptionManager.handleConversationEnd(cc, session);
     			Game g = (Game) session.get(Game.class, cc.getGameID());
-    			if (g.isSetActive() && g.getActive()) {
+    			if (g.isSetState() && !Game.ENDED.equals(g.getState())) {
     				// jack pot
     				game = g;
     				player = (Player) session.get(Player.class, cc.getPlayerID());
@@ -144,7 +145,7 @@ public class ClientController {
     		Object games [] = session.match(new QueryTemplate(Game.class));
     		for (int gi=0; gi<games.length; gi++) {
     			Game g = (Game)games[gi];
-    			if (g.isSetActive() && g.getActive()) {
+    			if (g.isSetState() && !Game.ENDED.equals(g.getState())) {
     				game = g;
     				logger.debug("Client "+login.getClientId()+" joining active game "+game.getID());
     			}
@@ -252,7 +253,7 @@ public class ClientController {
     		response.sendError(HttpServletResponse.SC_MOVED_PERMANENTLY, "conversation "+conversationID+" references unknown game "+conversation.getGameID());			
     		return null;			
 		}
-		if (!game.isSetActive() || !game.getActive()) {
+		if (!game.isSetState() || Game.ENDED.equals(game.getState())) {
 			logger.warn("Game "+game.getID()+" (conversation "+conversationID+") now inactive");
     		response.sendError(HttpServletResponse.SC_GONE, "game "+game.getID()+" now inactive");			
     		return null;			
