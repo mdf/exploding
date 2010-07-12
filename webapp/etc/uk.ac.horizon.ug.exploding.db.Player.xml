@@ -9,6 +9,8 @@
 
 	<property name="gameID" type="IDType" />
 	
+	<property name="colourRef" javatype="java.lang.Integer" />
+	
 	<property name="position" javatype="uk.ac.horizon.ug.exploding.db.Position" />
 	
 	<property name="positionUpdateTime" javatype="java.lang.Long" />

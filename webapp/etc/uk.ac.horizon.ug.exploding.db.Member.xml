@@ -13,6 +13,12 @@
 	
 	<property name="parentMemberID" type="IDType" />
 	
+	<property name="name" javatype="java.lang.String" />
+	
+	<property name="limbData" javatype="java.lang.String" />
+	
+	<property name="colourRef" javatype="java.lang.Integer" />
+	
 	<property name="zone" javatype="java.lang.Integer" />
 	
 	<property name="position" javatype="uk.ac.horizon.ug.exploding.db.Position" />
