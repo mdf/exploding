@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+	android:id="@+id/main_layout"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+	
+	<LinearLayout
+	android:id="@+id/button_layout"
+	android:layout_marginTop="5px"
+	android:layout_marginBottom="5px"
+	android:layout_width="fill_parent"
+	android:orientation="horizontal" android:layout_height="65px">
+		<Button
+		android:id="@+id/create"
+		android:text="CREATE"
+		android:typeface="serif" 
+		android:layout_height="65px" android:layout_width="160px" android:textSize="12sp" android:textStyle="bold">
+		</Button>
+		
+		
+		<Button
+		android:id="@+id/story"
+		android:text="ADD STORY"
+		android:typeface="serif"  
+		android:clickable="true" android:layout_height="65px" android:layout_width="160px" android:textSize="12sp" android:textStyle="bold">
+		</Button>
+		<Button
+		android:id="@+id/community"
+		android:text="COMMUNITY"
+		android:typeface="serif" 
+		android:layout_height="65px" android:layout_width="160px" android:textSize="12sp" android:textStyle="bold">
+		</Button>
+	</LinearLayout>
+	<AbsoluteLayout android:id="@+id/AbsoluteLayout01" android:layout_height="wrap_content" android:layout_width="fill_parent"><com.google.android.maps.MapView android:id="@+id/mapview" android:layout_width="fill_parent" android:clickable="true" android:apiKey="0DCXfmwsB5lNl4mg3T70vftbT6J5ZLaQFBXB15g" android:layout_height="700px" /><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1900" android:textSize="20px" android:textStyle="bold" android:typeface="serif" android:textColor="#ff00aeef" android:layout_y="5px" android:id="@+id/YearTextView" android:layout_x="420px"></TextView>
+</AbsoluteLayout>
+	
+
+
+
+</LinearLayout>
+

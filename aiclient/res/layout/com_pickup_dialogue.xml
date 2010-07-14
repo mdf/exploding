@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+  <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_weight="1">
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        android:layout_marginLeft="5px" android:layout_marginTop="5px" android:id="@+id/name_textview" android:layout_height="fill_parent" android:textSize="25dip" android:text="You are close to:"/>
+        
+  </LinearLayout>
+
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:background="#ffFFFFFF">
+      <TextView
+          android:gravity="left"
+
+          android:layout_width="wrap_content"
+          android:layout_weight="1"
+          android:layout_marginLeft="20px"
+          android:textColor="#ff000000" android:layout_height="fill_parent" android:layout_marginTop="30px" android:text="{Name}"/>
+      
+
+  </LinearLayout>
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="15px"
+      android:layout_marginRight="20px">
+      <TextView
+          android:text="Health"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="20px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+
+          android:gravity="right"
+          android:layout_width="150px"
+          android:layout_height="30px"
+          android:background="#ff00aeef"
+          android:textColor="#ff000000"/>
+                <TextView
+
+          android:gravity="right"
+          android:layout_width="100px"
+          android:layout_height="30px"
+          android:background="#ffFFFFFF"
+         />
+
+  </LinearLayout>
+      <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="10px"
+      android:layout_marginRight="20px">
+      <TextView
+          android:text="Wealth"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="20px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+          android:gravity="right"
+          android:layout_width="75px"
+          android:layout_height="30px"
+          android:background="#ffFFCC00"
+          android:textColor="#ff000000"/>
+                          <TextView
+
+          android:gravity="right"
+          android:layout_width="175px"
+          android:layout_height="30px"
+          android:background="#ffFFFFFF"
+         />
+
+  </LinearLayout>
+      <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="10px"
+      android:layout_marginRight="20px">
+      <TextView
+          android:text="Knowledge"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="20px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+
+
+          android:gravity="right"
+          android:layout_width="25px"
+          android:layout_height="30px"
+          android:background="#ffFF6633"
+          android:textColor="#ff000000"/>
+                          <TextView
+
+          android:gravity="right"
+          android:layout_width="225px"
+          android:layout_height="30px"
+          android:background="#ffFFFFFF"
+         />
+
+  </LinearLayout>
+      <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginTop="10px"
+      android:layout_marginRight="20px">
+      <TextView
+          android:text="Participation"
+          android:gravity="left"
+          android:layout_height="fill_parent"
+          android:layout_width="100px"
+          android:layout_weight="1"
+          android:layout_marginLeft="20px"
+          android:textColor="#ffFFFFFF"/>
+      <TextView
+
+          android:gravity="right"
+          android:layout_width="250px"
+          android:layout_height="30px"
+          android:background="#ff999933"
+          android:textColor="#ff000000"/>
+                          <TextView
+
+          android:gravity="right"
+          android:layout_width="0px"
+          android:layout_height="30px"
+          android:background="#ffFFFFFF"
+         />
+
+  </LinearLayout>
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_weight="1"
+      android:background="#ffFFFFFF" android:layout_height="fill_parent">
+      <TextView
+          android:gravity="left"
+
+          android:layout_width="wrap_content"
+          android:layout_weight="1"
+          android:layout_marginLeft="20px"
+          android:textColor="#ff000000" android:text="Resident in: {Zone}" android:layout_height="40px" android:layout_marginTop="30px"/>
+
+
+  </LinearLayout>
+      <LinearLayout
+    	android:orientation="horizontal"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_marginLeft="20px"
+    	android:layout_marginRight="20px"
+    	android:layout_marginBottom="10px">
+	    <Button
+android:typeface="serif"
+android:layout_height="fill_parent"
+android:id="@+id/dismiss_member_props" android:layout_marginTop="10px" android:layout_width="150dip" android:text="Pick Up">
+</Button>
+	    <Button
+android:typeface="serif"
+android:layout_height="fill_parent"
+android:id="@+id/dismiss_member_props" android:layout_marginTop="10px" android:layout_width="145dip" android:text="Cancel">
+</Button>
+
+		
+    </LinearLayout>
+
+        
+
+
+</LinearLayout>

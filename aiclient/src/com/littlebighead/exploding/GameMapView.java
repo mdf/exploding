@@ -14,6 +14,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.Overlay;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
@@ -26,6 +27,7 @@ import android.graphics.Canvas;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -44,6 +46,8 @@ import android.view.View.OnClickListener;
 public class GameMapView extends MapActivity implements ZoneUpdateListener, TimeEventUpdateListener {	//implements OnClickListener {
     private LocationManager lm;
     private LocationListener locationListener;
+    
+    private ArrayList playerMembers = new ArrayList();
 
 	
 	
@@ -59,6 +63,8 @@ public class GameMapView extends MapActivity implements ZoneUpdateListener, Time
 	String lastzone = "";
 	
 	GameState gameState = null;
+	
+	MediaPlayer mMediaPlayer = null;
 	
     class MapOverlay extends com.google.android.maps.Overlay {
         @Override
@@ -149,7 +155,7 @@ public class GameMapView extends MapActivity implements ZoneUpdateListener, Time
 		    public void onClick(View v) {
 				Intent myIntent = new Intent();
 				myIntent.setClassName("com.littlebighead.exploding", "com.littlebighead.exploding.CreateMemberView");
-				startActivity(myIntent);
+				startActivityForResult(myIntent,1);
 			}
 		});
 
@@ -181,6 +187,22 @@ public class GameMapView extends MapActivity implements ZoneUpdateListener, Time
 		}.start();
 		
  
+    }
+    
+    @Override 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {     
+      super.onActivityResult(requestCode, resultCode, data); 
+      switch(requestCode) { 
+        case (1) : { 
+          if (resultCode == Activity.RESULT_OK) { 
+//        	  ArrayList<Limb> limbs = (ArrayList<Limb>)data.getExtras().get("limbs");
+        	  for (Limb limb: Body.limbs) {
+        		  Log.i("limb position", Double.toString(limb.x));
+        	  }
+          } 
+          break; 
+        } 
+      } 
     }
     
     private class MyLocationListener implements LocationListener 
@@ -236,7 +258,10 @@ public class GameMapView extends MapActivity implements ZoneUpdateListener, Time
 //            public void run() {
             	System.err.println("ZONE IS ..... " + zone);
             	if (! zone.equals("no zone") && !zone.equals(lastzone)){
-            		showToast(zone);
+//            		showToast(zone);
+            		TextView zoneTextView = (TextView)findViewById(R.id.ZoneTextView);
+            		zoneTextView.setText(zone);
+
 				}
             	
 				lastzone = zone;
@@ -289,7 +314,9 @@ public class GameMapView extends MapActivity implements ZoneUpdateListener, Time
     				myIntent.putExtra("year", yearTextView.getText());
     				myIntent.putExtra("name", te.getName());
     				myIntent.putExtra("desc", te.getDesc());
+    				playAudio();
     				startActivity(myIntent);
+    				
     				
 //                    Toast.makeText(getBaseContext(), te.getName(), Toast.LENGTH_SHORT).show();
 //            		showToast(te.getName());    				
@@ -320,6 +347,22 @@ public class GameMapView extends MapActivity implements ZoneUpdateListener, Time
 		    stopService(svc);
 		  }
 
-		}
+	}
+	
+    private void playAudio () {
+        try {
+        	if (mMediaPlayer != null) {
+	        	// http://www.soundjay.com/beep-sounds-1.html lots of free beeps here
+	        	if (mMediaPlayer.isPlaying() == false) {
+		            mMediaPlayer = MediaPlayer.create(this, R.raw.beep);
+		            mMediaPlayer.setLooping(false);
+		            mMediaPlayer.start();
+	        	}
+        	}
+        } catch (Exception e) {
+            Log.e("beep", "error: " + e.getMessage(), e);
+        }
+    }
+
 
 }
