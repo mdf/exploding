@@ -283,11 +283,10 @@ public class Engine
 		    	{
 		    		TimelineEvent e = (TimelineEvent) es[j];
 		    		
-		    		logger.info("found event: " + e.getName());
-		    		
 		    		if(e.isSetTrack() && e.getTrack()==0)
 		    		{
 		    			// year event
+			    		logger.info("Year event: " + e.getName());
 		    			g.setYear(e.getName());
 		    			session.update(g);
 		    		}
@@ -297,7 +296,7 @@ public class Engine
 		    		}
 		    	}
 		    	
-		    	logger.info(gt.getGameTime() + " " + currentGameTime);
+		    	logger.info("Done events from " + gt.getGameTime() + " to " + currentGameTime);
 		    	
 		    	gt.setGameTime(currentGameTime);
 			}
@@ -602,6 +601,8 @@ public class Engine
 	   	}
 	   	
 	   	Object [] ms = session.match(mq);
+
+		logger.info("Content event: " + event.getID() + " " + event.getName() + " (zone: " + event.getZoneId() + ") affects " + ms.length + " members");
 	   	
 	   	Set<String> playerIDs = new HashSet<String>();
 	   	
@@ -612,11 +613,16 @@ public class Engine
 	   		// this *player* needs to be notified
 	   		playerIDs.add(member.getPlayerID());
 	   		
+	   		/*
+	   		 * gameState.xml contains events flagged absolute/relative
+	   		 * but *all* appear to be relative
+	   		 * 
 	   		if(event.getAbsolute()==1)
 	   		{
 	   			// FIXME absolute events?!   			
 	   		}
 	   		else
+	   		*/
 	   		{
 	   			// FIXME min/max ranges?!
 	   			// - there are none in gameState.xml still
@@ -838,6 +844,7 @@ public class Engine
 	   	{
 		   	msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
 		   	msg.setPlayerID(it.next());
+		   	logger.info("Player " + msg.getPlayerID() + " affected by event " + event.getID());
 			session.add(msg);
 	   	}
 	   		
