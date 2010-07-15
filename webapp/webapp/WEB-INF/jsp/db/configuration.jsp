@@ -52,7 +52,7 @@
 	_listProperties.put(uk.ac.horizon.ug.exploding.db.MessageToClient.class.getName(), 
 			new String[] { "conversationID", "clientID", "gameID", "time", "type" });
 	_listProperties.put(uk.ac.horizon.ug.exploding.db.Message.class.getName(), 
-			new String[] { "playerID", "type", "message", "createTime", "handled" });
+			new String[] { "playerID", "type", "title", "description", "createTime", "handled" });
 	_listProperties.put(uk.ac.horizon.ug.exploding.db.Player.class.getName(), 
 			new String[] { "gameID", "name", "positionUpdateTime" });
 	_listProperties.put(uk.ac.horizon.ug.exploding.db.Member.class.getName(), 

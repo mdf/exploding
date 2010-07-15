@@ -118,6 +118,16 @@
     <property name="idAllocations">
       <map>
       	<!-- Exploding -->
+		<entry key="uk.ac.horizon.ug.exploding.db.ContentGroup">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="CG"/>
+	      </bean>
+	    </entry> 
+		<entry key="uk.ac.horizon.ug.exploding.db.Game">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="G"/>
+	      </bean>
+	    </entry>      	        	
 		<entry key="uk.ac.horizon.ug.exploding.db.Member">
 	      <bean class="equip2.spring.IDAllocationBean">
 	        <property name="fixedPrefix" value="M"/>
@@ -133,6 +143,16 @@
 	        <property name="fixedPrefix" value="P"/>
 	      </bean>
 	    </entry>
+		<entry key="uk.ac.horizon.ug.exploding.db.TimelineEvent">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="TE"/>
+	      </bean>
+	    </entry>
+		<entry key="uk.ac.horizon.ug.exploding.db.Zone">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="ZO"/>
+	      </bean>
+	    </entry>	    	    
       </map>
     </property>
 	</bean>
