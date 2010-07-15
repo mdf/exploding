@@ -60,20 +60,45 @@ public class SpectatorController
 			}
 		}
 		
-		QueryTemplate mqt = new QueryTemplate(Message.class);
-		mqt.addConstraintGt("createTime", time);
-		mqt.addOrder("createTime", false);
-
-		Object [] ms = session.match(mqt);
-		
 		Vector<Message> msgs = new Vector<Message>();
-				
-		for(int i=0; i<ms.length; i++)
-		{
-			Message m = (Message) ms[i];
-			msgs.add(m);
-		}
 		
+		QueryTemplate gqt = new QueryTemplate(Game.class);
+		gqt.addConstraintEq("state", Game.ACTIVE);
+		gqt.addOrder("timeCreated", true);
+		
+		Object [] gs = session.match(gqt);
+		
+		if(gs.length>0)
+		{
+			Game game = (Game) gs[0];
+			
+			QueryTemplate pqt = new QueryTemplate(Player.class);
+			pqt.addConstraintEq("gameID", game.getID());
+			
+			Object [] ps = session.match(pqt);
+			
+			String [] ids = new String[ps.length];
+			
+			for(int i=0; i<ps.length; i++)
+			{
+				ids[i] = ((Player)ps[i]).getID();
+			}
+			
+			QueryTemplate mqt = new QueryTemplate(Message.class);
+			mqt.addConstraintGt("createTime", time);
+			mqt.addOrder("createTime", false);
+			mqt.addConstraintIn("playerID", ids);
+	
+			Object [] ms = session.match(mqt);
+			
+					
+			for(int i=0; i<ms.length; i++)
+			{
+				Message m = (Message) ms[i];
+				msgs.add(m);
+			}
+		}
+			
 		session.end();
 		
 		MessageBean data = new MessageBean();

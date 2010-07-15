@@ -146,7 +146,7 @@
 	<bean id="engineController" class="uk.ac.horizon.ug.exploding.engine.Engine"
 		init-method="startup">
 		<property name="dataspace"><ref bean="dataspace"/></property>
-		<property name="timeRatio" value="0.001"/>
+		<property name="timeRatio" value="0.003333333"/>
 		<property name="spawnRadius" value="0.001"/>
 		<property name="proximityRadius" value="0.001"/>
 	</bean>

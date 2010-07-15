@@ -12,19 +12,47 @@
 				<prop key="/play.html">orchestrationViewMultiController</prop>
 				<prop key="/finish.html">orchestrationViewMultiController</prop>
 				<prop key="/stop.html">orchestrationViewMultiController</prop>
+				<prop key="/moderate.html">moderationViewMultiController</prop>
+				<prop key="/enable.html">moderationViewMultiController</prop>
+				<prop key="/upload.html">uploadViewMultiController</prop>
+				<prop key="/bulkupload.html">uploadController</prop>
 			</props>
 		</property>
 	</bean>
-
-	<!-- orchestration controller -->
+	
 	<bean id="internalPathMethodNameResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver"/>
 
+	<!-- upload controller -->
+	<bean id="uploadViewMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+		<property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+		<property name="delegate"><ref bean="uploadController"/></property>
+	</bean>
+	
+	<bean id="uploadController" class="uk.ac.horizon.ug.exploding.orchestration.UploadController">
+		<property name="commandClass"><value>uk.ac.horizon.ug.exploding.orchestration.FileUploadBean</value></property>
+		<property name="successView"><value>upload</value></property>
+		<property name="dataspace"><ref bean="dataspace"/></property>
+	</bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+	<!-- orchestration controller -->
 	<bean id="orchestrationViewMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
 		<property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
 		<property name="delegate"><ref bean="orchestrationController"/></property>
 	</bean>
 
 	<bean id="orchestrationController" class="uk.ac.horizon.ug.exploding.orchestration.OrchestrationController">
+		<property name="dataspace"><ref bean="dataspace"/></property>
+	</bean>
+	
+	<!-- moderation controller -->
+	<bean id="moderationViewMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+		<property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+		<property name="delegate"><ref bean="moderationController"/></property>
+	</bean>
+
+	<bean id="moderationController" class="uk.ac.horizon.ug.exploding.orchestration.ModerationController">
 		<property name="dataspace"><ref bean="dataspace"/></property>
 	</bean>
 

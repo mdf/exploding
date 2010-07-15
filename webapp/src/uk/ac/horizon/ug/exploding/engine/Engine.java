@@ -322,6 +322,8 @@ public class Engine
 		if(game==null)
 		{
 			// FIXME error
+			session.end();
+			return;
 		}		
 		
 		// client is now setting zone

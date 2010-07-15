@@ -444,6 +444,7 @@ public class ClientController {
 			// TODO validity check?
 			// TODO flags?
 			newEvent.setEnabled(0);
+			newEvent.setPlayerID(player.getID());
 			session.add(newEvent);
 			
 			logger.info("Adding player("+player.getID()+")-authored TimelineEvent "+newEvent);
