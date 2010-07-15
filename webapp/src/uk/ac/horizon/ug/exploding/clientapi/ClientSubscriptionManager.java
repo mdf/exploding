@@ -3,11 +3,13 @@
  */
 package uk.ac.horizon.ug.exploding.clientapi;
 
+import java.io.StringWriter;
 import java.util.Enumeration;
 
 import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 import uk.ac.horizon.ug.exploding.db.ClientConversation;
 import uk.ac.horizon.ug.exploding.db.Game;
@@ -59,10 +61,8 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 
 		// Game Changes only (sent to own client; sent on intial join)
 		// - state changes, current year
-		/*
 		q = new QueryTemplate(uk.ac.horizon.ug.exploding.db.Game.class);
 		dataspace.getEventManagement().addIDataspaceObjectsListener(this, q, DataspaceObjectsEvent.OBJECT_MODIFIED_MASK);
-		*/
 	}
 
 	public IDataspace getDataspace()
@@ -110,7 +110,9 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 
 	private static String marshallFact(Object oldVal) {
 		XStream xs = ClientController.getXStream();
-		return xs.toXML(oldVal);
+		StringWriter sw = new StringWriter();
+		xs.marshal(oldVal, new CompactWriter(sw));
+		return sw.getBuffer().toString();
 	}
 
 	public void handleConversationEnd(ClientConversation cc, ISession session) {
@@ -280,7 +282,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 
 	private boolean matches(Object matchObject, ClientConversation conversation) {
 		// APPLICATION-SPECIFIC
-		// game
+		// tell own game
 		if (matchObject instanceof Game) {
 			Game game = (Game)matchObject;
 			if (game.getID()!=null && game.getID().equals(conversation.getGameID()))

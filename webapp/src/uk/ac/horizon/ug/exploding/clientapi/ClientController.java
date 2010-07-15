@@ -3,8 +3,12 @@
  */
 package uk.ac.horizon.ug.exploding.clientapi;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +31,7 @@ import uk.ac.horizon.ug.exploding.db.TimelineEvent;
 import uk.ac.horizon.ug.exploding.db.Zone;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.CompactWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import equip2.core.IDataspace;
@@ -166,10 +171,18 @@ public class ClientController {
     		player.setCanAuthor(false); // have to earn the ability
     		player.setPoints(0);
     		player.setNewMemberQuota(1);
+    		QueryTemplate pq = new QueryTemplate(Player.class);
+    		pq.addConstraintEq("gameID", game.getID());
+    		int playerCount = session.count(pq);
+    		player.setColourRef(playerCount+1);
     		// Client will send an update when it can with Position
     		//player.setPosition(position);
     		session.add(player);
     		logger.info("Created player "+player.getID()+" ("+player.getName()+") for client "+login.getClientId());
+    	}
+    	else if (player.getName()!=login.getPlayerName() && login.getPlayerName()!=null && !login.getPlayerName().equals(player.getName())) {
+    		logger.info("Updating player "+player.getID()+" name to "+login.getPlayerName()+" (was "+player.getName()+")");
+    		player.setName(login.getPlayerName());
     	}
     	
     	// create conversation
@@ -193,18 +206,16 @@ public class ClientController {
     	
     	LoginReplyMessage reply = new LoginReplyMessage();
     	
-    	reply.setGameStatus(GameStatus.ACTIVE);
+    	reply.setGameStatus(GameStatus.valueOf(game.getState()));
     	reply.setGameId(game.getID());
     	reply.setMessage(welcomeBack ? "Welcome back" : "Welcome");
     	reply.setStatus(LoginReplyMessage.Status.OK);
 
     	response.setStatus(200);
-    	PrintWriter pw = response.getWriter();
-    	//xs.toXML(reply, pw);
-    	String xml = xs.toXML(reply);
-    	logger.info("Sent login reply: "+xml+" (from "+reply+")");
-    	pw.print(xml);
-    	pw.close();
+    	Writer w = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), Charset.forName("UTF-8")));
+    	xs.marshal(reply, new CompactWriter(w));
+    	w.close();
+    	logger.info("Sent login reply: "+reply);
     	return null;
     }
     private void returnLoginError(Status status, String message, HttpServletResponse response) throws IOException {
@@ -268,9 +279,9 @@ public class ClientController {
 
 		
 		response.setStatus(200);
-    	PrintWriter pw = response.getWriter();
-    	xs.toXML(responses, pw);
-    	pw.close();
+    	Writer w = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), Charset.forName("UTF-8")));
+    	xs.marshal(responses, new CompactWriter(w));
+    	w.close();
     	
     	return null;
     }
@@ -362,31 +373,58 @@ public class ClientController {
 		}
 		
 		if (newVal instanceof Member) {
-			if (message.getType()!=MessageType.ADD_FACT)
-				throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Attempted "+message.getType()+" on Member (can only add)");
-			
-			Player player = (Player)session.get(Player.class, conversation.getPlayerID());
-			if (player==null) 
-				throw new ClientAPIException(MessageStatusType.INTERNAL_ERROR, "conversation Player "+conversation.getPlayerID()+" not found");
-			if (player.getNewMemberQuota()<=0) 
-				throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Player "+player.getID()+" tried to create a Member but has no newMemberQuota left");
-			// reduce quota
-			player.setNewMemberQuota(player.getNewMemberQuota()-1);
-			
-			Member newMember = (Member)newVal;
-			newMember.setID(IDAllocator.getNewID(session, Member.class, "M", null));
-			newMember.setPlayerID(conversation.getPlayerID());
-			newMember.setGameID(conversation.getGameID());
-			newMember.setCarried(false);
-			newMember.unsetParentMemberID();
-			// check fields
-			if (!newMember.isSetAction() || !newMember.isSetBrains() || !newMember.isSetHealth() || ! newMember.isSetPosition() || !newMember.isSetZone()) 
-				throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "new Member is missing required fields: "+newMember);
-			session.add(newMember);
-			logger.info("Adding new Member "+newMember+" for player "+conversation.getPlayerID());
-			return;
-		}		
+			if (message.getType()==MessageType.ADD_FACT) {
 
+				Player player = (Player)session.get(Player.class, conversation.getPlayerID());
+				if (player==null) 
+					throw new ClientAPIException(MessageStatusType.INTERNAL_ERROR, "conversation Player "+conversation.getPlayerID()+" not found");
+				if (player.getNewMemberQuota()<=0) 
+					throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Player "+player.getID()+" tried to create a Member but has no newMemberQuota left");
+				// reduce quota
+				player.setNewMemberQuota(player.getNewMemberQuota()-1);
+
+				Member newMember = (Member)newVal;
+				newMember.setID(IDAllocator.getNewID(session, Member.class, "M", null));
+				newMember.setPlayerID(conversation.getPlayerID());
+				newMember.setGameID(conversation.getGameID());
+				newMember.setCarried(false);
+				newMember.unsetParentMemberID();
+				if (player.isSetColourRef())
+					newMember.setColourRef(player.getColourRef());
+				// parent?!
+				QueryTemplate mt = new QueryTemplate(Member.class);
+				mt.addConstraintEq("playerID", conversation.getPlayerID());
+				mt.addConstraintIsNull("parentMemberID");
+				Object parentMembers []= session.match(mt);
+				if (parentMembers.length>0) {
+					Member parentMember = (Member)parentMembers[0];
+					newMember.setParentMemberID(parentMember.getID());
+				}
+				// check fields
+				if (!newMember.isSetAction() || !newMember.isSetBrains() || !newMember.isSetHealth() || ! newMember.isSetPosition() || !newMember.isSetZone() || !newMember.isSetName()) 
+					throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "new Member is missing required fields: "+newMember);
+				session.add(newMember);
+				logger.info("Adding new Member "+newMember+" for player "+conversation.getPlayerID());
+				return;
+			}		
+			else if (message.getType()==MessageType.UPD_FACT) {
+				Member newMember = (Member)message.newVal;
+				Member member = (Member)session.get(Member.class, newMember.getID());
+				if (member==null)
+					throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "update unknown Member "+newMember.getID());
+				if (!member.getPlayerID().equals(conversation.getPlayerID()))
+					throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "update Member "+newMember.getID()+" owned by another Player ("+member.getPlayerID()+" vs "+conversation.getPlayerID());
+				if (newMember.isSetCarried())
+					member.setCarried(newMember.getCarried());
+				member.setPosition(newMember.getPosition());
+				if (newMember.isSetZone())
+					member.setZone(newMember.getZone());
+				logger.info("Updated Member "+member.getID()+": carried="+member.getCarried()+", zone="+member.getZone()+", position="+member.getPosition());
+				return;
+			}
+			else
+				throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Attempted "+message.getType()+" on Member (can only add/update)");
+		}
 		if (newVal instanceof TimelineEvent) {
 			if (message.getType()!=MessageType.ADD_FACT)
 				throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Attempted "+message.getType()+" on TimelineEvent (can only add)");
