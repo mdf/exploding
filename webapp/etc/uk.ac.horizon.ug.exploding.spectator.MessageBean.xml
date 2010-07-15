@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.spectator" class="MessageBean">
+	
+	<property name="messages" javatype="uk.ac.horizon.ug.exploding.db.Message[]" />
+
+</bean>

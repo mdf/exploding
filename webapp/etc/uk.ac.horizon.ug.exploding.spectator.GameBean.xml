@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.spectator" class="GameBean">
+	
+	<property name="game" javatype="uk.ac.horizon.ug.exploding.db.Game" />
+	
+	<property name="players" javatype="uk.ac.horizon.ug.exploding.db.Player[]" />
+	
+	<property name="members" javatype="uk.ac.horizon.ug.exploding.db.Member[]" />
+
+</bean>

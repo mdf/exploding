@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/messages.html">spectatorViewMultiController</prop>
+				<prop key="/game.html">spectatorViewMultiController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- flash spectator client controller -->
+	<bean id="internalPathMethodNameResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver"/>
+	
+	<bean id="spectatorViewMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+		<property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+		<property name="delegate"><ref bean="spectatorController"/></property>
+	</bean>
+
+	<bean id="spectatorController" class="uk.ac.horizon.ug.exploding.spectator.SpectatorController">
+		<property name="dataspace"><ref bean="dataspace"/></property>
+	</bean>
+
+</beans>
