@@ -59,10 +59,8 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 
 		// Game Changes only (sent to own client; sent on intial join)
 		// - state changes, current year
-		/*
 		q = new QueryTemplate(uk.ac.horizon.ug.exploding.db.Game.class);
 		dataspace.getEventManagement().addIDataspaceObjectsListener(this, q, DataspaceObjectsEvent.OBJECT_MODIFIED_MASK);
-		*/
 	}
 
 	public IDataspace getDataspace()

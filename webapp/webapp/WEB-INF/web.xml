@@ -124,7 +124,21 @@
 	<servlet-mapping>
 		<servlet-name>rpc</servlet-name>
 		<url-pattern>/rpc/*</url-pattern>
-	</servlet-mapping> 		
+	</servlet-mapping> 	
+	
+  	<!-- spectator interface -->
+  
+	<servlet>
+		<servlet-name>spectator</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>spectator</servlet-name>
+		<url-pattern>/spectator/*</url-pattern>
+	</servlet-mapping> 
+			
 	
 	<!-- =====================================================================
 		General web application configuration - home, errors, etc.

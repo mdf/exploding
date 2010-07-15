@@ -133,63 +133,6 @@
 	        <property name="fixedPrefix" value="P"/>
 	      </bean>
 	    </entry>
-      	<!-- Compliant -->
-		<entry key="mrl.compliant.db.Annotation">
-	      <bean class="equip2.spring.IDAllocationBean">
-	        <property name="fixedPrefix" value="A"/>
-	      </bean>
-	    </entry>
-		<entry key="mrl.compliant.db.PerformerRole">
-	      <bean class="equip2.spring.IDAllocationBean">
-	        <property name="fixedPrefix" value="PR"/>
-	      </bean>
-	    </entry>	    
-		<entry key="mrl.compliant.db.Player">
-	      <bean class="equip2.spring.IDAllocationBean">
-	        <property name="fixedPrefix" value="P"/>
-	      </bean>
-	    </entry>
-		<entry key="mrl.compliant.db.ScriptAction">
-	      <bean class="equip2.spring.IDAllocationBean">
-	        <property name="fixedPrefix" value="SA"/>
-	      </bean>
-	    </entry>
-		<entry key="mrl.compliant.db.State">
-	      <bean class="equip2.spring.IDAllocationBean">
-	        <property name="fixedPrefix" value="ST"/>
-	      </bean>
-	    </entry>	    
-		<entry key="mrl.compliant.db.StateEvent">
-	      <bean class="equip2.spring.IDAllocationBean">
-	        <property name="fixedPrefix" value="STE"/>
-	      </bean>
-	    </entry>
-	    <!-- Asterisk -->
-		<entry key="mrl.asterisk.db.Call">
-	      <bean class="equip2.spring.IDAllocationBean">
-	        <property name="fixedPrefix" value="AC"/>
-	      </bean>
-	    </entry>
-		<entry key="mrl.asterisk.db.CallEvent">
-	      <bean class="equip2.spring.IDAllocationBean">
-	        <property name="fixedPrefix" value="ACE"/>
-	      </bean>
-	    </entry>
-	    <entry key="mrl.asterisk.db.CallAction">
-	      <bean class="equip2.spring.IDAllocationBean">
-	        <property name="fixedPrefix" value="ACA"/>
-	      </bean>
-	    </entry>
-		<entry key="mrl.asterisk.db.CallScript">
-	      <bean class="equip2.spring.IDAllocationBean">
-	        <property name="fixedPrefix" value="ACS"/>
-	      </bean>
-	    </entry>
-		<entry key="mrl.asterisk.db.Phone">
-	      <bean class="equip2.spring.IDAllocationBean">
-	        <property name="fixedPrefix" value="APH"/>
-	      </bean>
-	    </entry>
       </map>
     </property>
 	</bean>
@@ -204,6 +147,8 @@
 		init-method="startup">
 		<property name="dataspace"><ref bean="dataspace"/></property>
 		<property name="timeRatio" value="0.001"/>
+		<property name="spawnRadius" value="0.001"/>
+		<property name="proximityRadius" value="0.001"/>
 	</bean>
 
 	<bean id="engineTickJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

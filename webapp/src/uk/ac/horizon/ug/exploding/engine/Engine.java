@@ -324,7 +324,8 @@ public class Engine
 			// FIXME error
 		}		
 		
-		member.setZone(this.getZoneID(game.getContentGroupID(), member.getPosition()));
+		// client is now setting zone
+		//member.setZone(this.getZoneID(game.getContentGroupID(), member.getPosition()));
 		
 	   	QueryTemplate mq = new QueryTemplate(Member.class);
 	   	mq.addConstraintEq("gameID", game.getID());
@@ -707,6 +708,10 @@ public class Engine
 		   				offspring.setPlayerID(member.getPlayerID());
 		   				offspring.setParentMemberID(member.getID());
 		   				offspring.setHealth(4);
+		   				offspring.setColourRef(member.getColourRef());
+		   				
+		   				// FIXME - server generated offspring names, how are they generated?
+		   				offspring.setName(member.getName());
 		   				
 		   				offspring.setWealth(member.getWealth() + ((random.nextInt(2)>0) ? -1 : 1));
 		   				if(offspring.getWealth()>10)
@@ -749,6 +754,7 @@ public class Engine
 		   				
 		   				offspring.setPosition(p);
 		   				
+		   				// still need server zones for this?
 		   				offspring.setZone(this.getZoneID(game.getContentGroupID(), p));
 		   				
 		   				session.add(offspring);
