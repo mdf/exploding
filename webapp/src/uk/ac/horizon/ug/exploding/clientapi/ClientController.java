@@ -387,7 +387,8 @@ public class ClientController {
 				newMember.setID(IDAllocator.getNewID(session, Member.class, "M", null));
 				newMember.setPlayerID(conversation.getPlayerID());
 				newMember.setGameID(conversation.getGameID());
-				newMember.setCarried(false);
+				if (!newMember.isSetCarried())
+					newMember.setCarried(false);
 				newMember.unsetParentMemberID();
 				if (player.isSetColourRef())
 					newMember.setColourRef(player.getColourRef());
@@ -401,7 +402,7 @@ public class ClientController {
 					newMember.setParentMemberID(parentMember.getID());
 				}
 				// check fields
-				if (!newMember.isSetAction() || !newMember.isSetBrains() || !newMember.isSetHealth() || ! newMember.isSetPosition() || !newMember.isSetZone() || !newMember.isSetName()) 
+				if (!newMember.isSetAction() || !newMember.isSetBrains() || !newMember.isSetHealth() || !newMember.isSetCarried() || (!newMember.getCarried() && (! newMember.isSetPosition() || !newMember.isSetZone())) || !newMember.isSetName()) 
 					throw new ClientAPIException(MessageStatusType.INVALID_REQUEST, "new Member is missing required fields: "+newMember);
 				session.add(newMember);
 				logger.info("Adding new Member "+newMember+" for player "+conversation.getPlayerID());
