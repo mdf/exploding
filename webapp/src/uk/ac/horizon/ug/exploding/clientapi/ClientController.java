@@ -335,7 +335,6 @@ public class ClientController {
 				break;
 			}
 
-			session.end();
 			// OK!
 			responses.addAll(newResponses);
 		}
@@ -343,6 +342,8 @@ public class ClientController {
 			logger.warn("Handling message "+message, e);
 			responses.add(createErrorMessage(message, MessageStatusType.INTERNAL_ERROR, "Exception: "+e));			
 		}
+		// mdf
+		session.end();
 	}
 	private void handleFactOperation(ClientConversation conversation, Message message, List<Message> responses, ISession session) throws IllegalArgumentException, ClientAPIException, InstantiationException, IllegalAccessException {
 
