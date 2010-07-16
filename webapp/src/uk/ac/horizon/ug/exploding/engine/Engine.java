@@ -800,7 +800,7 @@ public class Engine
 		   				msg.setHandled(false);
 		   				msg.setTitle("New member");
 		   				
-		   				if(offspring.getZone()!=0)
+		   				if(offspring.isSetZone() && offspring.getZone()!=0)
 		   				{
 			   				QueryTemplate zqt = new QueryTemplate(Zone.class);
 			   				zqt.addConstraintEq("orgId", offspring.getZone());
@@ -830,18 +830,19 @@ public class Engine
 	   		}
 	   	}
 	   	
-	   	Message msg = new Message();
-	   	msg.setCreateTime(System.currentTimeMillis());
-	   	msg.setYear(game.getYear());
-	   	msg.setType(Message.MSG_TIMELINE_CONTENT);
-	   	msg.setTitle(event.getName());
-	   	msg.setDescription(event.getDescription());
-	   	msg.setHandled(false);
-		
+
 	   	Iterator<String> it = playerIDs.iterator();
 	   	
 	   	while(it.hasNext())
 	   	{
+		   	Message msg = new Message();
+		   	msg.setCreateTime(System.currentTimeMillis());
+		   	msg.setYear(game.getYear());
+		   	msg.setType(Message.MSG_TIMELINE_CONTENT);
+		   	msg.setTitle(event.getName());
+		   	msg.setDescription(event.getDescription());
+		   	msg.setHandled(false);
+			
 		   	msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
 		   	msg.setPlayerID(it.next());
 		   	logger.info("Player " + msg.getPlayerID() + " affected by event " + event.getID());
