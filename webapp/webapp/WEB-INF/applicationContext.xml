@@ -35,25 +35,23 @@
 	Note that the current directory on Jetty & Windows/Tomcat is the main
 	application directory, but not so on Linux/Tomcat, where a full path may
 	be required. -->
-  <!-- uncomment to enable logging (also the constructor argument for the dataspace, below)
+  <!-- uncomment to enable logging (also the constructor argument for the dataspace, below) -->
   <bean id="dataspaceLogger" class="equip2.core.logging.j2se.SimpleFileDataspaceLogger">
-    <constructor-arg><value>/usr/local/tomcat-compliant/logs</value></constructor-arg>
-    <constructor-arg><value>compliant-dataspace-log-</value></constructor-arg>
+    <constructor-arg><value>/usr/local/tomcat-exploding/logs</value></constructor-arg>
+    <constructor-arg><value>exploding-dataspace-log-</value></constructor-arg>
     <constructor-arg><value>.equip2log.hessian</value></constructor-arg>
     <constructor-arg><value>true</value></constructor-arg>
     <constructor-arg><value>1</value></constructor-arg>
     <constructor-arg><map><entry key="application" value="compliant"/></map></constructor-arg>
   </bean>
-   -->
-
   <!-- the (single) persistent EQUIP2 dataspace, which currently by default will read
        hibernate configuration from classes/hibernate.cfg.xml -->
   <bean id="dataspace" class="equip2.persist.hibernate.j2se.PersistentDataspace" destroy-method="shutdown">
     <!-- logger arg -->
     <!-- uncomment this argument and the dataspaceLogger, above,
 	 to enable logging (make sure the log dir above exists):
-    <constructor-arg><ref bean="dataspaceLogger"/></constructor-arg>
      -->
+    <constructor-arg><ref bean="dataspaceLogger"/></constructor-arg>
   </bean>
 
   <!-- register dataspace with equip2InitialContext as name
@@ -118,6 +116,16 @@
     <property name="idAllocations">
       <map>
       	<!-- Exploding -->
+		<entry key="uk.ac.horizon.ug.exploding.db.ContentGroup">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="CG"/>
+	      </bean>
+	    </entry> 
+		<entry key="uk.ac.horizon.ug.exploding.db.Game">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="G"/>
+	      </bean>
+	    </entry>      	        	
 		<entry key="uk.ac.horizon.ug.exploding.db.Member">
 	      <bean class="equip2.spring.IDAllocationBean">
 	        <property name="fixedPrefix" value="M"/>
@@ -133,6 +141,16 @@
 	        <property name="fixedPrefix" value="P"/>
 	      </bean>
 	    </entry>
+		<entry key="uk.ac.horizon.ug.exploding.db.TimelineEvent">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="TE"/>
+	      </bean>
+	    </entry>
+		<entry key="uk.ac.horizon.ug.exploding.db.Zone">
+	      <bean class="equip2.spring.IDAllocationBean">
+	        <property name="fixedPrefix" value="ZO"/>
+	      </bean>
+	    </entry>	    	    
       </map>
     </property>
 	</bean>
@@ -146,9 +164,9 @@
 	<bean id="engineController" class="uk.ac.horizon.ug.exploding.engine.Engine"
 		init-method="startup">
 		<property name="dataspace"><ref bean="dataspace"/></property>
-		<property name="timeRatio" value="0.001"/>
-		<property name="spawnRadius" value="0.001"/>
-		<property name="proximityRadius" value="0.001"/>
+		<property name="timeRatio" value="0.003333333"/>
+		<property name="spawnRadius" value="0.0002"/>
+		<property name="proximityRadius" value="0.0002"/>
 	</bean>
 
 	<bean id="engineTickJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

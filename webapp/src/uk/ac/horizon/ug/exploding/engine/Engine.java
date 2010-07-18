@@ -283,11 +283,10 @@ public class Engine
 		    	{
 		    		TimelineEvent e = (TimelineEvent) es[j];
 		    		
-		    		logger.info("found event: " + e.getName());
-		    		
 		    		if(e.isSetTrack() && e.getTrack()==0)
 		    		{
 		    			// year event
+			    		logger.info("Year event: " + e.getName());
 		    			g.setYear(e.getName());
 		    			session.update(g);
 		    		}
@@ -297,7 +296,7 @@ public class Engine
 		    		}
 		    	}
 		    	
-		    	logger.info(gt.getGameTime() + " " + currentGameTime);
+		    	logger.info("Done events from " + gt.getGameTime() + " to " + currentGameTime);
 		    	
 		    	gt.setGameTime(currentGameTime);
 			}
@@ -322,6 +321,8 @@ public class Engine
 		if(game==null)
 		{
 			// FIXME error
+			session.end();
+			return;
 		}		
 		
 		// client is now setting zone
@@ -393,10 +394,8 @@ public class Engine
 		   				msg.setType(Message.MSG_MEMBER_DIED);
 		   				msg.setPlayerID(member.getPlayerID());
 		   				msg.setHandled(false);
-
-		   				// FIXME - use these?
-		   				//msg.setTitle("");
-		   				//msg.setDescription("");
+		   				msg.setTitle("Member died");
+		   				msg.setDescription(ContextMessages.MSG_DEATH);
 		   			
 		   				session.add(msg);
 			   			
@@ -462,24 +461,38 @@ public class Engine
 		   				action = 0;
 		   			}
 		   			member.setAction(action);	
-
-		   			other.setPlayerID(member.getPlayerID());
-		   			other.setParentMemberID(member.getID());
-	   				session.update(other);
-	   				
+		   			
+	   				// message them
 	   				Message msg = new Message();
+	   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+	   				msg.setCreateTime(System.currentTimeMillis());
+	   				msg.setYear(game.getYear());
+	   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
+	   				msg.setPlayerID(other.getPlayerID());
+	   				msg.setHandled(false);
+	   				msg.setTitle("Lost a member");
+	   				msg.setDescription(ContextMessages.MSG_ASSIMILATED);
+
+	   				session.add(msg);
+	   				
+	   				// message us
+	   				msg = new Message();
 	   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
 	   				msg.setCreateTime(System.currentTimeMillis());
 	   				msg.setYear(game.getYear());
 	   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
 	   				msg.setPlayerID(member.getPlayerID());
 	   				msg.setHandled(false);
-
-	   				// FIXME - use these?
-	   				//msg.setTitle("");
-	   				//msg.setDescription("");
+	   				msg.setTitle("New member");
+	   				msg.setDescription(ContextMessages.MSG_ASSIMILATE);
 	   			
 	   				session.add(msg);
+	   				
+	   				// assimilate
+		   			other.setPlayerID(member.getPlayerID());
+		   			other.setParentMemberID(member.getID());
+	   				session.update(other);
+	   				
 	   			}
 	   			else if(member.getAction()==other.getAction())
 	   			{
@@ -500,11 +513,9 @@ public class Engine
 		   				action = 0;
 		   			}
 		   			other.setAction(action);
-		   			
-		   			member.setPlayerID(other.getPlayerID());
-		   			member.setParentMemberID(other.getID());
-	   				session.update(member);
+		   			session.update(other);
 	   				
+		   			// message us
 	   				Message msg = new Message();
 	   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
 	   				msg.setCreateTime(System.currentTimeMillis());
@@ -512,12 +523,28 @@ public class Engine
 	   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
 	   				msg.setPlayerID(member.getPlayerID());
 	   				msg.setHandled(false);
-
-	   				// FIXME - use these?
-	   				//msg.setTitle("");
-	   				//msg.setDescription("");
+	   				msg.setTitle("Lost community member");
+	   				msg.setDescription(ContextMessages.MSG_ASSIMILATED);
 	   			
 	   				session.add(msg);
+	   				
+	   				// message them
+	   				msg = new Message();
+	   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+	   				msg.setCreateTime(System.currentTimeMillis());
+	   				msg.setYear(game.getYear());
+	   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
+	   				msg.setPlayerID(member.getPlayerID());
+	   				msg.setHandled(false);
+	   				msg.setTitle("Lost community member");
+	   				msg.setDescription(ContextMessages.MSG_ASSIMILATE);
+	   			
+	   				session.add(msg);
+	   				
+	   				// assimilate	   				
+		   			member.setPlayerID(other.getPlayerID());
+		   			member.setParentMemberID(other.getID());
+	   				session.update(member);
 	   			}
 	   		}
 	   	}
@@ -574,6 +601,8 @@ public class Engine
 	   	}
 	   	
 	   	Object [] ms = session.match(mq);
+
+		logger.info("Content event: " + event.getID() + " " + event.getName() + " (zone: " + event.getZoneId() + ") affects " + ms.length + " members");
 	   	
 	   	Set<String> playerIDs = new HashSet<String>();
 	   	
@@ -584,11 +613,16 @@ public class Engine
 	   		// this *player* needs to be notified
 	   		playerIDs.add(member.getPlayerID());
 	   		
+	   		/*
+	   		 * gameState.xml contains events flagged absolute/relative
+	   		 * but *all* appear to be relative
+	   		 * 
 	   		if(event.getAbsolute()==1)
 	   		{
 	   			// FIXME absolute events?!   			
 	   		}
 	   		else
+	   		*/
 	   		{
 	   			// FIXME min/max ranges?!
 	   			// - there are none in gameState.xml still
@@ -618,10 +652,8 @@ public class Engine
 			   				msg.setType(Message.MSG_MEMBER_DIED);
 			   				msg.setPlayerID(member.getPlayerID());
 			   				msg.setHandled(false);
-			   				
-			   				// FIXME - use these?
 			   				msg.setTitle(event.getName());
-			   				//msg.setDescription("");
+			   				msg.setDescription(ContextMessages.MSG_DEATH);
 			   				
 			   				session.add(msg);
 			   				
@@ -711,7 +743,7 @@ public class Engine
 		   				offspring.setColourRef(member.getColourRef());
 		   				
 		   				// FIXME - server generated offspring names, how are they generated?
-		   				offspring.setName(member.getName());
+		   				offspring.setName(member.getName() + random.nextInt(1000));
 		   				
 		   				offspring.setWealth(member.getWealth() + ((random.nextInt(2)>0) ? -1 : 1));
 		   				if(offspring.getWealth()>10)
@@ -766,10 +798,29 @@ public class Engine
 		   				msg.setType(Message.MSG_MEMBER_CREATED);
 		   				msg.setPlayerID(member.getPlayerID());
 		   				msg.setHandled(false);
-
-		   				// FIXME - use these?
-		   				//msg.setTitle("");
-		   				//msg.setDescription("");
+		   				msg.setTitle("New member");
+		   				
+		   				if(offspring.isSetZone() && offspring.getZone()!=0)
+		   				{
+			   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+			   				zqt.addConstraintEq("orgId", offspring.getZone());
+			   				
+			   				Object [] zs = session.match(zqt);
+			   				
+			   				if(zs.length==1)
+			   				{
+			   					Zone z = (Zone) zs[0];
+				   				msg.setDescription(ContextMessages.MSG_BIRTH.replace("<zone>", z.getName()));
+			   				}
+			   				else
+			   				{
+				   				msg.setDescription(ContextMessages.MSG_BIRTH.replace("<zone>", "your community"));	
+			   				}
+		   				}
+		   				else
+		   				{
+			   				msg.setDescription(ContextMessages.MSG_BIRTH.replace("<zone>", "your community"));
+		   				}	   				
 		   			
 		   				session.add(msg);
 	   				}
@@ -779,20 +830,22 @@ public class Engine
 	   		}
 	   	}
 	   	
-	   	Message msg = new Message();
-	   	msg.setCreateTime(System.currentTimeMillis());
-	   	msg.setYear(game.getYear());
-	   	msg.setType(Message.MSG_TIMELINE_CONTENT);
-	   	msg.setTitle(event.getName());
-	   	msg.setDescription(event.getDescription());
-	   	msg.setHandled(false);
-		
+
 	   	Iterator<String> it = playerIDs.iterator();
 	   	
 	   	while(it.hasNext())
 	   	{
+		   	Message msg = new Message();
+		   	msg.setCreateTime(System.currentTimeMillis());
+		   	msg.setYear(game.getYear());
+		   	msg.setType(Message.MSG_TIMELINE_CONTENT);
+		   	msg.setTitle(event.getName());
+		   	msg.setDescription(event.getDescription());
+		   	msg.setHandled(false);
+			
 		   	msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
 		   	msg.setPlayerID(it.next());
+		   	logger.info("Player " + msg.getPlayerID() + " affected by event " + event.getID());
 			session.add(msg);
 	   	}
 	   		
