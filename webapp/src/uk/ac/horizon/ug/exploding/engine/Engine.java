@@ -225,11 +225,40 @@ public class Engine
 							Member member = (Member) doe.getNewValue();
 							Member oldMember = (Member) doe.getOldValue();
 							
-							if(oldMember.getCarried()==true && member.getCarried()==false)
+							// support first member as avatar (?)
+							if(member.getCarried() == false)
 							{
-								// check zones, consequences
-								memberPlaced(member);
-							}							
+								if(oldMember.getCarried()==true)
+								{
+									// placed
+									memberPlaced(member);
+								}
+								else
+								{
+									if(member.isSetPosition())
+									{
+										if(oldMember.isSetPosition())
+										{
+											double oldLat = oldMember.getPosition().getLatitude();
+											double oldLon = oldMember.getPosition().getLongitude();
+
+											double newLat = member.getPosition().getLatitude();
+											double newLon = member.getPosition().getLongitude();
+											
+											if(newLat!=oldLat && newLon!=oldLon)
+											{
+												// moved
+												memberPlaced(member);												
+											}
+										}
+										else
+										{
+											// moved
+											memberPlaced(member);											
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -276,6 +305,7 @@ public class Engine
 		     	eq.addConstraintGt("startTime", gt.getGameTime());
 		     	eq.addConstraintLe("startTime", currentGameTime);
 		    	eq.addOrder("startTime");
+		    	eq.addConstraintEq("enabled", 1);
 		    	
 		    	Object [] es = session.match(eq);
 		    	
@@ -441,6 +471,12 @@ public class Engine
 	   		Member other = (Member) ms[i];
 	   		
 	   		if(other.getPlayerID().equals(member.getPlayerID()))
+	   		{
+	   			continue;
+	   		}
+	   		
+	   		// cannot assimilate only member
+	   		if(other.getParentMemberID()==null)
 	   		{
 	   			continue;
 	   		}
@@ -629,85 +665,133 @@ public class Engine
 	   			
 	   			if(event.getHealth()!=0)
 	   			{
+	   				int max = 10;
+	   				int min = 0;
+	   				
+	   				if(event.isSetHealthMax() && event.getHealthMax()!=0)
+	   					max = event.getHealthMax();
+	   				if(event.isSetHealthMin())
+	   					min = event.getHealthMin();
+
 		   			int health = member.getHealth();
-		   			health += event.getHealth();
-		   					   			
-		   			if(health>10)
-		   			{
-		   				health = 10;
-		   			}
-		   			else if(health<=0)
-		   			{
-			   			// initial member
-			   			if(member.getParentMemberID()==null || member.getParentMemberID().length()==0)
+	   				
+		   			if(health>=min && health<=max)
+		   			{			   			
+			   			health += event.getHealth();
+			   					   			
+			   			if(health>10)
 			   			{
-			   				health = 1;
+			   				health = 10;
 			   			}
-			   			else
+			   			else if(health<=0)
 			   			{
-			   				Message msg = new Message();
-			   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-			   				msg.setCreateTime(System.currentTimeMillis());
-			   				msg.setYear(game.getYear());
-			   				msg.setType(Message.MSG_MEMBER_DIED);
-			   				msg.setPlayerID(member.getPlayerID());
-			   				msg.setHandled(false);
-			   				msg.setTitle(event.getName());
-			   				msg.setDescription(ContextMessages.MSG_DEATH);
-			   				
-			   				session.add(msg);
-			   				
-			   				session.remove(member);
-			   				continue;
+				   			// initial member
+				   			if(member.getParentMemberID()==null || member.getParentMemberID().length()==0)
+				   			{
+				   				health = 1;
+				   			}
+				   			else
+				   			{
+				   				Message msg = new Message();
+				   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+				   				msg.setCreateTime(System.currentTimeMillis());
+				   				msg.setYear(game.getYear());
+				   				msg.setType(Message.MSG_MEMBER_DIED);
+				   				msg.setPlayerID(member.getPlayerID());
+				   				msg.setHandled(false);
+				   				msg.setTitle(event.getName());
+				   				msg.setDescription(ContextMessages.MSG_DEATH);
+				   				
+				   				session.add(msg);
+				   				
+				   				session.remove(member);
+				   				continue;
+				   			}
 			   			}
+			   			
+			   			member.setHealth(health);
 		   			}
-		   			
-		   			member.setHealth(health);		   			
 	   			}
 	   			
 	   			if(event.getWealth()!=0)
 	   			{
+	   				int max = 10;
+	   				int min = 0;
+	   				
+	   				if(event.isSetWealthMax() && event.getWealthMax()!=0)
+	   					max = event.getWealthMax();
+	   				if(event.isSetWealthMin())
+	   					min = event.getWealthMin();
+
 		   			int wealth = member.getWealth();
-		   			wealth += event.getWealth();
-		   			if(wealth>10)
-		   			{
-		   				wealth = 10;
+	   				
+		   			if(wealth>=min && wealth<=max)
+		   			{	
+			   			wealth += event.getWealth();
+			   			if(wealth>10)
+			   			{
+			   				wealth = 10;
+			   			}
+			   			else if(wealth<0)
+			   			{
+			   				wealth = 0;
+			   			}
+			   			member.setWealth(wealth);
 		   			}
-		   			else if(wealth<0)
-		   			{
-		   				wealth = 0;
-		   			}
-		   			member.setWealth(wealth);		   			
 	   			}
 	   			
 	   			if(event.getAction()!=0)
 	   			{
+	   				int max = 10;
+	   				int min = 0;
+	   				
+	   				if(event.isSetActionMax() && event.getActionMax()!=0)
+	   					max = event.getActionMax();
+	   				if(event.isSetActionMin())
+	   					min = event.getActionMin();
+
 		   			int action = member.getAction();
-		   			action += event.getAction();
-		   			if(action>10)
-		   			{
-		   				action = 10;
+	   				
+		   			if(action>=min && action<=max)
+		   			{	
+			   			action += event.getAction();
+			   			if(action>10)
+			   			{
+			   				action = 10;
+			   			}
+			   			else if(action<0)
+			   			{
+			   				action = 0;
+			   			}
+			   			member.setAction(action);
 		   			}
-		   			else if(action<0)
-		   			{
-		   				action = 0;
-		   			}
-		   			member.setAction(action);		   			
 	   			}
 	   			
 	   			if(event.getBrains()!=0)
 	   			{
+	   				int max = 10;
+	   				int min = 0;
+	   				
+	   				if(event.isSetBrainsMax() && event.getBrainsMax()!=0)
+	   					max = event.getBrainsMax();
+	   				if(event.isSetBrainsMin())
+	   					min = event.getBrainsMin();
+
 		   			int brains = member.getBrains();
-		   			brains += event.getBrains();
-		   			if(brains>10)
-		   			{
-		   				brains = 10;
+	   				
+		   			if(brains>=min && brains<=max)
+		   			{	
+			   			brains += event.getBrains();
+			   			if(brains>10)
+			   			{
+			   				brains = 10;
+			   			}
+			   			else if(brains<0)
+			   			{
+			   				brains = 0;
+			   			}
+			   			member.setBrains(brains);
 		   			}
-		   			else if(brains<0)
-		   			{
-		   				brains = 0;
-		   			}
-		   			member.setBrains(brains);		   			
 	   			}
 	   			
 	   			// create offspring

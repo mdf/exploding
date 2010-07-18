@@ -22,4 +22,12 @@ public class AttributeSet
 	public Integer absolute;
 
 	public List<Field> fields = new ArrayList<Field>();
+	
+	public HealthOp healthOp;
+
+	public WealthOp wealthOp;
+
+	public ActionOp actionOp;
+
+	public BrainsOp brainsOp;
 }
