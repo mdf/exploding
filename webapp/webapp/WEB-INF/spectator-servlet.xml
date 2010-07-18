@@ -4,6 +4,11 @@
 <beans>
 
 	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref bean="equipSessionReleaseInterceptor" />
+			</list>
+		</property>
 		<property name="mappings">
 			<props>
 				<prop key="/messages.html">spectatorViewMultiController</prop>
