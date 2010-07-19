@@ -50,6 +50,11 @@ public class ContentController extends SimpleFormController
 	{
 		xstream = new XStream(new DomDriver());
 		
+		xstream.alias("healthOp", uk.ac.horizon.ug.exploding.author.model.HealthOp.class);
+		xstream.alias("wealthOp", uk.ac.horizon.ug.exploding.author.model.WealthOp.class);
+		xstream.alias("actionOp", uk.ac.horizon.ug.exploding.author.model.ActionOp.class);
+		xstream.alias("brainsOp", uk.ac.horizon.ug.exploding.author.model.BrainsOp.class);
+		
 		xstream.alias("gameState", uk.ac.horizon.ug.exploding.author.model.GameState.class);
 		xstream.aliasAttribute(uk.ac.horizon.ug.exploding.author.model.GameState.class, "version", "version");
 		
@@ -264,6 +269,34 @@ public class ContentController extends SimpleFormController
 						t.setHealth(te.indexList.attributeSet.health);
 						t.setWealth(te.indexList.attributeSet.wealth);
 						t.setInstant(te.indexList.attributeSet.instant);
+						
+						if(te.indexList.attributeSet.healthOp != null)
+						{
+							logger.info("healthOp" + t.getID());
+							t.setHealthMin(te.indexList.attributeSet.healthOp.minimum);
+							t.setHealthMax(te.indexList.attributeSet.healthOp.maximum);
+						}
+						
+						if(te.indexList.attributeSet.wealthOp != null)
+						{
+							logger.info("wealthOp");
+							t.setWealthMin(te.indexList.attributeSet.wealthOp.minimum);
+							t.setWealthMax(te.indexList.attributeSet.wealthOp.maximum);
+						}
+						
+						if(te.indexList.attributeSet.actionOp != null)
+						{
+							logger.info("actionOp");
+							t.setActionMin(te.indexList.attributeSet.actionOp.minimum);
+							t.setActionMax(te.indexList.attributeSet.actionOp.maximum);
+						}
+						
+						if(te.indexList.attributeSet.brainsOp != null)
+						{
+							logger.info("brainsOp");
+							t.setBrainsMin(te.indexList.attributeSet.brainsOp.minimum);
+							t.setBrainsMax(te.indexList.attributeSet.brainsOp.maximum);
+						}						
 					}
 					
 					session.add(t);
