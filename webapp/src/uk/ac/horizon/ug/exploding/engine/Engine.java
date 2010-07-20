@@ -121,9 +121,12 @@ public class Engine
 		session = dataspace.getSession();		
 		session.getEventManagement().addIDataspaceObjectsListener(new ZoneListener(), zone);
 
+		// player movements
+		Player player = new Player();
+		session.getEventManagement().addIDataspaceObjectsListener(new PlayerListener(), player);
+		
 		// member events
 		Member member = new Member();
-		session = dataspace.getSession();
 		session.getEventManagement().addIDataspaceObjectsListener(new MemberListener(), member);
 	}
 	
@@ -213,7 +216,7 @@ public class Engine
 							if(member.getCarried()==false)
 							{
 								// check zones, consequences
-								memberPlaced(member);
+								memberPlaced(member, false);
 							}
 						}
 					}
@@ -231,7 +234,7 @@ public class Engine
 								if(oldMember.getCarried()==true)
 								{
 									// placed
-									memberPlaced(member);
+									memberPlaced(member, false);
 								}
 								else
 								{
@@ -248,13 +251,13 @@ public class Engine
 											if(newLat!=oldLat && newLon!=oldLon)
 											{
 												// moved
-												memberPlaced(member);												
+												memberPlaced(member, true);												
 											}
 										}
 										else
 										{
 											// moved
-											memberPlaced(member);											
+											memberPlaced(member, true);											
 										}
 									}
 								}
@@ -266,6 +269,64 @@ public class Engine
 			catch (Exception e)
 			{
 				logger.error("Engine::MemberListener error: " +e.toString(), new Throwable());
+			}
+		}			
+	}
+	
+	class PlayerListener implements IDataspaceObjectsListener
+	{
+		PlayerListener(){}
+		
+		public void objectsChanged(DataspaceObjectsEvent dose)
+		{
+			logger.info("Engine::PlayerListener triggered");
+			
+			try
+			{
+				Enumeration changes = dose.getDataspaceObjectEvents();
+				
+				while(changes.hasMoreElements())
+				{
+					DataspaceObjectEvent doe = (DataspaceObjectEvent) changes.nextElement();
+
+					if(doe.getRealChange() == DataspaceObjectEvent.OBJECT_MODIFIED)
+					{
+						if(doe.getNewValue()!=null && doe.getOldValue()!=null)
+						{
+							// slave primary member
+							ISession session = dataspace.getSession();
+							session.begin(ISession.READ_WRITE);
+							
+							Player player = (Player) doe.getNewValue();
+							
+							QueryTemplate mqt = new QueryTemplate(Member.class);
+							mqt.addConstraintEq("playerID", player.getID());
+							mqt.addConstraintIsNull("parentMemberID");
+							
+							Object [] ms = session.match(mqt);
+							
+							if(ms.length>0)
+							{
+								Member member = (Member) ms[0];
+								member.setPosition(player.getPosition());
+								
+								Game game = (Game) session.get(Game.class, member.getGameID());
+								
+								if(game!=null)
+								{
+									member.setZone(getZoneID(game.getContentGroupID(), member.getPosition()));
+									session.update(member);									
+								}
+							}
+							
+							session.end();
+						}
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				logger.error("Engine::PlayerListener error: " +e.toString(), new Throwable());
 			}
 		}			
 	}	
@@ -338,7 +399,7 @@ public class Engine
 	}
 	
 	
-	public void memberPlaced(Member member)
+	public void memberPlaced(Member member, boolean movement)
 	{
 		ISession session = dataspace.getSession();
 		session.begin(ISession.READ_WRITE);
@@ -374,172 +435,99 @@ public class Engine
 
 	   	Object [] ms = session.match(mq);
 	   	
-	   	if(ms.length==0)
-	   	{
-	   		// increase wealth
-	   		// FIXME - does "community member in a new region" mean they've not been here before?
-   			int wealth = member.getWealth();
-   			wealth += 3;
-   			if(wealth>10)
-   			{
-   				wealth = 10;
-   			}
-   			else if(wealth<0)
-   			{
-   				wealth = 0;
-   			}
-   			member.setWealth(wealth);
-	   	}
-	   	else if(ms.length>=9) // excluding ourselves
-	   	{
-	   		// -2 health, +2 knowledge
-	   		// -2 wealth, +2 participation
-	   		// +2 participation
-	   		// FIXME this presumably *doesn't* mean +4 participation?!
-	   		
-	   		for(int i=0; i<ms.length; i++)
-	   		{
-	   			Member other = (Member) ms[i];
-
-	   			int health = other.getHealth();
-	   			health += -2;
-		   					   			
-		   		if(health>10)
-		   		{
-		   			health = 10;
-		   		}
-		   		else if(health<=0)
-		   		{
-			   		// initial member
-			   		if(other.getParentMemberID()==null || other.getParentMemberID().length()==0)
-			   		{
-			   			health = 1;
-			   		}
-			   		else
-			   		{
-		   				Message msg = new Message();
-		   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-		   				msg.setCreateTime(System.currentTimeMillis());
-		   				msg.setYear(game.getYear());
-		   				msg.setType(Message.MSG_MEMBER_DIED);
-		   				msg.setPlayerID(member.getPlayerID());
-		   				msg.setHandled(false);
-		   				msg.setTitle("Member died");
-		   				msg.setDescription(ContextMessages.MSG_DEATH);
-		   			
-		   				session.add(msg);
-			   			
-			   			session.remove(other);
-			   			continue;
-			   		}
-		   		}
-		   			
-		   		other.setHealth(health);		   			
-	   			
-	   			int wealth = other.getWealth();
-		   		wealth += -2;
-		   		if(wealth>10)
-		   		{
-		   			wealth = 10;
-		   		}
-		   		else if(wealth<0)
-		   		{
-		   			wealth = 0;
-		   		}
-		   		other.setWealth(wealth);
+	   	if(movement==false)
+	   	{	   	
+		   	if(ms.length==0)
+		   	{
+		   		// increase wealth
+		   		// FIXME - does "community member in a new region" mean they've not been here before?
+	   			int wealth = member.getWealth();
+	   			wealth += 3;
+	   			if(wealth>10)
+	   			{
+	   				wealth = 10;
+	   			}
+	   			else if(wealth<0)
+	   			{
+	   				wealth = 0;
+	   			}
+	   			member.setWealth(wealth);
+		   	}
+		   	else if(ms.length>=9) // excluding ourselves
+		   	{
+		   		// -2 health, +2 knowledge
+		   		// -2 wealth, +2 participation
+		   		// +2 participation
+		   		// FIXME this presumably *doesn't* mean +4 participation?!
 		   		
-	   			int action = other.getAction();
-	   			action += 2;
-	   			if(action>10)
-	   			{
-	   				action = 10;
-	   			}
-	   			else if(action<0)
-	   			{
-	   				action = 0;
-	   			}
-	   			other.setAction(action);
-	   			
-	   			session.update(other);
-	   		}
-	   	}
-		
-		// proximity to others
-	   	
-	   	for(int i=0; i<ms.length; i++)
-	   	{
-	   		Member other = (Member) ms[i];
-	   		
-	   		if(other.getPlayerID().equals(member.getPlayerID()))
-	   		{
-	   			continue;
-	   		}
-	   		
-	   		// cannot assimilate only member
-	   		if(other.getParentMemberID()==null)
-	   		{
-	   			continue;
-	   		}
-	   		
-	   		if(ZoneCache.distanceBetweenPoints(member.getPosition(), other.getPosition())<proximityRadius)
-	   		{
-	   			if(member.getAction()>other.getAction())
-	   			{
-		   			// we assimilate them
-		   			int action = member.getAction();
-		   			action += 3;
-		   			if(action>10)
-		   			{
-		   				action = 10;
-		   			}
-		   			else if(action<0)
-		   			{
-		   				action = 0;
-		   			}
-		   			member.setAction(action);	
+		   		for(int i=0; i<ms.length; i++)
+		   		{
+		   			Member other = (Member) ms[i];
+	
+		   			int health = other.getHealth();
+		   			health += -2;
+			   					   			
+			   		if(health>10)
+			   		{
+			   			health = 10;
+			   		}
+			   		else if(health<=0)
+			   		{
+				   		// initial member
+				   		if(other.getParentMemberID()==null || other.getParentMemberID().length()==0)
+				   		{
+				   			health = 1;
+				   		}
+				   		else
+				   		{
+			   				Message msg = new Message();
+			   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+			   				msg.setCreateTime(System.currentTimeMillis());
+			   				msg.setYear(game.getYear());
+			   				msg.setType(Message.MSG_MEMBER_DIED);
+			   				msg.setPlayerID(member.getPlayerID());
+			   				msg.setHandled(false);
+			   				msg.setTitle(ContextMessages.MSG_TITLE_DEATH);
+			   				msg.setDescription(ContextMessages.MSG_DEATH);
+			   							   				
+			   				if(other.isSetZone() && other.getZone()!=0)
+			   				{
+				   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+				   				zqt.addConstraintEq("orgId", member.getZone());
+				   				
+				   				Object [] zs = session.match(zqt);
+				   				
+				   				if(zs.length==1)
+				   				{
+				   					Zone z = (Zone) zs[0];
+					   				msg.setTitle(ContextMessages.MSG_TITLE_DEATH.replace("<zone>", "in " + z.getName()));
+					   				msg.setDescription(ContextMessages.MSG_DEATH.replace("<zone>", "in " + z.getName()));
+				   				}
+			   				}	
+			   			
+			   				session.add(msg);
+				   			
+				   			session.remove(other);
+				   			continue;
+				   		}
+			   		}
+			   			
+			   		other.setHealth(health);		   			
 		   			
-	   				// message them
-	   				Message msg = new Message();
-	   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-	   				msg.setCreateTime(System.currentTimeMillis());
-	   				msg.setYear(game.getYear());
-	   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
-	   				msg.setPlayerID(other.getPlayerID());
-	   				msg.setHandled(false);
-	   				msg.setTitle("Lost a member");
-	   				msg.setDescription(ContextMessages.MSG_ASSIMILATED);
-
-	   				session.add(msg);
-	   				
-	   				// message us
-	   				msg = new Message();
-	   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-	   				msg.setCreateTime(System.currentTimeMillis());
-	   				msg.setYear(game.getYear());
-	   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
-	   				msg.setPlayerID(member.getPlayerID());
-	   				msg.setHandled(false);
-	   				msg.setTitle("New member");
-	   				msg.setDescription(ContextMessages.MSG_ASSIMILATE);
-	   			
-	   				session.add(msg);
-	   				
-	   				// assimilate
-		   			other.setPlayerID(member.getPlayerID());
-		   			other.setParentMemberID(member.getID());
-	   				session.update(other);
-	   				
-	   			}
-	   			else if(member.getAction()==other.getAction())
-	   			{
-	   				// do nothing, we are equal
-	   				continue;
-	   			}
-	   			else
-	   			{
-	   				// they assimilate us
+		   			int wealth = other.getWealth();
+			   		wealth += -2;
+			   		if(wealth>10)
+			   		{
+			   			wealth = 10;
+			   		}
+			   		else if(wealth<0)
+			   		{
+			   			wealth = 0;
+			   		}
+			   		other.setWealth(wealth);
+			   		
 		   			int action = other.getAction();
-		   			action += 3;
+		   			action += 2;
 		   			if(action>10)
 		   			{
 		   				action = 10;
@@ -549,79 +537,209 @@ public class Engine
 		   				action = 0;
 		   			}
 		   			other.setAction(action);
+		   			
 		   			session.update(other);
-	   				
-		   			// message us
-	   				Message msg = new Message();
-	   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-	   				msg.setCreateTime(System.currentTimeMillis());
-	   				msg.setYear(game.getYear());
-	   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
-	   				msg.setPlayerID(member.getPlayerID());
-	   				msg.setHandled(false);
-	   				msg.setTitle("Lost community member");
-	   				msg.setDescription(ContextMessages.MSG_ASSIMILATED);
-	   			
-	   				session.add(msg);
-	   				
-	   				// message them
-	   				msg = new Message();
-	   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-	   				msg.setCreateTime(System.currentTimeMillis());
-	   				msg.setYear(game.getYear());
-	   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
-	   				msg.setPlayerID(member.getPlayerID());
-	   				msg.setHandled(false);
-	   				msg.setTitle("Lost community member");
-	   				msg.setDescription(ContextMessages.MSG_ASSIMILATE);
-	   			
-	   				session.add(msg);
-	   				
-	   				// assimilate	   				
-		   			member.setPlayerID(other.getPlayerID());
-		   			member.setParentMemberID(other.getID());
-	   				session.update(member);
-	   			}
-	   		}
+		   		}
+		   	}
 	   	}
+		
+	   	int year = 0;
+	   	
+	   	try
+	   	{	   	
+	   		year = Integer.parseInt(game.getYear());
+	   	}
+	   	catch(NumberFormatException e)
+	   	{
+	   	}
+	   	
+		// proximity to others
+	   	if(year==0 || year>=1914)
+	   	{	   	
+		   	for(int i=0; i<ms.length; i++)
+		   	{
+		   		Member other = (Member) ms[i];
+		   		
+		   		if(other.getPlayerID().equals(member.getPlayerID()))
+		   		{
+		   			continue;
+		   		}
+		   		
+		   		// cannot assimilate only member
+		   		if(other.getParentMemberID()==null)
+		   		{
+		   			continue;
+		   		}
+		   		
+		   		if(ZoneCache.distanceBetweenPoints(member.getPosition(), other.getPosition())<proximityRadius)
+		   		{
+		   			if(member.getAction()>other.getAction())
+		   			{
+			   			// we assimilate them
+			   			int action = member.getAction();
+			   			action += 3;
+			   			if(action>10)
+			   			{
+			   				action = 10;
+			   			}
+			   			else if(action<0)
+			   			{
+			   				action = 0;
+			   			}
+			   			member.setAction(action);	
+			   			
+		   				// message them
+		   				Message msg = new Message();
+		   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+		   				msg.setCreateTime(System.currentTimeMillis());
+		   				msg.setYear(game.getYear());
+		   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
+		   				msg.setPlayerID(other.getPlayerID());
+		   				msg.setHandled(false);
+		   				msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATED);   				
+		   				msg.setDescription(ContextMessages.MSG_ASSIMILATED);
+		   				
+		   				if(other.isSetZone() && other.getZone()!=0)
+		   				{
+			   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+			   				zqt.addConstraintEq("orgId", member.getZone());
+			   				
+			   				Object [] zs = session.match(zqt);
+			   				
+			   				if(zs.length==1)
+			   				{
+			   					Zone z = (Zone) zs[0];
+			   					msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATED.replace("<zone>", "in " + z.getName()));
+			   					msg.setDescription(ContextMessages.MSG_ASSIMILATED.replace("<zone>", "in " + z.getName()));
+			   				}
+		   				}		   				
+	
+		   				session.add(msg);
+		   				
+		   				// message us
+		   				msg = new Message();
+		   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+		   				msg.setCreateTime(System.currentTimeMillis());
+		   				msg.setYear(game.getYear());
+		   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
+		   				msg.setPlayerID(member.getPlayerID());
+		   				msg.setHandled(false);
+		   				msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATE);   
+		   				msg.setDescription(ContextMessages.MSG_ASSIMILATE);
+		   				
+		   				if(member.isSetZone() && member.getZone()!=0)
+		   				{
+			   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+			   				zqt.addConstraintEq("orgId", member.getZone());
+			   				
+			   				Object [] zs = session.match(zqt);
+			   				
+			   				if(zs.length==1)
+			   				{
+			   					Zone z = (Zone) zs[0];
+			 					msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATE.replace("<zone>", "in " + z.getName()));
+				   				msg.setDescription(ContextMessages.MSG_ASSIMILATE.replace("<zone>", "in " + z.getName()));
+			   				}
+		   				}
+		   			
+		   				session.add(msg);
+		   				
+		   				// assimilate
+			   			other.setPlayerID(member.getPlayerID());
+			   			other.setParentMemberID(member.getID());
+		   				session.update(other);
+		   				
+		   			}
+		   			else if(member.getAction()==other.getAction())
+		   			{
+		   				// do nothing, we are equal
+		   				continue;
+		   			}
+		   			else
+		   			{
+		   				// they assimilate us
+			   			int action = other.getAction();
+			   			action += 3;
+			   			if(action>10)
+			   			{
+			   				action = 10;
+			   			}
+			   			else if(action<0)
+			   			{
+			   				action = 0;
+			   			}
+			   			other.setAction(action);
+			   			session.update(other);
+		   				
+			   			// message us
+		   				Message msg = new Message();
+		   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+		   				msg.setCreateTime(System.currentTimeMillis());
+		   				msg.setYear(game.getYear());
+		   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
+		   				msg.setPlayerID(member.getPlayerID());
+		   				msg.setHandled(false);
+		   				msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATED);  	   				
+		   				msg.setDescription(ContextMessages.MSG_ASSIMILATED);
+		   				
+		   				if(member.isSetZone() && member.getZone()!=0)
+		   				{
+			   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+			   				zqt.addConstraintEq("orgId", member.getZone());
+			   				
+			   				Object [] zs = session.match(zqt);
+			   				
+			   				if(zs.length==1)
+			   				{
+			   					Zone z = (Zone) zs[0];
+			 					msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATED.replace("<zone>", "in " + z.getName()));
+				   				msg.setDescription(ContextMessages.MSG_ASSIMILATED.replace("<zone>", "in " + z.getName()));
+			   				}
+		   				}
+		   			
+		   				session.add(msg);
+		   				
+		   				// message them
+		   				msg = new Message();
+		   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+		   				msg.setCreateTime(System.currentTimeMillis());
+		   				msg.setYear(game.getYear());
+		   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
+		   				msg.setPlayerID(member.getPlayerID());
+		   				msg.setHandled(false);
+		   				msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATE); 
+		   				msg.setDescription(ContextMessages.MSG_ASSIMILATE);
+		   				
+		   				if(member.isSetZone() && member.getZone()!=0)
+		   				{
+			   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+			   				zqt.addConstraintEq("orgId", member.getZone());
+			   				
+			   				Object [] zs = session.match(zqt);
+			   				
+			   				if(zs.length==1)
+			   				{
+			   					Zone z = (Zone) zs[0];
+			 					msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATE.replace("<zone>", "in " + z.getName()));
+			   					msg.setDescription(ContextMessages.MSG_ASSIMILATE.replace("<zone>", "in " + z.getName()));
+			   				}
+		   				}
+		   			
+		   				session.add(msg);
+		   				
+		   				// assimilate	   				
+			   			member.setPlayerID(other.getPlayerID());
+			   			member.setParentMemberID(other.getID());
+		   				session.update(member);
+		   			}
+		   		}
+		   	}
+		}
 	   	
 	   	// finally, does this mean anyone can author ?
 	   	this.updateAuthorable(session, game);	   		
 		
 		session.end();
-	}
-	
-	// FIXME - I don't understand *Player* participation points yet
-	public void updateAuthorable(ISession session, Game game)
-	{
-	   	// has this changed a player's ability to author events?
-	   	QueryTemplate pqt = new QueryTemplate(Player.class);
-	   	pqt.addConstraintEq("gameID", game.getID());
-	   	
-	   	Object [] ps = session.match(pqt);
-	   	
-	   	for(int i=0; i<ps.length; i++)
-	   	{
-	   		Player p = (Player) ps[i];
-	   		
-	   		QueryTemplate mqt = new QueryTemplate(Member.class);
-	   		mqt.addConstraintEq("playerID", p.getID());
-	   		mqt.addConstraintGe("brains", 8);
-	   		
-	   		int count = session.count(mqt);
-	   		
-	   		// FIXME - notify client of change
-	   		if(count>0 && p.getCanAuthor()==false)
-	   		{
-	   			p.setCanAuthor(true);
-	   			session.update(p);
-	   		}
-	   		else if(count==0 && p.getCanAuthor()==true)
-	   		{
-	   			p.setCanAuthor(false);
-	   			session.update(p);
-	   		}
-	   	}
 	}
 
 	
@@ -645,9 +763,6 @@ public class Engine
 	   	for(int i=0; i<ms.length; i++)
 	   	{
 	   		Member member = (Member) ms[i];
-	   		
-	   		// this *player* needs to be notified
-	   		playerIDs.add(member.getPlayerID());
 	   		
 	   		/*
 	   		 * gameState.xml contains events flagged absolute/relative
@@ -699,9 +814,24 @@ public class Engine
 				   				msg.setType(Message.MSG_MEMBER_DIED);
 				   				msg.setPlayerID(member.getPlayerID());
 				   				msg.setHandled(false);
-				   				msg.setTitle(event.getName());
+				   				msg.setTitle(ContextMessages.MSG_TITLE_DEATH);				   				
 				   				msg.setDescription(ContextMessages.MSG_DEATH);
 				   				
+				   				if(member.isSetZone() && member.getZone()!=0)
+				   				{
+					   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+					   				zqt.addConstraintEq("orgId", member.getZone());
+					   				
+					   				Object [] zs = session.match(zqt);
+					   				
+					   				if(zs.length==1)
+					   				{
+					   					Zone z = (Zone) zs[0];
+					 					msg.setTitle(ContextMessages.MSG_TITLE_DEATH.replace("<zone>", "in " + z.getName()));
+						   				msg.setDescription(ContextMessages.MSG_DEATH.replace("<zone>", "in " + z.getName()));
+					   				}
+				   				}
+				   							   				
 				   				session.add(msg);
 				   				
 				   				session.remove(member);
@@ -882,7 +1012,8 @@ public class Engine
 		   				msg.setType(Message.MSG_MEMBER_CREATED);
 		   				msg.setPlayerID(member.getPlayerID());
 		   				msg.setHandled(false);
-		   				msg.setTitle("New member");
+		   				msg.setTitle(ContextMessages.MSG_TITLE_BIRTH);
+		   				msg.setDescription(ContextMessages.MSG_BIRTH);
 		   				
 		   				if(offspring.isSetZone() && offspring.getZone()!=0)
 		   				{
@@ -894,27 +1025,53 @@ public class Engine
 			   				if(zs.length==1)
 			   				{
 			   					Zone z = (Zone) zs[0];
-				   				msg.setDescription(ContextMessages.MSG_BIRTH.replace("<zone>", z.getName()));
-			   				}
-			   				else
-			   				{
-				   				msg.setDescription(ContextMessages.MSG_BIRTH.replace("<zone>", "your community"));	
+			   					msg.setTitle(ContextMessages.MSG_TITLE_BIRTH.replace("<zone>", "in " + z.getName()));
+				   				msg.setDescription(ContextMessages.MSG_BIRTH.replace("<zone>", "in " + z.getName()));
 			   				}
 		   				}
-		   				else
-		   				{
-			   				msg.setDescription(ContextMessages.MSG_BIRTH.replace("<zone>", "your community"));
-		   				}	   				
 		   			
 		   				session.add(msg);
 	   				}
 	   			}
 	   			
 	   			session.update(member);
+	   			
+		   		// where is this player's primary member
+		   		if(playerIDs.contains(member.getPlayerID()))
+		   		{
+		   			// already notifying this player
+		   			continue;
+		   		}
+		   		
+		   		if(event.getZoneId()!=0)
+		   		{
+		   			// not global
+		   			if(member.isSetParentMemberID())
+		   			{
+		   				// find root parent
+		   				QueryTemplate pmqt = new QueryTemplate(Member.class);
+		   				pmqt.addConstraintEq("playerID", member.getPlayerID());
+		   				pmqt.addConstraintIsNull("parentMemberID");
+		   				
+		   				Object [] pms = session.match(pmqt);
+		   				
+		   				if(pms.length>0)
+		   				{
+		   					Member pm = (Member) pms[0];
+		   					
+		   					if(pm.isSetZone() && pm.getZone()!=event.getZoneId())
+		   					{
+		   						continue;
+		   					}
+		   				}
+		   			}
+		   		}
+		   		
+		   		// this *player* needs to be notified
+		   		playerIDs.add(member.getPlayerID());
 	   		}
 	   	}
 	   	
-
 	   	Iterator<String> it = playerIDs.iterator();
 	   	
 	   	while(it.hasNext())
@@ -934,5 +1091,39 @@ public class Engine
 	   	}
 	   		
 	   	this.updateAuthorable(session, game);
+	}
+	
+	
+	// FIXME - I don't understand *Player* participation points yet
+	public void updateAuthorable(ISession session, Game game)
+	{
+	   	// has this changed a player's ability to author events?
+	   	QueryTemplate pqt = new QueryTemplate(Player.class);
+	   	pqt.addConstraintEq("gameID", game.getID());
+	   	
+	   	Object [] ps = session.match(pqt);
+	   	
+	   	for(int i=0; i<ps.length; i++)
+	   	{
+	   		Player p = (Player) ps[i];
+	   		
+	   		QueryTemplate mqt = new QueryTemplate(Member.class);
+	   		mqt.addConstraintEq("playerID", p.getID());
+	   		mqt.addConstraintGe("brains", 8);
+	   		
+	   		int count = session.count(mqt);
+	   		
+	   		// FIXME - notify client of change
+	   		if(count>0 && p.getCanAuthor()==false)
+	   		{
+	   			p.setCanAuthor(true);
+	   			session.update(p);
+	   		}
+	   		else if(count==0 && p.getCanAuthor()==true)
+	   		{
+	   			p.setCanAuthor(false);
+	   			session.update(p);
+	   		}
+	   	}
 	}
 }

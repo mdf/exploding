@@ -85,6 +85,7 @@ public class ClientController {
 		xs.alias("member", uk.ac.horizon.ug.exploding.db.Member.class);
 		xs.alias("msg", uk.ac.horizon.ug.exploding.db.Message.class);
 		xs.alias("game", uk.ac.horizon.ug.exploding.db.Game.class);
+		xs.alias("event", uk.ac.horizon.ug.exploding.db.TimelineEvent.class);
 		return xs;
 	}
 	/** client login 
