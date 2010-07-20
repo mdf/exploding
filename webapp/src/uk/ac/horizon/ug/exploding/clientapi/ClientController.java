@@ -120,6 +120,7 @@ public class ClientController {
     	// first look for an association between this client and an active game to reuse...
     	Player player = null;
     	Game game = null;
+    	int maxSeqNo = 1;
     	boolean welcomeBack = false;
     	for (int cci=0; cci<ccs.length; cci++) {
     		ClientConversation cc = (ClientConversation)ccs[cci];
@@ -134,6 +135,9 @@ public class ClientController {
     			// mark inactive!
     			cc.setActive(false);
     			logger.debug("Mark conversation "+cc.getID()+" with "+cc.getClientID()+" inactive on new login");
+    			if (cc.isSetNextSeqNo() && cc.getNextSeqNo()>maxSeqNo) {
+    				maxSeqNo = cc.getNextSeqNo();
+    			}
     			clientSubscriptionManager.handleConversationEnd(cc, session);
     			Game g = (Game) session.get(Game.class, cc.getGameID());
     			if (g.isSetState() && !Game.ENDED.equals(g.getState())) {
@@ -193,7 +197,8 @@ public class ClientController {
     	cc.setClientType(login.getClientType());
     	cc.setClientVersion(login.getClientVersion());
     	cc.setCreationTime(System.currentTimeMillis());
-    	cc.setNextSeqNo(1);
+    	logger.debug("Starting conversation with nextSeqNo="+maxSeqNo);
+    	cc.setNextSeqNo(maxSeqNo);
     	cc.setLastContactTime(0L);
     	cc.setGameID(game.getID());
     	cc.setPlayerID(player.getID());
