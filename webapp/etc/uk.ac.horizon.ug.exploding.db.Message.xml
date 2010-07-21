@@ -27,5 +27,6 @@
 	<constant name="MSG_MEMBER_DIED" javatype="java.lang.String" value='"member_died"'/>
 	<constant name="MSG_TIMELINE_YEAR" javatype="java.lang.String" value='"timeline_year"'/>
 	<constant name="MSG_TIMELINE_CONTENT" javatype="java.lang.String" value='"timeline_content"'/>
+	<constant name="MSG_TIMELINE_CONTENT_GLOBAL" javatype="java.lang.String" value='"timeline_content_global"'/>
 	
 </bean>

@@ -17,7 +17,7 @@
 	
 	<property name="ref" javatype="java.lang.String" />
 	
-	<property name="description" javatype="java.lang.String" />
+	<property name="description" javatype="java.lang.String" maxlength="400"/>
 	
 	<property name="zoneId" javatype="java.lang.Integer" />
 

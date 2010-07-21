@@ -108,7 +108,9 @@ public class OrchestrationController
     		
     		uk.ac.horizon.ug.exploding.db.GameTime gameTime = new uk.ac.horizon.ug.exploding.db.GameTime();
 			gameTime.setID(IDAllocator.getNewID(session, uk.ac.horizon.ug.exploding.db.GameTime.class, "GT", null));
-			gameTime.setGameTime(0.0f);
+			
+			//gameTime.setGameTime(0.0f);
+			gameTime.setGameTime(-1000.0f); // about 5 minutes
 
 			session.add(gameTime);
 			

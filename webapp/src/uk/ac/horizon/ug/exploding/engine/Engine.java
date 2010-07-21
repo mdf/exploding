@@ -171,7 +171,12 @@ public class Engine
 	}
 	
 	public Integer getZoneID(String contentGroupID, Position p)
-	{		
+	{
+		if(p==null || contentGroupID==null)
+		{
+			return null;
+		}
+		
 		Iterator<Entry<Integer, ZoneCache>> it = zoneCache.entrySet().iterator();
 		
 		while(it.hasNext())
@@ -312,11 +317,11 @@ public class Engine
 								
 								Game game = (Game) session.get(Game.class, member.getGameID());
 								
-								if(game!=null)
+								if(game!=null)						
 								{
 									member.setZone(getZoneID(game.getContentGroupID(), member.getPosition()));
-									session.update(member);									
 								}
+								session.update(member);					
 							}
 							
 							session.end();
@@ -390,6 +395,19 @@ public class Engine
 		    	logger.info("Done events from " + gt.getGameTime() + " to " + currentGameTime);
 		    	
 		    	gt.setGameTime(currentGameTime);
+
+		    	// finish game?
+		    	// 11100 ~= 2011
+		    	if(gt.getGameTime()>=11100)
+		    	{
+		    		logger.info("Ending game " + g.getID() + " at " + gt.getGameTime() + " last year " + g.getYear());
+		    		
+		    		// last message
+		    		
+		    		g.setState(Game.ENDING);
+		    		session.update(g);
+		    		
+		    	}
 			}
 		}
 
@@ -487,10 +505,10 @@ public class Engine
 			   				msg.setType(Message.MSG_MEMBER_DIED);
 			   				msg.setPlayerID(member.getPlayerID());
 			   				msg.setHandled(false);
-			   				msg.setTitle(ContextMessages.MSG_TITLE_DEATH);
-			   				msg.setDescription(ContextMessages.MSG_DEATH);
+			   				
+			   				String zoneName = null;
 			   							   				
-			   				if(other.isSetZone() && other.getZone()!=0)
+			   				if(member.isSetZone() && member.getZone()!=0)
 			   				{
 				   				QueryTemplate zqt = new QueryTemplate(Zone.class);
 				   				zqt.addConstraintEq("orgId", member.getZone());
@@ -500,10 +518,12 @@ public class Engine
 				   				if(zs.length==1)
 				   				{
 				   					Zone z = (Zone) zs[0];
-					   				msg.setTitle(ContextMessages.MSG_TITLE_DEATH.replace("<zone>", "in " + z.getName()));
-					   				msg.setDescription(ContextMessages.MSG_DEATH.replace("<zone>", "in " + z.getName()));
+				   					zoneName = z.getName();
 				   				}
-			   				}	
+			   				}
+			   				
+			   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_DEATH, zoneName));
+			   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_DEATH, zoneName));
 			   			
 			   				session.add(msg);
 				   			
@@ -596,9 +616,9 @@ public class Engine
 		   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
 		   				msg.setPlayerID(other.getPlayerID());
 		   				msg.setHandled(false);
-		   				msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATED);   				
-		   				msg.setDescription(ContextMessages.MSG_ASSIMILATED);
 		   				
+		   				String zoneName = null;
+			   				
 		   				if(other.isSetZone() && other.getZone()!=0)
 		   				{
 			   				QueryTemplate zqt = new QueryTemplate(Zone.class);
@@ -609,10 +629,12 @@ public class Engine
 			   				if(zs.length==1)
 			   				{
 			   					Zone z = (Zone) zs[0];
-			   					msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATED.replace("<zone>", "in " + z.getName()));
-			   					msg.setDescription(ContextMessages.MSG_ASSIMILATED.replace("<zone>", "in " + z.getName()));
+			   					zoneName = z.getName();
 			   				}
-		   				}		   				
+		   				}
+		   				
+		   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_ASSIMILATED, zoneName));
+		   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATED, zoneName));   				
 	
 		   				session.add(msg);
 		   				
@@ -624,8 +646,8 @@ public class Engine
 		   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
 		   				msg.setPlayerID(member.getPlayerID());
 		   				msg.setHandled(false);
-		   				msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATE);   
-		   				msg.setDescription(ContextMessages.MSG_ASSIMILATE);
+		   				
+		   				zoneName = null;
 		   				
 		   				if(member.isSetZone() && member.getZone()!=0)
 		   				{
@@ -637,10 +659,12 @@ public class Engine
 			   				if(zs.length==1)
 			   				{
 			   					Zone z = (Zone) zs[0];
-			 					msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATE.replace("<zone>", "in " + z.getName()));
-				   				msg.setDescription(ContextMessages.MSG_ASSIMILATE.replace("<zone>", "in " + z.getName()));
+			   					zoneName = z.getName();
 			   				}
 		   				}
+		   				
+		   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_ASSIMILATE, zoneName));
+		   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATE, zoneName));   	
 		   			
 		   				session.add(msg);
 		   				
@@ -679,8 +703,8 @@ public class Engine
 		   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
 		   				msg.setPlayerID(member.getPlayerID());
 		   				msg.setHandled(false);
-		   				msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATED);  	   				
-		   				msg.setDescription(ContextMessages.MSG_ASSIMILATED);
+		   				
+		   				String zoneName = null;
 		   				
 		   				if(member.isSetZone() && member.getZone()!=0)
 		   				{
@@ -692,10 +716,12 @@ public class Engine
 			   				if(zs.length==1)
 			   				{
 			   					Zone z = (Zone) zs[0];
-			 					msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATED.replace("<zone>", "in " + z.getName()));
-				   				msg.setDescription(ContextMessages.MSG_ASSIMILATED.replace("<zone>", "in " + z.getName()));
+			   					zoneName = z.getName();
 			   				}
 		   				}
+		   				
+		   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_ASSIMILATED, zoneName));
+		   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATED, zoneName));   	
 		   			
 		   				session.add(msg);
 		   				
@@ -705,25 +731,27 @@ public class Engine
 		   				msg.setCreateTime(System.currentTimeMillis());
 		   				msg.setYear(game.getYear());
 		   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
-		   				msg.setPlayerID(member.getPlayerID());
+		   				msg.setPlayerID(other.getPlayerID());
 		   				msg.setHandled(false);
-		   				msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATE); 
-		   				msg.setDescription(ContextMessages.MSG_ASSIMILATE);
 		   				
-		   				if(member.isSetZone() && member.getZone()!=0)
+		   				zoneName = null;
+		   				
+		   				if(other.isSetZone() && other.getZone()!=0)
 		   				{
 			   				QueryTemplate zqt = new QueryTemplate(Zone.class);
-			   				zqt.addConstraintEq("orgId", member.getZone());
+			   				zqt.addConstraintEq("orgId", other.getZone());
 			   				
 			   				Object [] zs = session.match(zqt);
 			   				
 			   				if(zs.length==1)
 			   				{
 			   					Zone z = (Zone) zs[0];
-			 					msg.setTitle(ContextMessages.MSG_TITLE_ASSIMILATE.replace("<zone>", "in " + z.getName()));
-			   					msg.setDescription(ContextMessages.MSG_ASSIMILATE.replace("<zone>", "in " + z.getName()));
+			   					zoneName = z.getName();
 			   				}
 		   				}
+		   				
+		   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_ASSIMILATE, zoneName));
+		   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATE, zoneName));   
 		   			
 		   				session.add(msg);
 		   				
@@ -814,8 +842,8 @@ public class Engine
 				   				msg.setType(Message.MSG_MEMBER_DIED);
 				   				msg.setPlayerID(member.getPlayerID());
 				   				msg.setHandled(false);
-				   				msg.setTitle(ContextMessages.MSG_TITLE_DEATH);				   				
-				   				msg.setDescription(ContextMessages.MSG_DEATH);
+				   				
+				   				String zoneName = null;
 				   				
 				   				if(member.isSetZone() && member.getZone()!=0)
 				   				{
@@ -827,10 +855,12 @@ public class Engine
 					   				if(zs.length==1)
 					   				{
 					   					Zone z = (Zone) zs[0];
-					 					msg.setTitle(ContextMessages.MSG_TITLE_DEATH.replace("<zone>", "in " + z.getName()));
-						   				msg.setDescription(ContextMessages.MSG_DEATH.replace("<zone>", "in " + z.getName()));
+					   					zoneName = z.getName();
 					   				}
 				   				}
+				   				
+				   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_DEATH, zoneName));
+				   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_DEATH, zoneName)); 
 				   							   				
 				   				session.add(msg);
 				   				
@@ -927,11 +957,12 @@ public class Engine
 	   			// create offspring
 	   			if(member.getHealth()>=8)
 	   			{
-	   				if(member.getWealth()>=8)
+	   				if(member.getWealth()>=8 && member.getAction()>=8)
 	   				{
 	   					// FIXME reduce wealth too?!
-	   					member.setWealth(4);
-		   				member.setHealth(4);
+	   					member.setWealth(6);
+		   				member.setHealth(6);
+		   				member.setAction(6);
 		   				
 		   				Player p = (Player) session.get(Player.class, member.getPlayerID());
 		   				
@@ -945,7 +976,7 @@ public class Engine
 	   				}
 	   				else
 	   				{	   			
-		   				member.setHealth(4);
+		   				member.setHealth(6);
 		   					
 		   				Member offspring = new Member();
 		   				offspring.setID(IDAllocator.getNewID(session, Member.class, "M", null));
@@ -953,8 +984,12 @@ public class Engine
 		   				offspring.setGameID(member.getGameID());
 		   				offspring.setPlayerID(member.getPlayerID());
 		   				offspring.setParentMemberID(member.getID());
-		   				offspring.setHealth(4);
+		   				
+		   				// random health 2-5
+		   				offspring.setHealth(random.nextInt(4)+2);
+		   				
 		   				offspring.setColourRef(member.getColourRef());
+		   				offspring.setLimbData(member.getLimbData());
 		   				
 		   				// FIXME - server generated offspring names, how are they generated?
 		   				offspring.setName(member.getName() + random.nextInt(1000));
@@ -1012,23 +1047,25 @@ public class Engine
 		   				msg.setType(Message.MSG_MEMBER_CREATED);
 		   				msg.setPlayerID(member.getPlayerID());
 		   				msg.setHandled(false);
-		   				msg.setTitle(ContextMessages.MSG_TITLE_BIRTH);
-		   				msg.setDescription(ContextMessages.MSG_BIRTH);
 		   				
-		   				if(offspring.isSetZone() && offspring.getZone()!=0)
+		   				String zoneName = null;
+		   				
+		   				if(member.isSetZone() && member.getZone()!=0)
 		   				{
 			   				QueryTemplate zqt = new QueryTemplate(Zone.class);
-			   				zqt.addConstraintEq("orgId", offspring.getZone());
+			   				zqt.addConstraintEq("orgId", member.getZone());
 			   				
 			   				Object [] zs = session.match(zqt);
 			   				
 			   				if(zs.length==1)
 			   				{
 			   					Zone z = (Zone) zs[0];
-			   					msg.setTitle(ContextMessages.MSG_TITLE_BIRTH.replace("<zone>", "in " + z.getName()));
-				   				msg.setDescription(ContextMessages.MSG_BIRTH.replace("<zone>", "in " + z.getName()));
+			   					zoneName = z.getName();
 			   				}
 		   				}
+		   				
+		   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_BIRTH, zoneName));
+		   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_BIRTH, zoneName)); 
 		   			
 		   				session.add(msg);
 	   				}
@@ -1072,6 +1109,21 @@ public class Engine
 	   		}
 	   	}
 	   	
+	   	// all players notified on global events
+	   	if(event.getZoneId()==0)
+	   	{	   		
+	   		QueryTemplate pqt = new QueryTemplate(Player.class);
+	   		pqt.addConstraintEq("gameID", game.getID());
+	   		
+	   		Object [] ps = session.match(pqt);
+	   		
+	   		for(int i=0; i<ps.length; i++)
+	   		{
+	   			Player p = (Player) ps[i];
+	   			playerIDs.add(p.getID());
+	   		}
+	   	}	   	
+	   	
 	   	Iterator<String> it = playerIDs.iterator();
 	   	
 	   	while(it.hasNext())
@@ -1079,7 +1131,16 @@ public class Engine
 		   	Message msg = new Message();
 		   	msg.setCreateTime(System.currentTimeMillis());
 		   	msg.setYear(game.getYear());
-		   	msg.setType(Message.MSG_TIMELINE_CONTENT);
+		   	
+		   	if(event.getZoneId()==0)
+		   	{
+		   		msg.setType(Message.MSG_TIMELINE_CONTENT_GLOBAL);
+		   	}
+		   	else
+		   	{
+		   		msg.setType(Message.MSG_TIMELINE_CONTENT);
+		   	}
+		   	
 		   	msg.setTitle(event.getName());
 		   	msg.setDescription(event.getDescription());
 		   	msg.setHandled(false);

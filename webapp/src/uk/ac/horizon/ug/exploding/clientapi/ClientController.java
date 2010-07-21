@@ -24,6 +24,7 @@ import uk.ac.horizon.ug.exploding.db.Member;
 import uk.ac.horizon.ug.exploding.clientapi.LoginReplyMessage.Status;
 import uk.ac.horizon.ug.exploding.db.ClientConversation;
 import uk.ac.horizon.ug.exploding.db.Game;
+import uk.ac.horizon.ug.exploding.db.GameTime;
 import uk.ac.horizon.ug.exploding.db.MessageToClient;
 import uk.ac.horizon.ug.exploding.db.Player;
 import uk.ac.horizon.ug.exploding.db.Position;
@@ -452,6 +453,14 @@ public class ClientController {
 			// TODO flags?
 			newEvent.setEnabled(0);
 			newEvent.setPlayerID(player.getID());
+			
+			// get game time
+			GameTime gt = (GameTime) session.get(GameTime.class, game.getGameTimeID());
+			if(gt==null)
+				newEvent.setStartTime(0.0f);
+			else
+				newEvent.setStartTime(gt.getGameTime());			
+			
 			session.add(newEvent);
 			
 			logger.info("Adding player("+player.getID()+")-authored TimelineEvent "+newEvent);
