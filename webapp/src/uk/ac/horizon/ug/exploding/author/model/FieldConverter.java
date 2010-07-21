@@ -31,7 +31,7 @@ public class FieldConverter implements Converter
         {
         	String coordinates = reader.getValue();
         	
-        	StringTokenizer sto = new StringTokenizer(coordinates, ",\n");
+        	StringTokenizer sto = new StringTokenizer(coordinates, ", \n");
         	
         	while(sto.hasMoreElements())
         	{

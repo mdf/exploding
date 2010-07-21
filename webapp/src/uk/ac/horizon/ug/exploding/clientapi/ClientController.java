@@ -24,6 +24,7 @@ import uk.ac.horizon.ug.exploding.db.Member;
 import uk.ac.horizon.ug.exploding.clientapi.LoginReplyMessage.Status;
 import uk.ac.horizon.ug.exploding.db.ClientConversation;
 import uk.ac.horizon.ug.exploding.db.Game;
+import uk.ac.horizon.ug.exploding.db.GameTime;
 import uk.ac.horizon.ug.exploding.db.MessageToClient;
 import uk.ac.horizon.ug.exploding.db.Player;
 import uk.ac.horizon.ug.exploding.db.Position;
@@ -85,6 +86,7 @@ public class ClientController {
 		xs.alias("member", uk.ac.horizon.ug.exploding.db.Member.class);
 		xs.alias("msg", uk.ac.horizon.ug.exploding.db.Message.class);
 		xs.alias("game", uk.ac.horizon.ug.exploding.db.Game.class);
+		xs.alias("event", uk.ac.horizon.ug.exploding.db.TimelineEvent.class);
 		return xs;
 	}
 	/** client login 
@@ -120,6 +122,7 @@ public class ClientController {
     	// first look for an association between this client and an active game to reuse...
     	Player player = null;
     	Game game = null;
+    	int maxSeqNo = 1;
     	boolean welcomeBack = false;
     	for (int cci=0; cci<ccs.length; cci++) {
     		ClientConversation cc = (ClientConversation)ccs[cci];
@@ -134,6 +137,9 @@ public class ClientController {
     			// mark inactive!
     			cc.setActive(false);
     			logger.debug("Mark conversation "+cc.getID()+" with "+cc.getClientID()+" inactive on new login");
+    			if (cc.isSetNextSeqNo() && cc.getNextSeqNo()>maxSeqNo) {
+    				maxSeqNo = cc.getNextSeqNo();
+    			}
     			clientSubscriptionManager.handleConversationEnd(cc, session);
     			Game g = (Game) session.get(Game.class, cc.getGameID());
     			if (g.isSetState() && !Game.ENDED.equals(g.getState())) {
@@ -193,7 +199,8 @@ public class ClientController {
     	cc.setClientType(login.getClientType());
     	cc.setClientVersion(login.getClientVersion());
     	cc.setCreationTime(System.currentTimeMillis());
-    	cc.setNextSeqNo(1);
+    	logger.debug("Starting conversation with nextSeqNo="+maxSeqNo);
+    	cc.setNextSeqNo(maxSeqNo);
     	cc.setLastContactTime(0L);
     	cc.setGameID(game.getID());
     	cc.setPlayerID(player.getID());
@@ -446,6 +453,14 @@ public class ClientController {
 			// TODO flags?
 			newEvent.setEnabled(0);
 			newEvent.setPlayerID(player.getID());
+			
+			// get game time
+			GameTime gt = (GameTime) session.get(GameTime.class, game.getGameTimeID());
+			if(gt==null)
+				newEvent.setStartTime(0.0f);
+			else
+				newEvent.setStartTime(gt.getGameTime());			
+			
 			session.add(newEvent);
 			
 			logger.info("Adding player("+player.getID()+")-authored TimelineEvent "+newEvent);
