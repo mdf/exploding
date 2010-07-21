@@ -21,6 +21,22 @@ public class ContextMessages
 
 	public static final String MSG_TITLE_DEATH = "A community member died<zone>";
 	
+	public static final String MSG_END = "Congratulations! Your community has survived for 120 years in Woolwich, you have <members> remaining.  Please return to the Tramshed as quickly as possible.";
+	
+	public static final String MSG_END_TITLE = "Please return to the Tramshed as quickly as possible.";
+	
+	public static String fillMembers(String message, int members)
+	{
+		if(members==1)
+		{
+			return message.replace("<members>", members + " member");
+		}
+		else
+		{
+			return message.replace("<members>", members + " members");			
+		}
+	}
+	
 	public static String fillZone(String message, String zone)
 	{
 		if(zone!=null && zone.length()>0)
