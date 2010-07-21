@@ -126,6 +126,19 @@
 		<url-pattern>/rpc/*</url-pattern>
 	</servlet-mapping> 	
 	
+	<!-- logs interface -->
+	
+	<servlet>
+		<servlet-name>logs</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>logs</servlet-name>
+		<url-pattern>/logs/*</url-pattern>
+	</servlet-mapping> 	
+	
   	<!-- spectator interface -->
   
 	<servlet>
