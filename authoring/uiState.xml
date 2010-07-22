@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<bmo ver="4">
+  <uiState ref="0PBDIG">
+    <field name="mainWindow" type="gadgetState">
+      <gadgetState ref="0PBE7S">
+        <field name="x" type="int">203</field>
+        <field name="y" type="int">41</field>
+        <field name="width" type="int">1039</field>
+        <field name="height" type="int">501</field>
+      </gadgetState>
+    </field>
+    <field name="propsWindow" type="gadgetState">
+      <gadgetState ref="0GCN14">
+        <field name="x" type="int">1147</field>
+        <field name="y" type="int">56</field>
+        <field name="width" type="int">200</field>
+        <field name="height" type="int">629</field>
+      </gadgetState>
+    </field>
+    <field name="timeWindow" type="gadgetState">
+      <gadgetState ref="0G7Z4O">
+        <field name="x" type="int">205</field>
+        <field name="y" type="int">590</field>
+        <field name="width" type="int">1486</field>
+        <field name="height" type="int">311</field>
+      </gadgetState>
+    </field>
+  </uiState>
+</bmo>

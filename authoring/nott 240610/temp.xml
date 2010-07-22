@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<bmo ver="4">
+  <zone ref="215G6G">
+    <field name="id" type="string">1</field>
+    <field name="name" type="string">Main</field>
+    <field name="attributes" type="attributeSet">
+      <attributeSet ref="17ORS8">
+        <field name="health" type="int">0</field>
+        <field name="wealth" type="int">0</field>
+        <field name="brains" type="int">0</field>
+        <field name="action" type="int">0</field>
+        <field name="instant" type="int">1</field>
+        <field name="flags" type="int">15</field>
+        <field name="absolute" type="int">1</field>
+        <field name="healthOp" type="attributeOp"/>
+        <field name="wealthOp" type="attributeOp"/>
+        <field name="brainsOp" type="attributeOp"/>
+        <field name="actionOp" type="attributeOp"/>
+      </attributeSet>
+    </field>
+    <field name="polygon" type="int">1</field>
+    <field name="radius" type="float">0.000000000</field>
+    <field name="coords" type="string">-1.166954,52.964072,0 
+-1.153522,52.966502,0 
+-1.145926,52.958308,0 
+-1.142063,52.955335,0 
+-1.145453,52.953421,0 
+-1.151891,52.95112,0 
+-1.154294,52.950706,0 </field>
+  </zone>
+</bmo>
+<?xml version="1.0"?>
+<bmo ver="4">
+  <zone ref="215B54">
+    <field name="id" type="string">2</field>
+    <field name="name" type="string">centre</field>
+    <field name="attributes" type="attributeSet">
+      <attributeSet ref="17OM8O">
+        <field name="health" type="int">0</field>
+        <field name="wealth" type="int">0</field>
+        <field name="brains" type="int">0</field>
+        <field name="action" type="int">0</field>
+        <field name="instant" type="int">1</field>
+        <field name="flags" type="int">15</field>
+        <field name="absolute" type="int">1</field>
+        <field name="healthOp" type="attributeOp"/>
+        <field name="wealthOp" type="attributeOp"/>
+        <field name="brainsOp" type="attributeOp"/>
+        <field name="actionOp" type="attributeOp"/>
+      </attributeSet>
+    </field>
+    <field name="polygon" type="int">1</field>
+    <field name="radius" type="float">0.000000000</field>
+    <field name="coords" type="string">-1.156611,52.956033,0 
+-1.152492,52.955929,0 
+-1.151204,52.956136,0 
+-1.151075,52.957816,0 
+-1.146612,52.958928,0 
+-1.143351,52.956265,0 
+-1.143565,52.95536,0 
+-1.14305,52.955102,0 
+-1.141462,52.95368,0 
+-1.145368,52.953214,0 
+-1.149316,52.95218,0 
+-1.151934,52.951301,0 
+-1.15335,52.952749,0 </field>
+  </zone>
+</bmo>
+<?xml version="1.0"?>
+<bmo ver="4">
+  <zone ref="215FZC">
+    <field name="id" type="string">3</field>
+    <field name="name" type="string">arsenal</field>
+    <field name="attributes" type="attributeSet">
+      <attributeSet ref="17ORU0">
+        <field name="health" type="int">0</field>
+        <field name="wealth" type="int">0</field>
+        <field name="brains" type="int">0</field>
+        <field name="action" type="int">0</field>
+        <field name="instant" type="int">1</field>
+        <field name="flags" type="int">15</field>
+        <field name="absolute" type="int">1</field>
+        <field name="healthOp" type="attributeOp"/>
+        <field name="wealthOp" type="attributeOp"/>
+        <field name="brainsOp" type="attributeOp"/>
+        <field name="actionOp" type="attributeOp"/>
+      </attributeSet>
+    </field>
+    <field name="polygon" type="int">1</field>
+    <field name="radius" type="float">0.000000000</field>
+    <field name="coords" type="string">-1.155753,52.964279,0 
+-1.152577,52.964925,0 
+-1.146698,52.959006,0 
+-1.151247,52.957868,0 
+-1.151376,52.956214,0 
+-1.152492,52.956007,0 
+-1.156611,52.956136,0 
+-1.158242,52.959083,0 
+-1.155367,52.960944,0 </field>
+  </zone>
+</bmo>
+<?xml version="1.0"?>
+<bmo ver="4">
+  <zone ref="215JD4">
+    <field name="id" type="string">4</field>
+    <field name="name" type="string">dusthole</field>
+    <field name="attributes" type="attributeSet">
+      <attributeSet ref="17OTW8">
+        <field name="health" type="int">0</field>
+        <field name="wealth" type="int">0</field>
+        <field name="brains" type="int">0</field>
+        <field name="action" type="int">0</field>
+        <field name="instant" type="int">1</field>
+        <field name="flags" type="int">15</field>
+        <field name="absolute" type="int">1</field>
+        <field name="healthOp" type="attributeOp"/>
+        <field name="wealthOp" type="attributeOp"/>
+        <field name="brainsOp" type="attributeOp"/>
+        <field name="actionOp" type="attributeOp"/>
+      </attributeSet>
+    </field>
+    <field name="polygon" type="int">1</field>
+    <field name="radius" type="float">0.000000000</field>
+    <field name="coords" type="string">-1.155624,52.963219,0 
+-1.153479,52.960453,0 
+-1.155281,52.959962,0 
+-1.157556,52.957661,0 
+-1.156783,52.956162,0 
+-1.161633,52.956084,0 
+-1.162791,52.956576,0 
+-1.16056,52.958153,0 
+-1.158199,52.959755,0 
+-1.160173,52.961513,0 
+-1.155624,52.963219,0 </field>
+  </zone>
+</bmo>
+<?xml version="1.0"?>
+<bmo ver="4">
+  <zone ref="215D1K">
+    <field name="id" type="string">5</field>
+    <field name="name" type="string">charlton</field>
+    <field name="attributes" type="attributeSet">
+      <attributeSet ref="17OMAG">
+        <field name="health" type="int">0</field>
+        <field name="wealth" type="int">0</field>
+        <field name="brains" type="int">0</field>
+        <field name="action" type="int">0</field>
+        <field name="instant" type="int">1</field>
+        <field name="flags" type="int">15</field>
+        <field name="absolute" type="int">1</field>
+        <field name="healthOp" type="attributeOp"/>
+        <field name="wealthOp" type="attributeOp"/>
+        <field name="brainsOp" type="attributeOp"/>
+        <field name="actionOp" type="attributeOp"/>
+      </attributeSet>
+    </field>
+    <field name="polygon" type="int">1</field>
+    <field name="radius" type="float">0.000000000</field>
+    <field name="coords" type="string">-1.16159,52.956007,0 
+-1.156783,52.956058,0 
+-1.15365,52.952335,0 
+-1.152363,52.951379,0 
+-1.151977,52.950758,0 
+-1.153221,52.950551,0 
+-1.153908,52.950474,0 </field>
+  </zone>
+</bmo>
+<?xml version="1.0"?>
+<bmo ver="4">
+  <zone ref="215NL4">
+    <field name="id" type="string">6</field>
+    <field name="name" type="string">marshes</field>
+    <field name="attributes" type="attributeSet">
+      <attributeSet ref="17OTZS">
+        <field name="health" type="int">0</field>
+        <field name="wealth" type="int">0</field>
+        <field name="brains" type="int">0</field>
+        <field name="action" type="int">0</field>
+        <field name="instant" type="int">1</field>
+        <field name="flags" type="int">15</field>
+        <field name="absolute" type="int">1</field>
+        <field name="healthOp" type="attributeOp"/>
+        <field name="wealthOp" type="attributeOp"/>
+        <field name="brainsOp" type="attributeOp"/>
+        <field name="actionOp" type="attributeOp"/>
+      </attributeSet>
+    </field>
+    <field name="polygon" type="int">1</field>
+    <field name="radius" type="float">0.000000000</field>
+    <field name="coords" type="string">-1.155624,52.964176,0 
+-1.153436,52.964641,0 
+-1.150603,52.960893,0 
+-1.151204,52.95792,0 
+-1.151462,52.956886,0 
+-1.151032,52.955128,0 
+-1.156182,52.955386,0 
+-1.157727,52.957713,0 </field>
+  </zone>
+</bmo>

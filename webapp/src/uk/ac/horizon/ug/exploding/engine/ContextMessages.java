@@ -13,17 +13,21 @@ public class ContextMessages
 	//public static final String MSG_DEATH = "Sadly you have lost a community member. Click here to find out more as you may need to move the rest of the community in the area to protect their health.";
 	public static final String MSG_DEATH = "Sadly you have lost a community member<zone>. You may need to move the rest of the community in the area to protect their health.";
 
-	public static final String MSG_TITLE_ASSIMILATED = "A community member was lost<zone>";
+	public static final String MSG_TITLE_ASSIMILATED = "One of your community members has joined another community<zone>";
 
-	public static final String MSG_TITLE_ASSIMILATE = "A community member joined<zone>";
+	public static final String MSG_TITLE_ASSIMILATE = "Another player’s community members have joined your community<zone>";
 
-	public static final String MSG_TITLE_BIRTH = "A community member was born<zone>";
+	public static final String MSG_TITLE_BIRTH = "Congratulations, there has been a birth in your community<zone>";
 
-	public static final String MSG_TITLE_DEATH = "A community member died<zone>";
+	public static final String MSG_TITLE_DEATH = "Sadly you have lost a community member, check the health of the other members<zone>";
 	
 	public static final String MSG_END = "Congratulations! Your community has survived for 120 years in Woolwich, you have <members> remaining.  Please return to the Tramshed as quickly as possible.";
 	
 	public static final String MSG_END_TITLE = "Please return to the Tramshed as quickly as possible.";
+
+	public static final String MSG_SCARE = "There has been a health scare<zone>, check the health of your community members";
+	
+	public static final String MSG_SCARE_TITLE = "There has been a health scare<zone>, check the health of your community members";
 	
 	public static String fillMembers(String message, int members)
 	{
