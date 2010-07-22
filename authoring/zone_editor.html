@@ -1,0 +1,1135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name = "description" content = "Online tool to draw polylines, polygons, polygons with hole, circle for Google Maps API. Get coordinates. Write KML file. Write JavaScript code."/>
+
+<title>Exploding Places</title>
+
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAARH5vP7AhGZEESV0GAu0coBR_O7H_7m2ce_fwzB7jDeSj7nKy1RRp0Mv8g5Blq28ik1TtB25hS3cX1Q&amp;sensor=false"type="text/javascript">
+</script>
+
+<style type="text/css">
+body {
+    font-family: "Trebuchet MS", Arial,Helvetica,Sans Serif;
+    font-size: 10pt;
+}
+#map {
+    width: 800px;
+    height: 600px;
+    border: 1px solid gray;
+    margin-top: 1px;
+    margin-left: 1px;
+}
+.centertable {
+    min-width: 10px;
+    margin: 0px auto;
+    border-collapse: collapse;
+}
+#coords {
+    padding: 5px;
+    font-weight: bold;
+}
+#middlerow {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.leftfloat {
+    float: left;
+}
+#TblColors {
+    cursor: hand;
+    width: 240px;
+    height: 190px;
+}
+#TblColors td{
+    padding: 2px;
+}
+#toptable td {
+    padding: 5px;
+    font-weight: bold;
+}
+</style>
+
+<script type="text/javascript">
+//<![CDATA[
+
+function gob(e){if(typeof(e)=='object')return(e);if(document.getElementById)return(document.getElementById(e));return(eval(e))}
+
+var map;
+var toolID = 1;
+var polyShape;
+var polyShape2;
+var polygonMode = false;
+var circlemode = null;
+var rectanglemode = null;
+var headfoot = false;
+var mylistener;
+var editlistener = null;
+var holelistener = null;
+var editing = false;
+var holeediting = false;
+var notext = false;
+var polygonDepth = "0";
+var polyPoints = new Array();
+var holePoints = new Array();
+var marker = null;
+var geocoder = null;
+var holemode = null;
+var mousemovepoint;
+
+var fillColor = "#FF0000"; // red fill
+var fillColorcur = "#FF0000";
+
+var lineColor = "#FF0000";  // red line
+var lineColorcur = "#FF0000";
+
+var polygonlineColor = "#FF0000";
+var polygonlineColorcur = "#FF0000";
+
+var lineColor2 = "#000000"; // black line
+var lineopacity = .4;
+var lineopacitycur = .4;
+var fillopacity = .4;
+var fillopacitycur = .4;
+var opacityhex = "66";
+var opacityhexcur = "66";
+var lineWeight = 3;
+var lineWeightcur = 3;
+var polygonLineWeight = 0.1;
+var polygonLineWeightcur = 0.1;
+
+var kmlFillColor = "660000FF";
+var kmlFillColorcur = "660000FF";
+var kmlLineColor = "660000FF";
+var kmlLineColorcur = "660000FF";
+var kmlpolygonLineColor = "660000FF";
+var kmlpolygonLineColorcur = "660000FF";
+
+var centerMarker = null;
+var radiusMarker = null;
+
+var opchoice = "polygon";
+
+var circleguide = "Ready for circle\n" +
+            "Use Polygon mode to draw a filled circle\n" +
+            "Click the map where you want the center of the circle to be\n" +
+            "Click at radius distance\n" +
+            "and the circle is drawn";
+var rectangleguide = "Ready for rectangle\n" +
+            "Use Polygon mode to draw a filled rectangle\n" +
+            "Click where you want the upper right corner placed";
+var presentationguide = 'Click on map.';
+
+var childwidth = 565;
+var childheight = 310;
+var childbordercolor = "#337EB7";
+var childbackgroundcolor = "#ffffff";
+
+function load() {
+    if(GBrowserIsCompatible()) {
+        map = new GMap2(document.getElementById("map"), {draggableCursor:'default',draggingCursor:'pointer'});
+
+	    //_lat = 52.977289;
+	    //_lng = -1.14893;
+	    _lat = 51.488919;
+	    _lng = 0.075102;
+	    
+//		0.075102,51.488919,0
+//		0.0418,51.502225,0
+//		0.109434,51.502278,0
+//		0.109692,51.470477,0
+//		0.041456,51.470638,0
+
+        map.setCenter(new GLatLng(_lat,_lng),3);
+
+
+		// Define the two corners of the bounding box
+//		var sw = new GLatLng(52.965763,-1.170559);
+//		var ne = new GLatLng(52.989226,-1.128244);
+		var sw = new GLatLng(51.470477,0.041456);
+		var ne = new GLatLng(51.502278,0.109692);
+		
+		// Create a bounding box
+		var bounds = new GLatLngBounds(sw, ne);
+		
+		// Center map in the center of the bounding box
+		// and calculate the appropriate zoom level
+		map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));
+
+	
+        var customUI = map.getDefaultUI();
+        customUI.controls.maptypecontrol = false;
+        customUI.controls.menumaptypecontrol = true;
+        map.setUI(customUI);
+        mylistener = GEvent.addListener(map,'click',mapClick);
+        geocoder = new GClientGeocoder();
+        GEvent.addListener(map,"mousemove",function(point){
+            mousemovepoint = point;
+            var LnglatStr6 = point.lng().toFixed(6) + ', ' + point.lat().toFixed(6);
+            var latLngStr6 = point.lat().toFixed(6) + ', ' + point.lng().toFixed(6);
+//            gob("over").options[0].text = LnglatStr6;
+//            gob("over").options[1].text = latLngStr6;
+            });
+        GEvent.addListener(map,"zoomend",mapzoom);
+    }
+}
+
+// mapClick - Handles the event of a user clicking anywhere on the map. activated by listener
+// Adds a new point to the map and draws either a new line from the last point
+// or a new polygon section depending on the drawing mode.
+// A click on a shape reactivates it.
+function mapClick(section, clickedPoint){
+    if(editing == true) stopediting();
+    // a drawn shape has been clicked, get ready to reactivate it
+    if(polyPoints.length == 0 && section != null){
+        var j = section.getVertexCount(); // get the amount of points
+        for (var i=0; i<j; i++){
+            polyPoints[i] = section.getVertex(i); // update polyPoints array
+        }
+        polyShape = section;
+        shapemessage(); // give the user choices to do something to this shape
+    }else{
+        //if(true){
+        //    pushpoint(mousemovepoint);
+        //}else{
+            if(section == null) pushpoint(clickedPoint);
+        //}
+    }
+}
+
+function pushpoint(point){
+	polyPoints.push(point);
+	drawCoordinates();
+}
+
+function setTool(){
+    if(toolID == 1){
+        polygonMode = false;
+    }
+    if(toolID == 2){
+        polygonMode = true;
+    }
+    if(polyPoints.length > 1){
+        drawCoordinates();
+    }
+    if(editing == true) stopediting();
+}
+
+// First and second stop for circle
+function clickforCircle(point){
+    if(!centerMarker){
+        centerMarker = new GMarker(point,{title:"Start"});
+        map.addOverlay(centerMarker);
+    }
+    else if(!radiusMarker){
+        radiusMarker = point;
+        collectcirclepoints(); // fill the polyPoints array with all the points needed to draw a circle
+        map.removeOverlay(centerMarker);
+        centerMarker = null;
+        radiusMarker = null;
+        drawCoordinates();
+    }
+}
+
+function collectcirclepoints(){
+    var zoom = map.getZoom();
+    var normalProj = G_NORMAL_MAP.getProjection();
+  	var centerPt = normalProj.fromLatLngToPixel(centerMarker.getPoint(),zoom);
+  	var radiusPt = normalProj.fromLatLngToPixel(radiusMarker,zoom);
+    with (Math){
+	    var radius = floor(sqrt(pow((centerPt.x-radiusPt.x),2) + pow((centerPt.y-radiusPt.y),2)));
+        for (var a = 0 ; a < 361 ; a+=10 ){
+        	var aRad = a*(PI/180);
+        	y = centerPt.y + radius * sin(aRad)
+        	x = centerPt.x + radius * cos(aRad)
+        	var p = new GPoint(x,y);
+            if(holemode){
+        	    holePoints.push(normalProj.fromPixelToLatLng(p, zoom));
+            }else{
+                polyPoints.push(normalProj.fromPixelToLatLng(p, zoom));
+            }
+	    }
+        if(holemode){
+            var helper = [];
+            var k = 0;
+            var j = holePoints.length;
+            for (var i = j-1; i>-1; i--) {
+                helper[k] = holePoints[i];
+                k++;
+            }
+            holePoints = helper;
+        }
+    }
+}
+
+function collectrectanglepoints(latlng){
+    var lat = latlng.lat();
+    var lon = latlng.lng();
+    var latOffset = gob("recheight").value;
+    var lonOffset = gob("recwidth").value;
+
+    var firstPoint = new GLatLng(parseFloat(lat - latOffset),parseFloat(lon - lonOffset));
+    var secondPoint = new GLatLng(parseFloat(lat + latOffset),parseFloat(lon - lonOffset));
+    var thirdPoint = new GLatLng(parseFloat(lat + latOffset),parseFloat(lon + lonOffset));
+    var fourthPoint = new GLatLng(parseFloat(lat - latOffset),parseFloat(lon + lonOffset));
+    if(holemode){
+        holePoints.push(firstPoint);
+        holePoints.push(fourthPoint);
+        holePoints.push(thirdPoint);
+        holePoints.push(secondPoint);
+        holePoints.push(firstPoint);
+    }else{
+        polyPoints.push(firstPoint);
+        polyPoints.push(secondPoint);
+        polyPoints.push(thirdPoint);
+        polyPoints.push(fourthPoint);
+        polyPoints.push(firstPoint);
+    }
+    drawCoordinates();
+}
+
+// let start and end meet, a button has been clicked
+function closePoly(){
+    if(!circlemode && !rectanglemode){ // in circlemode this has been done in function collectcirclepoints
+        // Push onto polypoints of existing polyline
+        if(holemode){
+            if(holePoints.length > 2){
+                holePoints.push(holePoints[0]);
+            }
+        }else{
+            // Push onto polypoints of existing polyline/polygon
+            if(polyPoints.length > 2) polyPoints.push(polyPoints[0]);
+        }
+        drawCoordinates();
+    }
+}
+
+// the "Edit lines" button has been pressed, or a finished shape has been clicked
+function editlines(){
+    if(editing == true){
+        stopediting();
+        drawCoordinates();
+    }else{
+        if(polyPoints.length > 0){
+            polygonMode = false; // editing is set to be possible only in polyline draw mode
+            //gob('toolchoice').value = 1;
+            drawCoordinates(); // draw and log in polyline mode
+            polyShape.enableEditing();
+            editlistener = GEvent.addListener(polyShape,'lineupdated',updateCoordinates);
+            editing = true;
+            if(polyShape2 != null){
+                polyShape2.enableEditing();
+                holelistener = GEvent.addListener(polyShape2,'lineupdated',updateCoordinates);
+                holeediting = true;
+            }
+            coo.value = "Drag a point. When finished editing, click the edit-button again or continue drawing.";
+        }
+    }
+}
+
+// when editing lines, the points arrays are updated with this function. activated by listener
+function updateCoordinates(){
+    var j = polyShape.getVertexCount(); // get the amount of points
+    for (var i = 0; i<j; i++){
+        polyPoints[i] = polyShape.getVertex(i); // update polyPoints array
+    }
+    if(holePoints.length > 0){
+        j = polyShape2.getVertexCount(); // get the amount of points
+        for (var i = 0; i<j; i++){
+            holePoints[i] = polyShape2.getVertex(i); // update holePoints array
+        }
+    }
+    logCoordinates();
+}
+
+// drawCoordinates
+function drawCoordinates(){
+    // Recreate shapes
+    if(polyPoints.length > 0){
+        if(polyShape) map.removeOverlay(polyShape);
+        if(polyShape2) map.removeOverlay(polyShape2);
+        if(marker) map.removeOverlay(marker);
+        if(true){ // polygon
+            if(holePoints.length > 0){ // let's create a polygon with a hole
+                var polywithholePoints = new Array();
+                // join outer boundary coordinates and inner boundary coordinates
+                polywithholePoints = polyPoints.concat(holePoints);
+                // this is the polygon with a hole
+                polyShape = new GPolygon(polywithholePoints,"#ffffff",0,lineopacitycur,fillColorcur,fillopacitycur);
+            }else{ // normal polygon
+                if(polyPoints.length == 2){
+                    polyShape = new GPolyline(polyPoints,polygonlineColorcur,lineWeightcur,lineopacitycur);
+                }else{
+                    polyShape = new GPolygon(polyPoints,polygonlineColorcur,polygonLineWeightcur,lineopacitycur,fillColorcur,fillopacitycur);
+                }
+            }
+        }
+		marker = new GMarker(polyPoints[0]); // marker always at startpoint
+		map.addOverlay(marker);
+	        
+        // add the updated shape(s)
+        // polyShape2 will never be a polygon, just building lines until complete
+        map.addOverlay(polyShape);
+        logCoordinates();
+    }
+}
+
+function stopediting(){
+    GEvent.removeListener(editlistener);
+    polyShape.disableEditing();
+    editing = false;
+    if(polyShape2 != null){
+        GEvent.removeListener(holelistener);
+        polyShape2.disableEditing();
+        holeediting = false;
+    }
+}
+
+// logCoordinates - prints out coordinates of global polyPoints (and holePoints) array
+//  This version logs KML or only coordinates, but could be extended to log different types of output
+function logCoordinates(){
+        var j;
+        var k;
+        coo.value =  ""; // erase content in coords window
+        j = polyPoints.length; // get the amount of points
+        // check mode
+        if(true){ // print polygon
+            // loop to print coords within the outerBoundaryIs code
+            // coordinates are printed with a maximum of 6 decimal places, function roundVal takes care of this
+            for (var i=0; i<j; i++){
+                var lat = polyPoints[i].lat();
+                var longi = polyPoints[i].lng();
+                coo.value += roundVal(longi) + "," + roundVal(lat) + "," + polygonDepth + " \n";
+            }
+        }else{ // print polyline(s)
+        }
+}
+
+function mapzoom(){
+    var mapZoom = map.getZoom();
+    //gob("myzoom").value = mapZoom;
+}
+
+function mapcenter(){
+    var mapCenter = map.getCenter();
+    var latLngStr6 = mapCenter.lat().toFixed(6) + ', ' + mapCenter.lng().toFixed(6);
+    gob("centerofmap").value = latLngStr6;
+}
+
+function togglejavascript(){
+    var javabox = gob("javascript").checked;
+    if(javabox){
+        showCode(); //javascript
+    }else{ //KML
+        gob("javascript").checked = false;
+        headfoot = gob("headerfooter").checked = true;
+        if(polyPoints.length > 0){
+            logCoordinates();
+        }else{
+            removesomemodes();
+            coo.value = presentationguide;
+        }
+    }
+}
+
+function showCodeintextarea(){
+    if (notext == false){
+        gob("presentcode").checked = false;
+        notext = true;
+    }else{
+        gob("presentcode").checked = true;
+        notext = false;
+        if(polyPoints.length > 0){
+            logCoordinates();
+        }
+    }
+}
+
+function showCode(){ //Javascript, not KML
+    var j = polyPoints.length;
+    var k = holePoints.length;
+    var weight = polygonLineWeightcur;
+    gob("headerfooter").checked = false;
+    gob("noheaderfooter").checked = false;
+    coo.value = "var points =\n[\n";
+    for(var i=0; i<j; i++){
+        var lat = polyPoints[i].lat();
+        var longi = polyPoints[i].lng();
+        coo.value += "new GLatLng(" + roundVal(lat) + "," + roundVal(longi) + ")";
+        if(i < (j-1)) coo.value += ",\n";
+    }
+    if(k>0){
+        coo.value += ",\n";
+        weight = 0;
+        for (var i=0; i<k; i++){
+            var lat = holePoints[i].lat();
+            var longi = holePoints[i].lng();
+            coo.value += "new GLatLng(" + roundVal(lat) + "," + roundVal(longi) + ")";
+            if(i < (k-1)) coo.value += ",\n";
+        }
+    }
+    coo.value +="\n];\n";
+    if(true){
+        coo.value +="var polygon = new GPolygon(points,'" + polygonlineColorcur + "'," + weight + "," + lineopacitycur + ",'" + fillColorcur + "'," + fillopacitycur + ");\n";
+        coo.value +="map.addOverlay(polygon);";
+    }else{
+        coo.value +="var polyline = new GPolyline(points,'" + lineColorcur + "'," + lineWeightcur + "," + lineopacitycur + ");\n";
+        coo.value +="map.addOverlay(polyline);";
+    }
+}
+
+function shapemessage(){
+    var messagecontent = '&nbsp;To edit click the Edit button,<br />'
+    + '&nbsp;and the Edit lines button when finished<br />'
+    + '&nbsp;Then click the Next shape button<br />'
+    + '&nbsp;Click Remove to remove the shape you clicked<br />'
+    + '<div style="position:absolute; left:50px; top:100px; width:290px; height:35px;"/>'
+    + '<form name="messageform">'
+    + '<input type="button" name="editer" value="Edit" onClick="editlines();popback();"/>'
+    + '&nbsp;&nbsp;<input type="button" name="remover" value="Remove" onClick="removeshape();popback()"/>'
+    + '&nbsp;&nbsp;<input type="button" name="closer" value="Close" onClick="nextshape();popback()"/>'
+    + '</form></div>';
+    var objId = "newcontent";
+    if(!gob(objId)){
+        var newdiv = document.createElement('div');
+        newdiv.id = objId;
+        document.body.appendChild(newdiv);
+        var obj = gob(objId);
+        obj.style.position = "absolute";
+        obj.style.top = "250px";
+        obj.style.left = "100px";
+        obj.style.width = "300px";
+        obj.style.height = "150px";
+        obj.style.border = "2px solid " + childbordercolor;
+        obj.style.background = childbackgroundcolor;
+        obj.onclick = function(){popback();};
+    }else{
+        var obj = gob(objId);
+        obj.style.visibility = "visible";
+    }
+    obj.innerHTML = messagecontent;
+}
+
+function popback(){
+    var obj = gob("newcontent");
+    obj.style.visibility = "hidden";
+}
+
+function removeshape(){
+    map.removeOverlay(polyShape);
+    nooverlayvariables();
+}
+
+function subclean(){
+    nooverlayvariables();
+    //removesomemodes();
+    //polygonMode = false;
+    //gob('toolchoice').value = 1; // polyline draw mode
+    coo.value = presentationguide;
+}
+
+function nextshape(){
+    //button has been pressed
+    if(polyPoints.length > 0){
+        if(editing == true) stopediting();
+        if(marker) map.removeOverlay(marker);
+        subclean();
+    }
+}
+
+// Clear current Map
+function clearMap(){
+    if(editing == true) stopediting();
+    map.clearOverlays();
+    subclean();
+}
+
+function nooverlayvariables(){
+    polyShape = null;
+    polyShape2 = null;
+    polyPoints = [];
+    holePoints = [];
+}
+
+function removesomemodes(){
+//    holemode = gob("nohole").checked = false;
+//    circlemode = gob("nocircle").checked = false;
+//    rectanglemode = gob("norectangle").checked = false;
+}
+
+//  check if print KML or print only coordinates in text area
+function toggleheadfoot(){
+    //map.clearOverlays();
+    gob("javascript").checked = false;
+    headfoot = gob("headerfooter").checked;
+    if(polyPoints.length > 0){
+        logCoordinates();
+    }else{
+        if(circlemode){
+            coo.value = circleguide;
+        }else{
+            coo.value = presentationguide;
+        }
+    }
+}
+
+function togglerectangle(){
+    rectanglemode = gob("norectangle").checked;
+    if(rectanglemode){
+        circlemode = gob("nocircle").checked = false;
+        if(!holemode){
+            if(polyPoints.length){
+                map.clearOverlays();
+                polyPoints = [];
+            }
+        }
+        coo.value = rectangleguide;
+    }else{
+        // print ready to draw message in text area
+        if(!polyPoints.length) coo.value = presentationguide;
+    }
+}
+
+function togglecircle(){
+    var guide;
+    circlemode = gob("nocircle").checked;
+    if(circlemode){
+        rectanglemode = gob("norectangle").checked = false;
+        if(!holemode){
+            if(polyPoints.length){
+                map.clearOverlays();
+                polyPoints = [];
+            }
+        }
+        // print ready to draw circle message in text area
+        guide = circleguide;
+    }else{
+        if(centerMarker) map.removeOverlay(centerMarker);
+        // print ready to draw message in text area
+        guide = presentationguide;
+    }
+    if(!polyPoints.length) coo.value = guide;
+}
+
+function togglehole(){
+    if(!polyPoints.length || polygonMode){ // map is blank, write a message in text area
+        coo.value =  "Draw a closed shape (freehand, circle or rectangle) in Polyline mode first\n" +
+        "Then mark Hole and draw a (closed) shape within\n" +
+        "Choose Polygon draw mode to view the result\n" +
+        "This feature is used to draw a polygon with a hole";
+        gob("nohole").checked = false;
+    }else{
+        holemode = gob("nohole").checked;
+        if(!holemode){
+            // clear any second (inner) shape
+            holePoints = [];
+            if(centerMarker){
+                map.removeOverlay(centerMarker);
+                centerMarker = null;
+            }
+        }else{ // ready for polygon with hole
+            // draw mode set to polyline in holemode
+            polygonMode = false;
+        }
+        drawCoordinates();
+    }
+}
+
+// Delete last Point
+// This function removes the last point from the Polyline/Polygon and redraws
+// map.
+function deleteLastPoint(){
+    if(editing == true) stopediting();
+    if(!circlemode && !rectanglemode){ // do not allow delete last point in a circle or rectangle
+        if(polyPoints || holePoints){
+            if(!holemode){
+                // pop last element of polyPoints array
+                polyPoints.pop();
+                drawCoordinates();
+            }else{
+                // pop last element of holePoints array
+                holePoints.pop();
+                drawCoordinates();
+            }
+        }
+    }
+}
+
+function showAddress(address){
+  if(geocoder){
+   geocoder.getLatLng(address,
+     function(point){
+       if(!point){
+         alert(address + " not found");
+       }else{
+         var mapZoom = map.getZoom();
+         map.setCenter(point, mapZoom);
+         // Create our "tiny" marker icon
+         var tinyIcon = new GIcon();
+         tinyIcon.image = "http://labs.google.com/ridefinder/images/mm_20_red.png";
+         tinyIcon.shadow = "http://labs.google.com/ridefinder/images/mm_20_shadow.png";
+         tinyIcon.iconSize = new GSize(12,20);
+         tinyIcon.shadowSize = new GSize(22,20);
+         tinyIcon.iconAnchor = new GPoint(6,20);
+         tinyIcon.infoWindowAnchor = new GPoint(5,1);
+         // Set up our GMarkerOptions object literal
+         markerOptions = {icon:tinyIcon};
+         var centerpoint = new GMarker(point, markerOptions);
+         map.addOverlay(centerpoint);
+       }
+     }
+    );
+  }
+}
+
+// the copy part may not work with all web browsers
+function copyTextarea(){
+    coo.focus();
+    coo.select();
+    copiedTxt = document.selection.createRange();
+    copiedTxt.execCommand("Copy");
+}
+
+function roundVal(val){
+    if(val.toString().length < 9){
+        return val;
+    }else{
+    	var dec = 6;
+    	var result = Math.round(val*Math.pow(10,dec))/Math.pow(10,dec);
+    	return result;
+    }
+}
+
+function managechildcreation(){
+    var wc = new getchildwindowposition();
+    createchild(wc.left,wc.top);
+}
+
+function getchildwindowposition(){
+    var info = new getparentwindowsize();
+    xleft = (info.clientWidth - childwidth)/2 + " ";
+    xleft = parseInt(xleft);
+    ytop = (info.clientHeight - childheight)/2 + " ";
+    ytop = parseInt(ytop);
+    this.left = xleft;
+    this.top = ytop;
+}
+
+function getparentwindowsize(){
+    var myWidth = 0, myHeight = 0;
+    if(typeof(window.innerWidth) == 'number'){
+        //Non-IE
+        myWidth = window.innerWidth;
+        myHeight = window.innerHeight;
+    }else if(document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)){
+        //IE 6+ in 'standards compliant mode'
+        myWidth = document.documentElement.clientWidth;
+        myHeight = document.documentElement.clientHeight;
+    }else if(document.body && (document.body.clientWidth || document.body.clientHeight)){
+        //IE 4 compatible
+        myWidth = document.body.clientWidth;
+        myHeight = document.body.clientHeight;
+    }
+    this.clientHeight = myHeight;
+    this.clientWidth = myWidth;
+}
+
+function createchild(left,top){
+    objId="child";
+    var newdiv = document.createElement('div');
+    newdiv.id = objId;
+    document.body.appendChild(newdiv);
+    childwindowstyle(objId,left,top);
+}
+
+function childwindowstyle(objId,left,top){
+    var obj = gob(objId);
+    obj.style.position = "absolute";
+    obj.style.left = left +"px";
+    obj.style.top = top +"px";
+    obj.style.width = childwidth +"px";
+    obj.style.height = childheight + "px";
+    obj.style.border = "2px solid " + childbordercolor;
+    obj.style.background = childbackgroundcolor;
+}
+
+function color_html2kml(color){
+    var newcolor ="ffffff";
+    if(color.length == 7) newcolor = color.substring(5,7)+color.substring(3,5)+color.substring(1,3);
+    return newcolor
+}
+
+function colortotext(bgColor){
+    bgColor = bgColor.toUpperCase();
+    var childhtmlcolor = document.infotextform.htmlc.value = ""+bgColor;
+    var childkmlcolor = document.infotextform.kmlc.value = opacityhexcur + color_html2kml(""+bgColor);
+    if(gob("childpolygonmaster").checked){
+        if(gob("childpolygonfield").checked){
+            fillColorcur = childhtmlcolor;
+            kmlFillColorcur = childkmlcolor;
+        }else{
+            polygonlineColorcur = childhtmlcolor;
+            kmlpolygonLineColorcur = childkmlcolor;
+        }
+    }else{
+        lineColorcur = childhtmlcolor;
+        kmlLineColorcur = childkmlcolor;
+    }
+    if(polyPoints.length > 0) drawCoordinates();
+}
+
+// this function handles clicks on colours in child window (style manager window)
+function setcellcolor(){
+    var obj = gob("currentcolor");
+    var childcolorname = this.id;
+    gob("currentcolorname").innerHTML = childcolorname;
+    obj.style.backgroundColor = this.bgColor;
+    colortotext(this.bgColor);
+}
+
+function addcellcolor(row,color,name){
+    cell = document.createElement("td");
+    cell.id = name;
+    cell.setAttribute("Width",10);
+    cell.setAttribute("Height",10);
+    cell.setAttribute("bgColor",color);
+    cell.onclick = setcellcolor;
+    row.appendChild(cell);
+}
+
+function addrow(myTable,height){
+    lastRow = myTable.rows.length;
+    row = myTable.insertRow(lastRow);
+    row.setAttribute("height",height);
+    return row
+}
+
+function updateopathick(){
+    var opacityhexcurold = opacityhexcur;
+    var lineWeightcurold = lineWeightcur;
+    var lineopa = gob("kmlcinput").value;
+    var fillopa = gob("kmlfillinput").value;
+    var linethick = gob("htmlcinput").value;
+    if(gob("childpolygonmaster").checked){
+        if(lineopa != lineopacitycur){
+            lineopacitycur = lineopa;
+            opacityhexcur = getopacityhex(lineopa);
+            kmlpolygonLineColorcur = opacityhexcur + color_html2kml(""+polygonlineColorcur);
+            document.infotextform.kmlc.value = kmlpolygonLineColorcur;
+        }
+        if(fillopa != fillopacitycur){
+            fillopacitycur = fillopa;
+            opacityhexcur = getopacityhex(fillopa);
+            kmlFillColorcur = opacityhexcur + color_html2kml(""+fillColorcur);
+            document.infotextform.kmlc.value = kmlFillColorcur;
+        }
+        if(linethick != polygonLineWeightcur){
+            polygonLineWeightcur = linethick;
+        }
+    }else{
+        if(lineopa != lineopacitycur){
+            lineopacitycur = lineopa;
+            opacityhexcur = getopacityhex(lineopa);
+            kmlLineColorcur = opacityhexcur + color_html2kml(""+lineColorcur);
+            document.infotextform.kmlc.value = kmlLineColorcur;
+        }
+        if(linethick != lineWeightcur) lineWeightcur = linethick;
+    }
+    if(polyPoints.length > 0) drawCoordinates();
+}
+
+function getopacityhex(opa){
+    var hexopa = opacityhexcur;
+    if(opa == 0) hexopa = "00";
+    if(opa == .0) hexopa = "00";
+    if(opa == .1) hexopa = "1a";
+    if(opa == .2) hexopa = "33";
+    if(opa == .3) hexopa = "4d";
+    if(opa == .4) hexopa = "66";
+    if(opa == .5) hexopa = "80";
+    if(opa == .6) hexopa = "9a";
+    if(opa == .7) hexopa = "b3";
+    if(opa == .8) hexopa = "cd";
+    if(opa == .9) hexopa = "e6";
+    if(opa == 1.0) hexopa = "ff";
+    if(opa == 1) hexopa = "ff";
+    return hexopa
+}
+
+function togglecolorMode(){
+    if(gob("childpolygonmaster").checked){
+        var obj = gob("currentcolor");
+        gob("currentcolorname").innerHTML = "";
+        if(gob("childpolygonfield").checked){
+            obj.style.backgroundColor = fillColorcur;
+            document.infotextform.kmlc.value = kmlFillColorcur;
+            document.infotextform.htmlc.value = fillColorcur;
+        }else{
+            obj.style.backgroundColor = polygonlineColorcur;
+            document.infotextform.kmlc.value = kmlpolygonLineColorcur;
+            document.infotextform.htmlc.value = polygonlineColorcur;
+        }
+    }else{
+        gob("childpolygonfield").checked = false;
+        gob("childpolylinefield").checked = false;
+    }
+}
+
+function polylinetopolygon(){
+    var obj = gob("currentcolor");
+    gob("currentcolorname").innerHTML = "";
+    gob("childfield").checked = false;
+    gob("childpolylinemaster").checked = false;
+    gob("childpolygonfield").checked = true;
+    gob("childpolylinefield").checked = false;
+    gob("opandweight").innerHTML = "polygon";
+    gob("kmlcinput").value = lineopacitycur;
+    gob("htmlcinput").value = polygonLineWeightcur;
+    gob("kmlfillinput").value = fillopacitycur;
+    document.opacityandlinethicknessform.kmlfillinput.disabled = false;
+    document.infotextform.kmlc.value = kmlFillColorcur;
+    document.infotextform.htmlc.value = fillColorcur;
+    obj.style.backgroundColor = fillColorcur;
+}
+
+function polygontopolyline(){
+    var obj = gob("currentcolor");
+    gob("currentcolorname").innerHTML = "";
+    gob("childfield").checked = true;
+    gob("childpolygonmaster").checked = false;
+    gob("childpolygonfield").checked = false;
+    gob("childpolylinefield").checked = false;
+    gob("opandweight").innerHTML = "polyline";
+    gob("kmlcinput").value = lineopacitycur;
+    gob("htmlcinput").value = lineWeightcur;
+    gob("kmlfillinput").value = fillopacitycur;
+    document.opacityandlinethicknessform.kmlfillinput.disabled = true;
+    document.infotextform.kmlc.value = kmlLineColorcur;
+    document.infotextform.htmlc.value = lineColorcur;
+    obj.style.backgroundColor = lineColorcur;
+}
+
+function closechild(){
+    var obj = gob("child");
+    document.body.removeChild(obj);
+}
+
+function restoredefaults(){
+    if(polyPoints.length > 0){
+        fillColorcur = fillColor;
+        lineColorcur = lineColor;
+        polygonlineColorcur = polygonlineColor;
+        lineopacitycur = lineopacity;
+        fillopacitycur = fillopacity;
+        opacityhexcur = opacityhex;
+        lineWeightcur = lineWeight;
+        polygonLineWeightcur = polygonLineWeight;
+        kmlFillColorcur = kmlFillColor;
+        kmlLineColorcur = kmlLineColor;
+        kmlpolygonLineColorcur = kmlpolygonLineColor;
+        opchoice = "polygon";
+        drawCoordinates();
+    }
+}
+
+// arrive here from Style Options button click
+function createchildwindow(){
+    managechildcreation();
+    var title = '<span style="font-weight:bold">&nbsp; Style manager<span>';
+    var childtitlecolor = "#337EB7";
+    var obj = gob("child");
+    var childwindow ='<div id = "titlefield" style='
+    + '"position: relative; background-color:'+childtitlecolor+'; color:white; left:2px; top:2px; width:'+(childwidth-4)+'px; height:18px;"/>'
+    + title +'</div>'
+    + '<div style="position:absolute; left:0px; top:24px; width:260px; height:200px; font-family:Arial,Helvetica,sans-serif; font-size:9pt; overflow-y:auto; overflow-x:hidden;"/>'
+    + '<div id="colorcells" style="position:absolute; left:2px; top:1px; width:'+(childwidth-4)+'px; height:'+(childheight-111)+'px;"/>'
+    + '<table id="TblColors" border=1>'
+    + '</table></div></div>'
+    + '<div id="currentcolor" style="position:absolute; left:10px; top:235px; width:20px; height:20px; background-color:'+fillColorcur+'; border: 1px solid;"/></div>'
+    + '<div id="currentcolorname" style="position:absolute; left:40px; top:235px; width:150px; height:35px;"/></div>'
+    + '<form name="infotextform">'
+    + '<div style="position:absolute; left:270px; top:24px; width:270px; height:55px; border:2px solid; border-color:' + childbordercolor +';"/>'
+    + '<table><tr><td colspan="2">'
+    + 'Polygon: <input type="checkbox" name="childPolyMode" id="childpolygonmaster" value="polygonmaster" onclick="polylinetopolygon();" checked="checked"/></td>'
+    + '</tr><tr>'
+    + '<td>Fill colour: <input type="radio" name="colorMode" id="childpolygonfield" value="childpolygon" onclick="togglecolorMode();" checked="checked"/></td>'
+    + '<td>Line colour: <input type="radio" name="colorMode" id="childpolylinefield" value="childpolyline" onclick="togglecolorMode();"/></td></tr>'
+    + '</table>'
+    + '</div>'
+    + '<div style="position:absolute; left:270px; top:85px; width:270px; height:24px;"/>'
+    + '<table><tr><td>HTML: <input type="text" name="htmlc" value="'+fillColorcur+'" style="width:80px" readonly /></td>'
+    + '<td>KML: <input type="text" name="kmlc" value="'+kmlFillColorcur+'" style="width:80px" readonly /></td></tr>'
+    + '</table>'
+    + '</div>'
+    + '<div style="position:absolute; left:270px; top:117px; width:270px; height:24px; border:2px solid; border-color:' + childbordercolor +';"/>'
+    + '<table><tr><td>'
+    + 'Polyline: <input type="checkbox" name="childPolyMode" id="childpolylinemaster" value="polylinemaster" onclick="polygontopolyline();"/></td>'
+    + '<td>Line colour: <input type="radio" name="colorMode" id="childfield" value="childpolyline"/></td></tr>'
+    + '</table>'
+    + '</div></form>'
+    + '<div style="position:absolute; left:270px; top:175px; width:270px; height:80px; border:2px solid; border-color:' + childbordercolor +'";/>'
+    + '<form name="opacityandlinethicknessform">'
+    + '<table><tr><td colspan="2">You may enter new values for <span id="opandweight">'+opchoice+'</span></td></tr>'
+    + '<tr><td>Line opacity: <input type="text" name="kmlcinput" value="'+lineopacitycur+'" style="width:25px" /></td>'
+    + '<td>Line thicknes: <input type="text" name="htmlcinput" value="'+polygonLineWeightcur+'" style="width:25px" /></td></tr>'
+    + '<tr><td>Fill opacity: <input type="text" name="kmlfillinput" value="'+fillopacitycur+'" style="width:25px" /></td>'
+    + '<td align="center"><input type="button" name="opathick" value="Apply" onClick="updateopathick();"/></td></tr>'
+    + '</table>'
+    + '</form></div>'
+    + '<div style="position:absolute; left:170px; top:275px; width:460px; height:35px;"/>'
+    + '<form name="buttonform">'
+    + '<input type="button" name="default" value="Restore defaults" onClick="restoredefaults();closechild();"/>'
+    + '&nbsp;&nbsp;<input type="button" name="close" value="Finished" onClick="closechild();"/>'
+    + '</form></div>';
+    obj.innerHTML = childwindow;
+
+    var colortable = gob("TblColors");
+    var cellcolor = ['#000000','#FFFFFF','#FFFFF0','#C0C0C0',
+    '#A9A9A9','#808080','#696969',
+    '#2F4F4F','#8B0000','#DC143C',
+    '#FF0000','#FF4500','#FF6347',
+    '#FF7F50','#FF8040','#FF8C00',
+    '#F5DEB3','#FFFF00','#FFD700',
+    '#ADFF2F','#98FB98','#7CFC00',
+    '#7FFF00','#00FF00','#00FF7F',
+    '#32CD32','#228B22','#008000',
+    '#006400','#556B2F','#808000',
+    '#C71585','#DDA0DD','#CD5C5C',
+    '#800000','#804000','#D2691E',
+    '#B8860B','#CD853F','#F4A460',
+    '#F0E68C','#BC8F8F','#EEE8AA',
+    '#000080','#191970','#0000A0',
+    '#0000CD','#0000FF','#6A5ACD',
+    '#6495ED','#87CEFA','#ADD8E6',
+    '#E0FFFF','#00FFFF','#FF69B4',
+    '#FF00FF','#FF0080','#9932CC',
+    '#8B008B','#800080','#4B0082',
+    '#8D38C9','#9400D3'];
+    var colorname = ['Black','White','Ivory','Silver',
+    'Dark Grey','Grey','Dim Grey',
+    'Dark Slate Gray','Dark Red','Crimson',
+    'Red','Orange Red','Tomato',
+    'Coral','Orange','Dark Orange',
+    'Wheat','Yellow','Gold',
+    'Green Yellow','Pale Green','Lawn Green',
+    'Chartreuse','Lime','Spring Green',
+    'Lime Green','Forest Green','Green',
+    'Dark Green','Dark Olive Green','Olive',
+    'Medium Violet Red','Plum','Indian Red',
+    'Maroon','Brown','Chocolate',
+    'Dark Goldenrod','Peru','Sandy Brown',
+    'Khaki','Rosy Brown','Pale Goldenrod',
+    'Navy','Midnight Blue','Dark Blue',
+    'Medium Blue','Blue','Slate Blue',
+    'Cornflower Blue','Light Sky Blue','Light Blue',
+    'Light Cyan','Cyan','Hot Pink',
+    'Fuchsia','Light Purple','Dark Orchid',
+    'Dark Magenta','Purple','Indigo',
+    'Violet','Dark Violet'];
+
+    var cellarraylength = cellcolor.length;
+    var row = addrow(colortable,"10");
+    for(i=0; i<cellarraylength; i++){
+        if(i==9 || i==18 || i==27 || i==36 || i==45 || i==54) row = addrow(colortable,"10");
+        addcellcolor(row,cellcolor[i],colorname[i]);
+    }
+}
+
+//]]>
+</script>
+
+</head>
+
+<body onload="load()" onunload="GUnload()">
+
+<!--div id="middlerow">
+<form class="leftfloat" style="margin-right:5px" action="#">
+<select id="over" style="width:180px;" >
+<option>LngLat mousemove</option>
+<option selected="selected">LatLng mousemove</option>
+</select>
+</form>
+<form class="leftfloat" style="margin-right:5px" action="#">
+Zoom level:
+<input type="text" size="5" name="myzoom" id="myzoom" value="3" style="width:15px;" />
+<input type="button" onclick="mapcenter();" value="Mapcenter"/>
+<input type="text" style="width:140px;" id="centerofmap" />
+</form-->
+
+<!--form class="leftfloat" action="#">
+&nbsp;&nbsp;&nbsp;Circle:
+
+<input type="checkbox" name="circlemode" id="nocircle" value="no" onclick="togglecircle();"/>
+&nbsp;&nbsp;Hole:
+<input type="checkbox" name="holemode" id="nohole" value="no" onclick="togglehole();"/>
+&nbsp;&nbsp;&nbsp;Rectangle:
+<input type="checkbox" name="rectanglemode" id="norectangle" value="no" onclick="togglerectangle();"/>
+&nbsp;Width:
+<input type="text" style="width:25px;" name="recwidth" id="recwidth" value="20" />
+&nbsp;Height:
+<input type="text" style="width:25px;" name="recheight" id="recheight" value="10" />
+</form-->
+
+<!--/div-->
+
+<div style="clear:both">
+<!--form class="leftfloat" style="margin-right:5px" action="#" onsubmit="showAddress(this.address.value); return false">
+<input type="text" size="25" name="address" value="Europe" />
+<input type="submit" value="Search" />
+</form-->
+
+<form class="leftfloat" action="#">
+<input type="button" onclick="nextshape();" value="Next zone"/>
+<input type="button" onclick="editlines();" value="Edit lines"/>
+<input type="button" name="button" value="Style options" onclick="createchildwindow()"/>
+
+<input type="button" onclick="clearMap();" value="Clear Map"/>
+<!--input type="button" onclick="copyTextarea();" value="Select and copy text"/-->
+<input type="button" onclick="deleteLastPoint();" value="Delete Last Point"/>
+<!--input type="button" onclick="closePoly();" value="Close Polyshape"/-->
+</form>
+</div>
+
+<br/>
+<br/>
+
+<table>
+<tr style="vertical-align:top" width="70%">
+<td rowspan="2"><div id="map"></div></td>
+<td>
+<!--form style="margin-bottom:5px" action="#">
+
+&nbsp;&nbsp;&nbsp;Live code presentation in textarea (below):
+<input type="checkbox" name="showcodemode" id="presentcode" value="yes" onclick="showCodeintextarea();" checked="checked"/>
+</form-->
+
+</td>
+
+</tr>
+<tr style="vertical-align:top" width="100">
+<td>
+<div id="status">
+<textarea id="coords" cols="30" rows="29">
+Click on map.
+</textarea>
+</div>
+</td>
+</tr>
+
+</table>
+
+<p></p>
+
+<script type="text/javascript">
+//<![CDATA[
+
+var coo = gob('coords')
+
+//]]>
+</script>
+
+</body>
+</html>
+

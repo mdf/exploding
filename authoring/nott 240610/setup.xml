@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<bmo ver="4">
+  <TSetup ref="1818BS">
+    <field name="maxDepth" type="int">2048</field>
+  </TSetup>
+</bmo>

@@ -816,8 +816,10 @@ public class Engine
 		logger.info("Content event: " + event.getID() + " " + event.getName() + " (zone: " + event.getZoneId() + ") affects " + ms.length + " members");
 	   	
 	   	Set<String> playerIDs = new HashSet<String>();
-	   	Set<String> playerIDsBirth = new HashSet<String>();
-	   	Set<String> playerIDsDeath = new HashSet<String>();
+	   	//Set<String> playerIDsBirth = new HashSet<String>();
+	   	//Set<String> playerIDsDeath = new HashSet<String>();
+	   	
+	   	int deaths = 0;
 	   	
 	   	for(int i=0; i<ms.length; i++)
 	   	{
@@ -939,6 +941,8 @@ public class Engine
 					   				/*
 				   			   	}
 				   			   	*/
+					   				
+					   			deaths++;
 				   				
 				   				session.remove(member);
 				   				continue;
@@ -1179,11 +1183,13 @@ public class Engine
 	   			playerIDs.add(p.getID());
 	   		}
 	   	}	   	
-	   	
+
 	   	Iterator<String> it = playerIDs.iterator();
 	   	
 	   	while(it.hasNext())
 	   	{
+	   		String playerID = it.next();
+	   		
 		   	Message msg = new Message();
 		   	msg.setCreateTime(System.currentTimeMillis());
 		   	msg.setYear(game.getYear());
@@ -1202,9 +1208,58 @@ public class Engine
 		   	msg.setHandled(false);
 			
 		   	msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-		   	msg.setPlayerID(it.next());
+		   	msg.setPlayerID(playerID);
 		   	logger.info("Player " + msg.getPlayerID() + " notified of event " + event.getID());
 			session.add(msg);
+	   	}
+
+	   	// health scare in a particular, all players
+	   	if(deaths>4 && event.getZoneId()!=0)
+	   	{
+	   		String titleText = null;
+	   		String descText = null;
+	   		String zoneName = null;
+   				
+   			if(event.isSetZoneId() && event.getZoneId()!=0)
+   			{
+	   			QueryTemplate zqt = new QueryTemplate(Zone.class);
+	   			zqt.addConstraintEq("orgId", event.getZoneId());
+	   			
+	   			Object [] zs = session.match(zqt);
+	   			
+	   			if(zs.length==1)
+	   			{
+	   				Zone z = (Zone) zs[0];
+	   				zoneName = z.getName();
+	   			}
+   			}
+   				
+   			titleText = ContextMessages.fillZone(ContextMessages.MSG_SCARE_TITLE, zoneName);
+   			descText = ContextMessages.fillZone(ContextMessages.MSG_SCARE, zoneName); 
+	   		
+	   		QueryTemplate pqt = new QueryTemplate(Player.class);
+		   	pqt.addConstraintEq("gameID", game.getID());
+		   		
+		   	Object [] ps = session.match(pqt);
+		   		
+		   	for(int i=0; i<ps.length; i++)
+		   	{
+		   		Player p = (Player) ps[i];
+		   		
+			   	Message msg = new Message();
+			   	msg.setCreateTime(System.currentTimeMillis());
+			   	msg.setYear(game.getYear());
+			   	msg.setType(Message.MSG_MEMBER_DIED);
+			   	
+			   	msg.setTitle(titleText);
+			   	msg.setDescription(descText);
+			   	msg.setHandled(false);
+				
+			   	msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+			   	msg.setPlayerID(p.getID());
+			   	logger.info("Player " + msg.getPlayerID() + " notified of health scare by " + event.getID());
+				session.add(msg);
+		   	}
 	   	}
 	   		
 	   	this.updateAuthorable(session, game);
