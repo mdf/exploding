@@ -42,4 +42,10 @@
 
 	<property name="newVal" javatype="java.lang.String" maxlength="10000" />
 
+	<property name="priority" javatype="java.lang.Integer" />
+
+	<property name="updateClass" javatype="java.lang.String" />
+
+	<property name="updateID" javatype="java.lang.String" />
+
 </bean>

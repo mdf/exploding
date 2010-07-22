@@ -528,7 +528,34 @@ public class ClientController {
 				logger.info("Acked "+mtcs.length+" messages to "+conversation.getClientID()+" (seq<="+ackSeq+") - "+removed+" removed");
 			}
 		}
+		// new individual acks
+		// TODO move back to original code
+		int ackSeqs[] = message.getAckSeqs();
+		if (ackSeqs!=null && ackSeqs.length>0) {
+			int removed = 0;
+			for (int i=0; i< ackSeqs.length; i++) {
+				QueryTemplate q = new QueryTemplate(MessageToClient.class);
+				//("SELECT x FROM MessageToClient x WHERE x.clientId = :clientId AND x.ackedByClient = 0 AND x.seqNo = :ackSeq");
+				q.addConstraintEq("clientID", conversation.getClientID());
+				q.addConstraintEq("ackedByClient", 0); 
+				// Note - exact!
+				q.addConstraintEq("seqNo", ackSeqs[i]);
+				Object mtcs[] = session.match(q);
+				for (int mi=0; mi<mtcs.length; mi++) {
+					MessageToClient mtc = (MessageToClient)mtcs[mi];
+					mtc.setAckedByClient(time);
 
+					// delete on ack - we only have clientLifetime or not at the mo.
+					// (most messages are regenerated on new client)
+					//if (!mtc.isSetClientLifetime() || mtc.getClientLifetime()==false) {
+					session.remove(mtc);
+					removed ++;
+					//}
+				}
+			}
+			logger.info("Acked[] "+ackSeqs.length+" messages to "+conversation.getClientID()+" (seq<="+ackSeq+") - "+removed+" removed");
+		}
+		
 		//ClientConversation cc = em.find(ClientConversation.class, conversation.getConversationId());
 
 //		boolean checkToFollow = true;

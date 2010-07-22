@@ -24,8 +24,12 @@ public class Message {
 	protected String handle;
 	/** ack seq - for ACK, ERROR, POLL and POLL_RESP */
 	protected Integer ackSeq;
+	/** new-style multi-ack */
+	protected int ackSeqs[];
 	/** messages to follow - for POLL/POLL_RESP */
 	protected Integer toFollow;
+	/** priority of required messages (POLL) or of message (ADD/UPD/DEL_FACT) */
+	protected Integer priority;
 	/** error code - for ERROR / ACK */
 	protected MessageStatusType status;
 	/** error message - for ERROR */
@@ -130,6 +134,18 @@ public class Message {
 		this.ackSeq = ackSeq;
 	}
 	/**
+	 * @return the ackSeqs
+	 */
+	public int[] getAckSeqs() {
+		return ackSeqs;
+	}
+	/**
+	 * @param ackSeqs the ackSeqs to set
+	 */
+	public void setAckSeqs(int[] ackSeqs) {
+		this.ackSeqs = ackSeqs;
+	}
+	/**
 	 * @return the toFollow
 	 */
 	public Integer getToFollow() {
@@ -140,6 +156,18 @@ public class Message {
 	 */
 	public void setToFollow(Integer toFollow) {
 		this.toFollow = toFollow;
+	}
+	/**
+	 * @return the priority
+	 */
+	public Integer getPriority() {
+		return priority;
+	}
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(Integer priority) {
+		this.priority = priority;
 	}
 	/**
 	 * @return the status
