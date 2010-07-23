@@ -71,7 +71,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 	}
 	/** insert a new MessageToClient */
 	static void insertMessageToClient(ClientConversation conversation,
-			int type, boolean clientLifetime, Object oldVal, Object newVal, String updateClass, String updateID, int priority, ISession session) {
+			int type, boolean clientLifetime, Object oldVal, Object newVal, String updateClass, String updateID, String updateCategory, int priority, ISession session) {
 		try {
 			MessageToClient msg = new MessageToClient();
 			int seqNo = conversation.getNextSeqNo();
@@ -102,23 +102,33 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 				if (newVal!=null) {
 					updateClass = getUpdateClass(newVal);
 					updateID = getUpdateID(newVal);
+					updateCategory = getUpdateCategory(newVal);
 				}
 				else if (oldVal!=null) {
 					updateClass = getUpdateClass(oldVal);
 					updateID = getUpdateID(oldVal);
+					updateCategory = getUpdateCategory(oldVal);
 				}
 			}
 			if (priority<=0) {
 				priority = getPriority(conversation, type, oldVal, newVal);
 			}
+			msg.setPriority(priority);
 			msg.setUpdateClass(updateClass);
 			msg.setUpdateID(updateID);
+			msg.setUpdateCategory(updateCategory);
 			msg.setAckedByClient(0L);
 			msg.setSentToClient(0L);
-			session.add(msg);
-			conversation.setNextSeqNo(seqNo+1);
-			//em.merge(conversation);
-			logger.info("Added message: "+msg);
+
+			if (messageIsRedundant(conversation, msg, session)) {
+				logger.info("Suppress 'redundant' message for "+conversation.getClientID()+": "+msg);
+			}
+			else {
+				session.add(msg);
+				conversation.setNextSeqNo(seqNo+1);
+				//em.merge(conversation);
+				logger.info("Added message: "+msg);
+			}
 		} catch (Exception e)  {
 			logger.error("Unable to create/insert message to client", e);			
 		}
@@ -147,7 +157,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 	}
 
 	public void handleConversationStart(ClientConversation cc, ISession session) {
-    	insertMessageToClient(cc, MessageType.NEW_CONV.ordinal(), false, null, null, null, null, 0, session);
+    	insertMessageToClient(cc, MessageType.NEW_CONV.ordinal(), false, null, null, null, null, null, 0, session);
     	
     	// adopt any old messages for this clientId and sessionId
 		QueryTemplate q = new QueryTemplate(MessageToClient.class);
@@ -173,12 +183,12 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 		// APPLICATION_SPECIFIC
     	// own Player
     	Player player = (Player)getClientProjection(cc, session.get(Player.class, cc.getPlayerID()));
-		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, player, null, null, 0, session);
+		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, player, null, null, null, 0, session);
 
     	// replicate Zones...
 		// repliace Game
     	Game game = (Game) getClientProjection(cc, session.get(Game.class, cc.getGameID()));
-		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, game, null, null, 0, session);
+		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, game, null, null, null, 0, session);
     	
     	//ContentGroup contentgame.getContentGroupID()
     	QueryTemplate q = new QueryTemplate(Zone.class);
@@ -198,7 +208,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
     		uk.ac.horizon.ug.exploding.db.Message m = (uk.ac.horizon.ug.exploding.db.Message)getClientProjection(cc, match[zi]);
     		m.setHandled(true);
     		m.setHandledTime(now);
-    		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, m, null, null, 0, session);
+    		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, m, null, null, null, 0, session);
     	}
     	logger.info("Sent "+match.length+" unhandled Messages on new conversation");
     	//sendInitialValues(cc, session, q);
@@ -214,7 +224,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
     	Object match[] = session.match(q);
     	for (int zi=0; zi<match.length; zi++) {
     		Object m = getClientProjection(cc, match[zi]);
-    		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, m, null, null, 0, session);
+    		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, m, null, null, null, 0, session);
     	}
     	logger.info("Sent "+match.length+" "+q.getQueryClass().getName()+" on new conversation");
 	}
@@ -258,7 +268,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 			
 			// each client type...
     		String oldValue = null, newValue = null;
-    		String updateClass = null, updateID = null;
+    		String updateClass = null, updateID = null, updateCategory = null;
     		
     		// client independent match first
     		// should only get relevant classes!
@@ -300,6 +310,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 					if (updateClass==null) {
 						updateClass = getUpdateClass(newObject);
 						updateID = getUpdateID(newObject);
+						updateCategory = getUpdateCategory(newObject);
 					}
 					newValue = marshallFact(newProj);
 				}
@@ -307,6 +318,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 					if (updateClass==null) {
 						updateClass = getUpdateClass(oldObject);
 						updateID = getUpdateID(oldObject);
+						updateCategory = getUpdateCategory(oldObject);
 					}
 					oldValue = marshallFact(oldProj);
 				}
@@ -360,7 +372,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 				}
 				// actual message
 				if (insertMessage)
-					insertMessageToClient(conversation, type.ordinal(), clientLifetime, oldValue, newValue, updateClass, updateID, priority, session);
+					insertMessageToClient(conversation, type.ordinal(), clientLifetime, oldValue, newValue, updateClass, updateID, updateCategory, priority, session);
 				// tidy up projections
 				if (clientSpecificProjection) {
 					oldValue = null;
@@ -416,6 +428,21 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 			return null;
 		return value.getClass().getName();
 	}
+	/** application-specific: return object class subgroup identifier, if relevant, for update suppression */
+	private static String getUpdateCategory(Object value) {
+		if (value==null)
+			return null;
+		if (value instanceof uk.ac.horizon.ug.exploding.db.Message) {
+			uk.ac.horizon.ug.exploding.db.Message m = (uk.ac.horizon.ug.exploding.db.Message)value;
+			if (uk.ac.horizon.ug.exploding.db.Message.MSG_TIMELINE_CONTENT.equals(m.getType()) ||
+					uk.ac.horizon.ug.exploding.db.Message.MSG_TIMELINE_CONTENT_GLOBAL.equals(m.getType()))
+				return null;
+			// "contextual message"
+			return "contextual";						
+		}
+		return null;
+	}
+
 	/** application-specific: return "objectID" for update suppression */
 	public static String getUpdateID(Object o) {
 		if (o==null)
@@ -443,9 +470,57 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 		logger.warn("getUpdateID for unknown class "+o.getClass().getName());
 		return null; //!?!		
 	}
+	/** application-specific: priority levels */
+	static enum AppPriority {
+		OTHERS_MEMBERS,
+		CONTEXT_MESSAGES,
+		TIMELINE_MESSAGES,
+		YOUR_MEMBERS_SYSTEM_CHANGES,
+		MUST_SEND, // the ones after this we REALLY want to send
+		YOUR_MEMBERS_USER_CHANGES, // pick/place, user create
+		GLOBAL_MESSAGES,
+		ZONES, // required at start
+		YOUR_GAME, // year
+		YOUR_PLAYER, // can author/create
+	}
 	/** application-specific: return priority for delivery to client */
 	public static int getPriority(ClientConversation cc, int typeOrdinal, Object oldVal, Object newVal) {
-		// TODO ...
+		Object val = newVal!=null ? newVal : oldVal;
+		if (val instanceof Player)
+			// you only get your own player anyway
+			return AppPriority.YOUR_PLAYER.ordinal();
+		if (val instanceof Game) 
+			// you only get your own game anyway
+			return AppPriority.YOUR_GAME.ordinal();
+		if (val instanceof Zone)
+			return AppPriority.ZONES.ordinal();
+		if (val instanceof uk.ac.horizon.ug.exploding.db.Message) {
+			uk.ac.horizon.ug.exploding.db.Message m = (uk.ac.horizon.ug.exploding.db.Message)val;
+			if (uk.ac.horizon.ug.exploding.db.Message.MSG_TIMELINE_CONTENT.equals(m.getType()))
+				return AppPriority.TIMELINE_MESSAGES.ordinal();
+			if (uk.ac.horizon.ug.exploding.db.Message.MSG_TIMELINE_CONTENT_GLOBAL.equals(m.getType()))
+				return AppPriority.GLOBAL_MESSAGES.ordinal();
+			return AppPriority.CONTEXT_MESSAGES.ordinal();						
+		}
+		if (val instanceof Member) {
+			Member m = (Member)val;
+			if (cc.getPlayerID().equals(m.getPlayerID())) {
+				// can we spot a player-driven change?
+				Member nm = (Member)newVal;
+				Member om = (Member)oldVal;
+				// pick/drop?
+				if (om==null && nm.getCarried()==false)
+					// player member creation
+					return AppPriority.YOUR_MEMBERS_USER_CHANGES.ordinal();
+				if (nm!=null && om!=null && om.getCarried()!=nm.getCarried()) 
+					// pick/drop
+					return AppPriority.YOUR_MEMBERS_USER_CHANGES.ordinal();
+				return AppPriority.YOUR_MEMBERS_SYSTEM_CHANGES.ordinal();
+			}
+			else
+				return AppPriority.OTHERS_MEMBERS.ordinal();
+		}
+		logger.warn("getPriority for unknown class "+val);
 		// default
 		return 1;
 	}
@@ -472,5 +547,26 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 		}
 		// no change
 		return value;
+	}
+	/** application-specific: is there no point sending this message at all */
+	private static boolean messageIsRedundant(ClientConversation conversation,
+			MessageToClient msg, ISession session) {
+		// client will only want one Contextual message each poll
+		if (MessageType.FACT_ADD.ordinal()==msg.getType() && 
+				uk.ac.horizon.ug.exploding.db.Message.class.getName().equals(msg.getUpdateClass()) &&
+				msg.getUpdateCategory()!=null) {
+			QueryTemplate qt = new QueryTemplate(MessageToClient.class);
+			//MessageToClient mtc; mtc.getConversationID(); mtc.getSentToClient(); 
+			qt.addConstraintEq("conversationID", conversation.getID());
+			qt.addConstraintEq("updateCategory", msg.getUpdateCategory());			
+			qt.addConstraintEq("updateClass", msg.getUpdateClass());
+			int count = session.count(qt);
+			if (count>0) {
+				logger.debug("mesageIdRedundant: found "+count+" MTCs with "+msg.getUpdateClass()+" category "+msg.getUpdateCategory());
+				return true;
+			}
+		}
+		// be careful :-)
+		return false;
 	}
 }

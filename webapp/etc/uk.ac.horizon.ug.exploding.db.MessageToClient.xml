@@ -48,4 +48,6 @@
 
 	<property name="updateID" javatype="java.lang.String" />
 
+	<property name="updateCategory" javatype="java.lang.String" />
+
 </bean>

@@ -567,26 +567,42 @@ public class ClientController {
 		int toFollow = 0;
 		if (message.getToFollow()==null || message.getToFollow()>0) {
 			// actually get some messages...
-			// TODO from
+			// might need to increase limit if they have a priority requirement...
+			int maxCount = 0;
+			if (message.getToFollow()!=null) {
+				maxCount = message.getToFollow();
+				QueryTemplate q2 = new QueryTemplate(MessageToClient.class);
+				q2.addConstraintEq("clientID", conversation.getClientID());
+				q2.addConstraintEq("ackedByClient", 0L);
+				q2.addConstraintGe("priority", ClientSubscriptionManager.AppPriority.MUST_SEND.ordinal());
+				int mustSend = session.count(q2);
+				if (mustSend>maxCount) {
+					logger.info("Increasing poll responses limit from "+maxCount+" to "+mustSend);					
+					maxCount = mustSend;
+				}
+			}			
 			//Query q = em.createQuery ("SELECT x FROM MessageToClient x WHERE x.clientId = :clientId AND x.seqNo> :ackSeq ORDER BY x.seqNo ASC");
 			QueryTemplate q = new QueryTemplate(MessageToClient.class);
 			q.addConstraintEq("clientID", conversation.getClientID());
-			q.addConstraintGt("seqNo", ackSeq);
+			q.addConstraintEq("ackedByClient", 0L);
+			// hopefully multiple order constraints will work (first should have precedence
+			//MessageToClient mtc; mtc.getAckedByClient();mtc.getPriority();
+			q.addOrder("priority", false);
 			q.addOrder("seqNo", false);
-			if (message.getToFollow()!=null)
-				q.setMaxResults(message.getToFollow());
+			if (maxCount!=0)
+				q.setMaxResults(maxCount);
 			Object mtcs [] = session.match(q);
 			sentCount = mtcs.length;
-			if (message.getToFollow()==null || mtcs.length<message.getToFollow())
+			if (maxCount!=0 || mtcs.length<maxCount)
 				// can't be any left
 				; //checkToFollow = false;
 			else {
 				QueryTemplate q1 = new QueryTemplate(MessageToClient.class);
 				q1.addConstraintEq("clientID", conversation.getClientID());
-				q1.addConstraintGt("seqNo", ackSeq);
+				q1.addConstraintEq("ackedByClient", 0L);
 				//Query q = em.createQuery ("SELECT COUNT(x) FROM MessageToClient x WHERE x.clientId = :clientId AND x.seqNo> :ackSeq ");
 				int countResult = session.count(q1);
-				toFollow = countResult-sentCount;				
+				toFollow = countResult-sentCount;
 			}
 			int removed = 0;
 			for (int mi=0; mi<mtcs.length; mi++) {
