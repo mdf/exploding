@@ -71,12 +71,13 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 	}
 	/** insert a new MessageToClient */
 	static void insertMessageToClient(ClientConversation conversation,
-			int type, boolean clientLifetime, Object oldVal, Object newVal, ISession session) {
+			int type, boolean clientLifetime, Object oldVal, Object newVal, String updateClass, String updateID, int priority, ISession session) {
 		try {
 			MessageToClient msg = new MessageToClient();
 			int seqNo = conversation.getNextSeqNo();
 			msg.setID(IDAllocator.getNewID(session, MessageToClient.class, "MC", null));
 			msg.setClientID(conversation.getClientID());
+			msg.setPlayerID(conversation.getPlayerID());
 			msg.setConversationID(conversation.getID());
 			msg.setGameID(conversation.getGameID());
 			msg.setSeqNo(seqNo);
@@ -97,6 +98,21 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 				else
 					msg.setNewVal(marshallFact(newVal));
 			}
+			if (updateClass==null) {
+				if (newVal!=null) {
+					updateClass = getUpdateClass(newVal);
+					updateID = getUpdateID(newVal);
+				}
+				else if (oldVal!=null) {
+					updateClass = getUpdateClass(oldVal);
+					updateID = getUpdateID(oldVal);
+				}
+			}
+			if (priority<=0) {
+				priority = getPriority(conversation, type, oldVal, newVal);
+			}
+			msg.setUpdateClass(updateClass);
+			msg.setUpdateID(updateID);
 			msg.setAckedByClient(0L);
 			msg.setSentToClient(0L);
 			session.add(msg);
@@ -131,8 +147,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 	}
 
 	public void handleConversationStart(ClientConversation cc, ISession session) {
-		// TODO Auto-generated method stub
-    	insertMessageToClient(cc, MessageType.NEW_CONV.ordinal(), false, null, null, session);
+    	insertMessageToClient(cc, MessageType.NEW_CONV.ordinal(), false, null, null, null, null, 0, session);
     	
     	// adopt any old messages for this clientId and sessionId
 		QueryTemplate q = new QueryTemplate(MessageToClient.class);
@@ -144,6 +159,9 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 			MessageToClient mtc = (MessageToClient)mtcs[i];
 			logger.debug("Adopt old MessageToClient "+mtc.getID());
 			mtc.setConversationID(cc.getID());
+			// will need to resend to next client conversation
+			// TODO back-port
+			mtc.setSentToClient(0L);
 		}
 		if (mtcs.length>0)
 			logger.info("Adopted "+mtcs.length+" messages from inactive conversations into conversation "+cc.getID());
@@ -154,13 +172,13 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 
 		// APPLICATION_SPECIFIC
     	// own Player
-    	Player player = (Player)session.get(Player.class, cc.getPlayerID());
-		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, player, session);
+    	Player player = (Player)getClientProjection(cc, session.get(Player.class, cc.getPlayerID()));
+		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, player, null, null, 0, session);
 
     	// replicate Zones...
 		// repliace Game
-    	Game game = (Game) session.get(Game.class, cc.getGameID());
-		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, game, session);
+    	Game game = (Game) getClientProjection(cc, session.get(Game.class, cc.getGameID()));
+		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, game, null, null, 0, session);
     	
     	//ContentGroup contentgame.getContentGroupID()
     	QueryTemplate q = new QueryTemplate(Zone.class);
@@ -177,10 +195,10 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
     	long now = System.currentTimeMillis();
     	Object match[] = session.match(q);
     	for (int zi=0; zi<match.length; zi++) {
-    		uk.ac.horizon.ug.exploding.db.Message m = (uk.ac.horizon.ug.exploding.db.Message)match[zi];
+    		uk.ac.horizon.ug.exploding.db.Message m = (uk.ac.horizon.ug.exploding.db.Message)getClientProjection(cc, match[zi]);
     		m.setHandled(true);
     		m.setHandledTime(now);
-    		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, m, session);
+    		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, m, null, null, 0, session);
     	}
     	logger.info("Sent "+match.length+" unhandled Messages on new conversation");
     	//sendInitialValues(cc, session, q);
@@ -195,8 +213,8 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 			QueryTemplate q) {
     	Object match[] = session.match(q);
     	for (int zi=0; zi<match.length; zi++) {
-    		Object m = match[zi];
-    		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, m, session);
+    		Object m = getClientProjection(cc, match[zi]);
+    		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, m, null, null, 0, session);
     	}
     	logger.info("Sent "+match.length+" "+q.getQueryClass().getName()+" on new conversation");
 	}
@@ -240,24 +258,58 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 			
 			// each client type...
     		String oldValue = null, newValue = null;
-
+    		String updateClass = null, updateID = null;
+    		
     		// client independent match first
     		// should only get relevant classes!
     		//if (!matches(pattern, oldObject!=null ? oldObject : newObject, null, droolsSession.getKsession().getKnowledgeBase()))
     		//continue;
 					
     		// each client...
+    		nextConversation:
     		for (int ci=0; ci<conversations.length; ci++) {
     			ClientConversation conversation  = (ClientConversation)conversations[ci];
     			// client-dependent match
     			Object matchObject = oldObject!=null ? oldObject : newObject;
 				if (!matches(matchObject, conversation))
 						continue;
+				// chance to filter values on the way to the client
+				boolean clientSpecificProjection = false;
+				Object newProj = getClientProjection(conversation, newObject);
+				Object oldProj = getClientProjection(conversation, oldObject);
+				// exact equals can be left for other clients; otherwise we need to send this value to only this client...
+				if (!(newProj==newObject)) {
+					clientSpecificProjection = true;
+					newValue = null;
+				}
+				if (!(oldProj==oldObject)) {
+					clientSpecificProjection = true;
+					oldValue = null;
+				}
+				if (type==MessageType.FACT_UPD && clientSpecificProjection) {
+					// we might be able to suppress this update if the client doesn't see the difference
+					if (oldProj!=null && newProj!=null && oldProj.equals(newProj)) {
+						logger.debug("Suppress update "+oldObject+" -> "+newObject+" on client projection for "+conversation.getClientID()+" as "+oldProj+" -> "+newProj);
+						continue nextConversation;
+					}
+//					else 
+//						logger.debug("Don't suppress update "+oldObject+" -> "+newObject+" on client projection for "+conversation.getClientID()+" as "+oldProj+" -> "+newProj+" - not equal");
+				}
 				// marshall on demand
-				if (oldObject!=null && oldValue==null) 
-					oldValue = marshallFact(oldObject);
-				if (newObject!=null && newValue==null)
-					newValue = marshallFact(newObject);
+				if (newProj!=null && newValue==null) {
+					if (updateClass==null) {
+						updateClass = getUpdateClass(newObject);
+						updateID = getUpdateID(newObject);
+					}
+					newValue = marshallFact(newProj);
+				}
+				if (oldProj!=null && oldValue==null) {
+					if (updateClass==null) {
+						updateClass = getUpdateClass(oldObject);
+						updateID = getUpdateID(oldObject);
+					}
+					oldValue = marshallFact(oldProj);
+				}
 				// add message
 				boolean clientLifetime = false;
 				// APPLICATION-SPECIFIC
@@ -270,7 +322,50 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 					clientLifetime = true;
 				}
 				// END APPLICATION-SPECIFIC
-				insertMessageToClient(conversation, type.ordinal(), clientLifetime, oldValue, newValue, session);
+				int priority = getPriority(conversation, type.ordinal(), oldObject, newObject);
+				// clobber/merge with existing messages
+				boolean insertMessage = true;
+				// TODO	clobber/merge with existing messages
+				if (type==MessageType.FACT_UPD && updateID!=null && updateClass!=null && oldValue!=null && newValue!=null) {
+					// just updates for now??
+					// MTCs of type FACT_UPD for this Conversation with this objectClass and objectID,
+					// not yet sent to client, sorted by seqNo
+//					MessageToClient mtc;
+//					mtc.getConversationID();
+//					mtc.getType();
+//					mtc.getUpdateID();
+//					mtc.getUpdateClass();
+//					mtc.getSeqNo();
+//					mtc.getSentToClient();
+					QueryTemplate uqt = new QueryTemplate(MessageToClient.class);
+					uqt.addConstraintEq("updateID", updateID);
+					uqt.addConstraintEq("conversationID", conversation.getID());
+					uqt.addConstraintEq("sentToClient", 0L);
+					uqt.addConstraintEq("type", MessageType.FACT_UPD.ordinal());
+					uqt.addConstraintEq("updateClass", updateClass);
+//					uqt.addOrder("seqNo", false);
+					Object mtcs[] = session.match(uqt);
+					if (mtcs.length==1) {
+						MessageToClient mtc = (MessageToClient)mtcs[0];
+						if (oldValue.equals(mtc.getNewVal())) {
+							mtc.setNewVal(newValue);
+							logger.debug("Suppress update "+oldProj+" -> "+newProj+" by rewriting pending update "+mtc);
+							insertMessage = false;
+						} else
+							logger.warn("Suppress update "+oldProj+" -> "+newProj+" had old new value "+mtc.getNewVal()+" - in pending update "+mtc);
+					}
+					else if (mtcs.length>1) {
+						logger.warn("Suppress update for "+newProj+" found "+mtcs.length+" old matching updates");
+					}
+				}
+				// actual message
+				if (insertMessage)
+					insertMessageToClient(conversation, type.ordinal(), clientLifetime, oldValue, newValue, updateClass, updateID, priority, session);
+				// tidy up projections
+				if (clientSpecificProjection) {
+					oldValue = null;
+					newValue = null;
+				}
     		}
     		session.end();
 		}
@@ -315,4 +410,67 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 		return false;
 	}
 
+	/** application-specific: return "classname" for update suppression */
+	public static String getUpdateClass(Object value) {
+		if (value==null)
+			return null;
+		return value.getClass().getName();
+	}
+	/** application-specific: return "objectID" for update suppression */
+	public static String getUpdateID(Object o) {
+		if (o==null)
+			return null;
+		if (o instanceof Player) {
+			Player p = (Player)o;
+			return p.getID();
+		}
+		if (o instanceof uk.ac.horizon.ug.exploding.db.Message) {
+			uk.ac.horizon.ug.exploding.db.Message p = (uk.ac.horizon.ug.exploding.db.Message)o;
+			return p.getID();
+		}
+		if (o instanceof Member) {
+			Member p = (Member)o;
+			return p.getID();
+		}
+		if (o instanceof Zone) {
+			Zone p = (Zone)o;
+			return p.getID();
+		}
+		if (o instanceof Game) {
+			Game p = (Game)o;
+			return p.getID();
+		}
+		logger.warn("getUpdateID for unknown class "+o.getClass().getName());
+		return null; //!?!		
+	}
+	/** application-specific: return priority for delivery to client */
+	public static int getPriority(ClientConversation cc, int typeOrdinal, Object oldVal, Object newVal) {
+		// TODO ...
+		// default
+		return 1;
+	}
+	/** application-specific: project values for client */
+	private Object getClientProjection(ClientConversation cc, Object value) {
+		if (value instanceof Member) {
+			Member m = (Member)value;
+			if (!cc.getPlayerID().equals(m.getPlayerID())) {
+				// don't give other player's member attributes
+				Member nm = new Member();
+				nm.setID(m.getID());
+				nm.setCarried(m.getCarried());
+				nm.setColourRef(m.getColourRef());
+				nm.setGameID(m.getGameID());
+				nm.setLimbData(m.getLimbData());
+				nm.setName(m.getName());
+				nm.setParentMemberID(m.getParentMemberID());
+				nm.setPlayerID(m.getPlayerID());
+				nm.setPosition(m.getPosition());
+				nm.setZone(m.getZone());
+				logger.debug("getClientProjection for player "+cc.getPlayerID()+": "+m+" -> "+nm);
+				return nm;
+			}
+		}
+		// no change
+		return value;
+	}
 }

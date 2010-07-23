@@ -552,8 +552,12 @@ public class ClientController {
 					removed ++;
 					//}
 				}
+				if (mtcs.length==0) 
+					logger.warn("Ack[] of unknown message or duplicate ack seqNo="+ackSeqs[i]+" for "+conversation.getClientID());
+				else if (mtcs.length>1)
+					logger.warn("Ack[] found "+mtcs.length+" messages with identical seqNo="+ackSeqs[i]+" for "+conversation.getClientID());
 			}
-			logger.info("Acked[] "+ackSeqs.length+" messages to "+conversation.getClientID()+" (seq<="+ackSeq+") - "+removed+" removed");
+			logger.info("Acked[] "+ackSeqs.length+" messages to "+conversation.getClientID()+" - "+removed+" removed");
 		}
 		
 		//ClientConversation cc = em.find(ClientConversation.class, conversation.getConversationId());
