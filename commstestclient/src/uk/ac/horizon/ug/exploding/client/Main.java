@@ -60,7 +60,7 @@ public class Main implements Runnable {
 							","+m.client.getFacts(Zone.class.getName()).size()+
 							","+m.client.getFacts(Game.class.getName()).size()+
 							","+m.client.getFacts(Member.class.getName()).size()+
-							","+m.client.getFacts(Message.class.getName()).size());
+							","+m.client.getFacts(uk.ac.horizon.ug.exploding.client.model.Message.class.getName()).size());
 				}
 			}
 		}  
@@ -107,7 +107,7 @@ public class Main implements Runnable {
 	private static final String TAG = "Test";
 	public static final int CLIENT_VERSION = 1;
 	private static final String CLIENT_TYPE = "AndroidDevclient";
-	private static final int TO_FOLLOW = 10;
+	private static final int TO_FOLLOW = 30;
 	private GameStatus gameStatus;
 	private LoginReplyMessage.Status loginStatus;
 	private String loginMessage;
@@ -235,8 +235,8 @@ public class Main implements Runnable {
 		}
 	}
 	private Position lastPosition;
-	static double INITIAL_LATITUDE = 51.49083;
-	static double INITIAL_LONGITUDE = 0.064266;
+	static double INITIAL_LATITUDE = 52.951419;//51.49083;
+	static double INITIAL_LONGITUDE = -1.183117;//0.064266;
 	static double STEP_SIZE = 30*360/(Math.PI*2*6000000);
 	private Position getPosition() {
 		if (lastPosition==null) {
@@ -274,6 +274,7 @@ public class Main implements Runnable {
 			return;
 		System.out.println("Creating member");
 		Member m = new Member();
+		m.setPlayerID(player.getID());
 		m.setAction(random.nextInt() % 8);
 		m.setBrains(random.nextInt() % 8);
 		m.setWealth(random.nextInt() % 8);
@@ -295,7 +296,7 @@ public class Main implements Runnable {
 				b.append(",");
 			}
 		}
-		m.setLimbData("");
+		m.setLimbData(b.toString());
 		
 		client.queueMessage(client.addFactMessage(m), null);
 	}
