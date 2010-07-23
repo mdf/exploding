@@ -587,7 +587,7 @@ public class ClientController {
 			q.addConstraintEq("ackedByClient", 0L);
 			// hopefully multiple order constraints will work (first should have precedence
 			//MessageToClient mtc; mtc.getAckedByClient();mtc.getPriority();
-			q.addOrder("priority", false);
+			q.addOrder("priority", true);
 			q.addOrder("seqNo", false);
 			if (maxCount!=0)
 				q.setMaxResults(maxCount);

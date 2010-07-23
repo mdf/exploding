@@ -472,6 +472,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 	}
 	/** application-specific: priority levels */
 	static enum AppPriority {
+		UNKNOWN,
 		OTHERS_MEMBERS,
 		CONTEXT_MESSAGES,
 		TIMELINE_MESSAGES,
