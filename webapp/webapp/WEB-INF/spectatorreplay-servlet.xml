@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref bean="equipSessionReleaseInterceptor" />
+			</list>
+		</property>
+		<property name="mappings">
+			<props>
+				<prop key="/index.html">filenameViewController</prop>
+				<prop key="/control.html">spectatorReplayMultiController</prop>
+				<prop key="/configure.html">spectatorReplayMultiController</prop>
+				<prop key="/advance.html">spectatorReplayMultiController</prop>
+				<prop key="/messages.html">spectatorViewMultiController</prop>
+				<prop key="/game.html">spectatorViewMultiController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- flash spectator client controller -->
+	<bean id="internalPathMethodNameResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver"/>
+	
+	<bean id="spectatorViewMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+		<property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+		<property name="delegate"><ref bean="spectatorController"/></property>
+	</bean>
+
+	<bean id="spectatorController" class="uk.ac.horizon.ug.exploding.spectator.SpectatorController">
+<!-- 		<property name="dataspace"><ref bean="dataspace"/></property> -->
+	</bean>
+
+	<bean id="spectatorReplayMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+		<property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+		<property name="delegate"><ref bean="spectatorReplayController"/></property>
+	</bean>
+
+	<bean id="spectatorReplayController" class="uk.ac.horizon.ug.exploding.spectatorreplay.SpectatorReplayController">
+ 		<property name="spectatorController"><ref bean="spectatorController"/></property> 
+	</bean>
+
+	<bean id="filenameViewController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController">
+		<property name="prefix" value="spectatorreplay/" />
+	</bean>
+  	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+
+
+</beans>
