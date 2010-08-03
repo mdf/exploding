@@ -19,6 +19,7 @@ import uk.ac.horizon.ug.exploding.db.Member;
 import uk.ac.horizon.ug.exploding.db.Message;
 import uk.ac.horizon.ug.exploding.db.Player;
 import uk.ac.horizon.ug.exploding.db.Position;
+import uk.ac.horizon.ug.exploding.db.TimelineEvent;
 
 import equip2.core.DataspaceObjectEvent;
 import equip2.core.logging.LogEntry;
@@ -49,13 +50,17 @@ public class ServerHessianToTSV {
 	static String MEMBER_LATITUDE = "member_latitude";
 	static String MEMBER_LONGITUDE = "member_latitude";
 	static String MEMBER_CARRIED = "member_carried";
+	static String TIMELINE_EVENT_ID = "timeline_event_id";
+	static String TIMELINE_EVENT_ZONE = "timeline_event_zone";
+	static String TIMELINE_EVENT_ATTRIBS = "timeline_event_attribs";
 	static String STANDARD_HEADINGS [] =  new String[] {
 		"time", "pretty_time", "game_id", "player_id", "pretty_event", "event" 
 	};
 	static String EXTRA_HEADINGS [] = new String[] {
 		GAME_NAME, GAME_YEAR, PLAYER_NAME, LATITUDE, LONGITUDE, 
 		MESSAGE_TYPE, MESSAGE_TITLE, MESSAGE_TEXT, MESSAGE_YEAR,
-		MEMBER_ID, MEMBER_NAME, MEMBER_ATTRIBS, MEMBER_LATITUDE, MEMBER_LONGITUDE, MEMBER_CARRIED
+		MEMBER_ID, MEMBER_NAME, MEMBER_ATTRIBS, MEMBER_LATITUDE, MEMBER_LONGITUDE, MEMBER_CARRIED,
+		TIMELINE_EVENT_ID, TIMELINE_EVENT_ZONE, TIMELINE_EVENT_ATTRIBS
 	};
 	
 	/**
@@ -228,6 +233,30 @@ public class ServerHessianToTSV {
 				}
 			}
 		}
+		else if (newValue instanceof TimelineEvent) {
+			TimelineEvent nte = (TimelineEvent)newValue;
+			TimelineEvent ote = (TimelineEvent)oldValue;
+			if (nte!=null && ote==null && nte.getPlayerID()!=null) {
+				// add by player only
+				Player p = playerCache.get(nte.getPlayerID());
+				if (p==null)
+				{
+					System.err.println("TimelineEvent "+nte.getID()+" for unknown player "+nte.getPlayerID());
+					return;
+				}
+				values.put(PLAYER_NAME, p.getName());
+				values.put(MESSAGE_TITLE, nte.getName());
+				values.put(MESSAGE_TEXT, nte.getDescription());
+				values.put(TIMELINE_EVENT_ZONE, nte.getZoneId());
+				values.put(TIMELINE_EVENT_ID, nte.getID());
+				String delta = "H:"+(nte.getHealth()>0 ? "+" : "")+(nte.getHealth())+
+				",W:"+(nte.getWealth()>0 ? "+" : "")+(nte.getWealth())+
+				",K:"+(nte.getBrains()>0 ? "+" : "")+(nte.getBrains())+
+				",P:"+(nte.getAction()>0 ? "+" : "")+(nte.getAction());
+				values.put(TIMELINE_EVENT_ATTRIBS, delta);
+				writeLine(time, p.getGameID(), p.getID(), "Player "+p.getID()+" '"+p.getName()+"' authors event "+nte.getID()+": '"+nte.getName()+"' - '"+nte.getDescription()+"' with attribs "+delta, "player:author_event", values);
+			}
+		}
 	}
 
 	private static void writeLine(long time, String gameId, String playerId,
@@ -235,7 +264,7 @@ public class ServerHessianToTSV {
 		StringBuilder sb = new StringBuilder();
 		if (playerId==null)
 			playerId = "";
-		sb.append(time+"\t"+new Date(time)+"\t"+gameId+"\t"+playerId+"\t"+pretty_event+"\t"+event);
+		sb.append(time+"\t"+new Date(time)+"\t"+gameId+"\t"+playerId+"\t"+escapeString(pretty_event)+"\t"+event);
 		for (int hi=0; hi<EXTRA_HEADINGS.length; hi++) {
 			sb.append("\t");
 			if (values.containsKey(EXTRA_HEADINGS[hi]))
