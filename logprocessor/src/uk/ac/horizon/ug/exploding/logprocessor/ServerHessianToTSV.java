@@ -14,9 +14,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.ac.horizon.ug.exploding.db.ClientConversation;
 import uk.ac.horizon.ug.exploding.db.Game;
 import uk.ac.horizon.ug.exploding.db.Member;
 import uk.ac.horizon.ug.exploding.db.Message;
+import uk.ac.horizon.ug.exploding.db.MessageToClient;
 import uk.ac.horizon.ug.exploding.db.Player;
 import uk.ac.horizon.ug.exploding.db.Position;
 import uk.ac.horizon.ug.exploding.db.TimelineEvent;
@@ -53,14 +55,28 @@ public class ServerHessianToTSV {
 	static String TIMELINE_EVENT_ID = "timeline_event_id";
 	static String TIMELINE_EVENT_ZONE = "timeline_event_zone";
 	static String TIMELINE_EVENT_ATTRIBS = "timeline_event_attribs";
+	static String CONVERSATION_ID = "conversation_id";
+	static String CLIENT_ID = "client_id";
+	static String CONVERSATION_STATE = "conversation_state";
 	static String STANDARD_HEADINGS [] =  new String[] {
-		"time", "pretty_time", "game_id", "player_id", "pretty_event", "event" 
+		"Timestamp", "pretty_time", "game_id", "player_id", "pretty_event", "event" 
+	};
+	static String STANDARD_HEADING_TYPES [] = new String[] {
+		"LONG", "STRING", "STRING", "STRING", "STRING", "STRING"
 	};
 	static String EXTRA_HEADINGS [] = new String[] {
 		GAME_NAME, GAME_YEAR, PLAYER_NAME, LATITUDE, LONGITUDE, 
 		MESSAGE_TYPE, MESSAGE_TITLE, MESSAGE_TEXT, MESSAGE_YEAR,
 		MEMBER_ID, MEMBER_NAME, MEMBER_ATTRIBS, MEMBER_LATITUDE, MEMBER_LONGITUDE, MEMBER_CARRIED,
-		TIMELINE_EVENT_ID, TIMELINE_EVENT_ZONE, TIMELINE_EVENT_ATTRIBS
+		TIMELINE_EVENT_ID, TIMELINE_EVENT_ZONE, TIMELINE_EVENT_ATTRIBS,
+		CONVERSATION_ID, CLIENT_ID, CONVERSATION_STATE
+	};
+	static String EXTRA_HEADING_TYPES [] = new String[] {
+		"STRING", "STRING", "STRING", "Double", "Double", 
+		"STRING", "STRING", "STRING", "STRING", 
+		"STRING", "STRING", "STRING", "Double", "Double", "STRING", 
+		"STRING", "STRING", "STRING",
+		"STRING", "STRING", "STRING"
 	};
 	
 	/**
@@ -186,7 +202,7 @@ public class ServerHessianToTSV {
 				values.put(MESSAGE_TITLE, nm.getTitle());
 				values.put(MESSAGE_TEXT, nm.getDescription());
 				values.put(MESSAGE_YEAR, nm.getYear());
-				writeLine(time, p.getGameID(), nm.getPlayerID(), "Player "+p.getID()+" '"+p.getName()+"' sent "+nm.getType()+" '"+nm.getTitle()+"' ("+nm.getYear()+") ...", "player:message", values);
+				writeLine(time, p.getGameID(), nm.getPlayerID(), "Server prepares message "+nm.getType()+" '"+nm.getTitle()+"' ("+nm.getYear()+") ... for player "+p.getID()+" '"+p.getName()+"'", "player:message", values);
 			}
 		}
 		else if (newValue instanceof Member) {
@@ -257,8 +273,61 @@ public class ServerHessianToTSV {
 				writeLine(time, p.getGameID(), p.getID(), "Player "+p.getID()+" '"+p.getName()+"' authors event "+nte.getID()+": '"+nte.getName()+"' - '"+nte.getDescription()+"' with attribs "+delta, "player:author_event", values);
 			}
 		}
+		else if (newValue instanceof ClientConversation) {
+			ClientConversation nc = (ClientConversation)newValue;
+			ClientConversation oc = (ClientConversation)oldValue;
+			ClientConversation c = nc!=null ? nc : oc;
+			values.put(CLIENT_ID, c.getClientID());
+			values.put(CONVERSATION_ID, c.getID());
+			values.put(CONVERSATION_STATE, c.getActive() ? "active": "inactive");
+			Player p = playerCache.get(c.getPlayerID());
+			if (p==null)
+			{
+				System.err.println("ClientConversation "+c.getID()+" for unknown player "+c.getPlayerID());
+			}
+			else {
+				values.put(PLAYER_NAME, p.getName());
+			}
+			if (oc==null && nc!=null) {
+				writeLine(time, nc.getGameID(), nc.getPlayerID(), "Player "+nc.getPlayerID()+" "+(p!=null ? "'"+p.getName()+"'" : "?")+" starts or restarts client (IMEI) "+nc.getClientID()+" ("+nc.getClientType()+",v."+nc.getClientVersion()+")", "client:new_conversation", values);
+			}
+			else if (oc!=null && nc!=null) {
+				if (oc.getActive()!=nc.getActive() && (oc.getActive()==null || nc.getActive()==null || nc.getActive().booleanValue()!=oc.getActive().booleanValue())) {
+					writeLine(time, nc.getGameID(), nc.getPlayerID(), "Player "+nc.getPlayerID()+" "+(p!=null ? "'"+p.getName()+"'" : "?")+" client conversation becomes "+(nc.getActive() ? "active" : "inactive")+" (due to game end or client re-start)", "client:convestation_state", values);
+					//writeLine(time, nc.getGameID(), nc.getPlayerID(), "Client (IMEI) "+nc.getClientID()+" conversation "+nc.getID()+" becomes "+(nc.getActive() ? "active" : "inactive")+" for player "+nc.getPlayerID()+" "+(p!=null ? "'"+p.getName()+"'" : "?"), "client:convestation_state", values);					
+				} else if (oc.getLastContactTime()!=nc.getLastContactTime() && (oc.getLastContactTime()==null || nc.getLastContactTime()==null || nc.getLastContactTime().longValue()!=oc.getLastContactTime().longValue())) {
+					// the server didn't actually update last contact time, so this is no use
+					writeLine(time, nc.getGameID(), nc.getPlayerID(), "Client (IMEI) "+nc.getClientID()+" conversation "+nc.getID()+" contacts server for player "+nc.getPlayerID()+" "+(p!=null ? "'"+p.getName()+"'" : "?"), "client:convestation_state", values);
+				}
+			}
+		}
+		else if (newValue instanceof MessageToClient) {
+			MessageToClient nm = (MessageToClient)newValue;
+			MessageToClient om = (MessageToClient)oldValue;
+			MessageToClient m = (nm!=null) ? nm : om;
+			values.put(CLIENT_ID, m.getClientID());
+			values.put(CONVERSATION_ID, m.getConversationID());
+			Player p = playerCache.get(m.getPlayerID());
+			if (p==null)
+			{
+				System.err.println("MessageToPlayer "+m.getID()+" for unknown player "+m.getPlayerID());
+			}
+			else {
+				values.put(PLAYER_NAME, p.getName());
+			}
+			if (nm!=null && om!=null && nm.getSentToClient()!=null && nm.getSentToClient()!=0 && om.getSentToClient()!=null && om.getSentToClient()==0) {
+				// sent to client				
+				Long lastSend = clientSendTimes.get(nm.getClientID());
+				if (lastSend==null || lastSend!=time) {
+					clientSendTimes.put(nm.getClientID(), time);
+					writeLine(time, nm.getGameID(), nm.getPlayerID(), "Player "+nm.getPlayerID()+" "+(p!=null ? "'"+p.getName()+"'" : "?")+" sent updates by server (including messages and member changes)", "client:sent_updates", values);
+				}
+			}
+		}
 	}
-
+	// times of send(s) to clients
+	private static Map<String,Long> clientSendTimes = new HashMap<String,Long>();
+	
 	private static void writeLine(long time, String gameId, String playerId,
 			String pretty_event, String event, Map<String,Object> values) throws IOException {
 		StringBuilder sb = new StringBuilder();
@@ -298,6 +367,16 @@ public class ServerHessianToTSV {
 			for (int hi=0; hi<EXTRA_HEADINGS.length; hi++) {
 				pw.print(EXTRA_HEADINGS[hi]);
 				if (hi+1 < EXTRA_HEADINGS.length)
+					pw.print("\t");
+			}
+			pw.println();
+			for (int hi=0; hi<STANDARD_HEADING_TYPES.length; hi++) {
+				pw.print(STANDARD_HEADING_TYPES[hi]);
+				pw.print("\t");
+			}
+			for (int hi=0; hi<EXTRA_HEADING_TYPES.length; hi++) {
+				pw.print(EXTRA_HEADING_TYPES[hi]);
+				if (hi+1 < EXTRA_HEADING_TYPES.length)
 					pw.print("\t");
 			}
 			pw.println();
