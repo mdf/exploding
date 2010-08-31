@@ -19,6 +19,8 @@ public class LoginMessage {
 	private int clientVersion;
 	/** client type */
 	private String clientType;
+	/** game tag */
+	private String gameTag;
 	/** cons */
 	public LoginMessage() {		
 	}
@@ -63,6 +65,12 @@ public class LoginMessage {
 	}
 	public void setClientType(String clientType) {
 		this.clientType = clientType;
+	}
+	public String getGameTag() {
+		return gameTag;
+	}
+	public void setGameTag(String gameTag) {
+		this.gameTag = gameTag;
 	}
 	
 }

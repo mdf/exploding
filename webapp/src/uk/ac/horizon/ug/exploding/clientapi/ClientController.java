@@ -153,20 +153,29 @@ public class ClientController {
     	}
     	if (game==null) {
     		// look for an active game
-    		Object games [] = session.match(new QueryTemplate(Game.class));
-    		for (int gi=0; gi<games.length; gi++) {
-    			Game g = (Game)games[gi];
-    			if (g.isSetState() && !Game.ENDED.equals(g.getState())) {
-    				game = g;
-    				logger.debug("Client "+login.getClientId()+" joining active game "+game.getID());
-    			}
-    		}
+    		QueryTemplate gameQuery = new QueryTemplate(Game.class);
+    		if (login.getGameTag()!=null)
+    			gameQuery.addConstraintEq("tag", login.getGameTag());
+    		else
+    			gameQuery.addConstraintIsNull("tag");
+    		// most recently created given preference
+    		gameQuery.addOrder("timeCreated", true);
+    		// not ENDED
+    		gameQuery.addConstraintIn("state", new Object[] {Game.ACTIVE, Game.NOT_STARTED, Game.ENDING});
+    		// only one needed
+    		gameQuery.setMaxResults(1);
+    		Object games [] = session.match(gameQuery);
+    		if (games.length>0)
+    			game = (Game)games[0];
     		if (game==null) {
-    			logger.warn("No active game: client "+login.getClientId()+" rejected");
+    			logger.warn("No active game (tag="+login.getGameTag()+"): client "+login.getClientId()+" rejected");
     			session.end();
     			returnLoginError(LoginReplyMessage.Status.GAME_NOT_FOUND, "No game available right now.", response);
     			return null;
     		}
+    		else
+				logger.debug("Client "+login.getClientId()+" joining "+game.getState()+" game "+game.getID()+" (tag="+login.getGameTag()+")");
+
     	}
     	if (player==null) {
     		// create a player
