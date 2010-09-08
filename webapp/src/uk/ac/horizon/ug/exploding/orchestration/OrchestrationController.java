@@ -169,8 +169,7 @@ public class OrchestrationController
     	return mav;
     }
 	
-    
-    public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws ServletException
+    private ModelAndView handleCreate(HttpServletRequest request, HttpServletResponse response) throws ServletException
     {
     	ModelAndView mav = new ModelAndView();
     	HttpSession httpSession = request.getSession();
@@ -205,11 +204,30 @@ public class OrchestrationController
 			session.add(game);
 
     		session.end();
+
+    		mav.getModel().put(Constants.OBJECT_MODEL_NAME, game);
+
     	}
-    	
-    	mav.setViewName("redirect:/orchestration/games.html");
     	return mav;
     }
+    
+    public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws ServletException
+    {
+    	ModelAndView mav = handleCreate(request, response);
+    	
+    	mav.setViewName("redirect:/orchestration/games.html");    	
+    	return mav;
+    }
+    
+    /** version of create for lobby - returns game object in simple XML */
+    public ModelAndView lobby_create(HttpServletRequest request, HttpServletResponse response) throws ServletException
+    {
+    	ModelAndView mav = handleCreate(request, response);
+
+    	mav.setView(new EquipObjectView());
+		return mav;
+    }
+
     
     public ModelAndView play(HttpServletRequest request, HttpServletResponse response) throws ServletException
     {
