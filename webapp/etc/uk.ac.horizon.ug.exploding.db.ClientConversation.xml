@@ -12,6 +12,11 @@
 
 	<property name="clientVersion" javatype="java.lang.Integer" />
 
+	<property name="tag" javatype="java.lang.String" >
+		<description>Optional string/id for marking a set/series of related games. 
+		May be used to filter game join/spectator requests.</description>
+	</property>
+	
 	<property name="gameID" type="IDType" />
 	
 	<property name="playerID" type="IDType" />
