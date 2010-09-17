@@ -336,7 +336,8 @@ public class ClientController {
 				handlePoll(conversation, message, newResponses, session);
 				break;
 			case ACK: // acknowledge message
-
+				// no op?
+				break;
 			case ADD_FACT:// request to add fact
 			case UPD_FACT:// request to update fact
 			case DEL_FACT:// request to delete fact
@@ -351,6 +352,7 @@ public class ClientController {
 				break;
 			}
 
+			logger.debug("message "+message.getType()+" ("+message+") -> "+newResponses.size()+" responses");
 			// OK!
 			responses.addAll(newResponses);
 		}
@@ -602,6 +604,7 @@ public class ClientController {
 				q.setMaxResults(maxCount);
 			Object mtcs [] = session.match(q);
 			sentCount = mtcs.length;
+			logger.debug("Poll (maxCount="+maxCount+") found "+mtcs.length+" MTCs with clientID="+conversation.getClientID()+", ackedByClient=0");
 			if (maxCount!=0 || mtcs.length<maxCount)
 				// can't be any left
 				; //checkToFollow = false;
@@ -639,10 +642,12 @@ public class ClientController {
 				//else
 				mtc.setSentToClient(time);				
 			}
-			if (removed>0) {
+			if (mtcs.length>0 || removed>0) {
 				logger.info("Sent "+mtcs.length+" messages to "+conversation.getClientID()+" (seq>"+ackSeq+") - "+removed+" removed");
 			}
 		}
+		else
+			logger.debug("Note: no response as Poll request toFollow="+message.getToFollow());
 
 		// response
 		Message pollResponse = new Message();

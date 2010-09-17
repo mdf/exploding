@@ -2,9 +2,10 @@
 <bean package="uk.ac.horizon.ug.exploding.db" class="ClientConversation" id="ID" primarykey="ID" primarykeygenerator="assigned" table="clientconversation">
 	
 	<type name="IDType" javatype="java.lang.String" maxlength="20" />
-
-	<property name="ID" type="IDType" />
+	<!--  note could be long -->
+	<property name="ID" javatype="java.lang.String" />
 	
+	<!--  note could be long -->
 	<property name="clientID" javatype="java.lang.String" />
 
 	<property name="clientType" javatype="java.lang.String" />
