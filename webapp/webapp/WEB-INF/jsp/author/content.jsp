@@ -24,7 +24,7 @@
 		        <c:forEach var="cg" items="${requestScope.contentGroups}">
 					<tr bgcolor="#eeeeee">
 						<td>
-							<c:out value="${cg.ID}"/> <c:out value="${cg.name}"/>
+							<c:out value="${cg.ID}"/> <c:out value="${cg.name}"/> <c:out value="${cg.location}"/> <c:out value="${cg.version}"/>
 						</td>
 						<td>
 							<a href="delete.html?contentGroupID=<c:out value="${cg.ID}"/>">delete</a>

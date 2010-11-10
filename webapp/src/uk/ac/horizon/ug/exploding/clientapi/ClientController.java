@@ -116,6 +116,11 @@ public class ClientController {
     	// look for ClientConversation(s) with this client
     	QueryTemplate q = new QueryTemplate(ClientConversation.class);
     	q.addConstraintEq("clientID", login.getClientId());
+    	// if they specify a tag then scope to tag aswell (multiple games option)
+		if (login.getGameTag()!=null)
+			q.addConstraintEq("tag", login.getGameTag());
+		else
+			q.addConstraintIsNull("tag");
 
     	Object ccs [] = session.match(q);
 
@@ -153,20 +158,29 @@ public class ClientController {
     	}
     	if (game==null) {
     		// look for an active game
-    		Object games [] = session.match(new QueryTemplate(Game.class));
-    		for (int gi=0; gi<games.length; gi++) {
-    			Game g = (Game)games[gi];
-    			if (g.isSetState() && !Game.ENDED.equals(g.getState())) {
-    				game = g;
-    				logger.debug("Client "+login.getClientId()+" joining active game "+game.getID());
-    			}
-    		}
+    		QueryTemplate gameQuery = new QueryTemplate(Game.class);
+    		if (login.getGameTag()!=null)
+    			gameQuery.addConstraintEq("tag", login.getGameTag());
+    		else
+    			gameQuery.addConstraintIsNull("tag");
+    		// most recently created given preference
+    		gameQuery.addOrder("timeCreated", true);
+    		// not ENDED
+    		gameQuery.addConstraintIn("state", new Object[] {Game.ACTIVE, Game.NOT_STARTED, Game.ENDING});
+    		// only one needed
+    		gameQuery.setMaxResults(1);
+    		Object games [] = session.match(gameQuery);
+    		if (games.length>0)
+    			game = (Game)games[0];
     		if (game==null) {
-    			logger.warn("No active game: client "+login.getClientId()+" rejected");
+    			logger.warn("No active game (tag="+login.getGameTag()+"): client "+login.getClientId()+" rejected");
     			session.end();
     			returnLoginError(LoginReplyMessage.Status.GAME_NOT_FOUND, "No game available right now.", response);
     			return null;
     		}
+    		else
+				logger.debug("Client "+login.getClientId()+" joining "+game.getState()+" game "+game.getID()+" (tag="+login.getGameTag()+")");
+
     	}
     	if (player==null) {
     		// create a player
@@ -195,6 +209,8 @@ public class ClientController {
     	ClientConversation cc = new ClientConversation();
     	cc.setID(login.getConversationId());
     	cc.setActive(true);
+    	// cache tag here aswell for login re-owning filter
+    	cc.setTag(login.getGameTag());
     	cc.setClientID(login.getClientId());
     	cc.setClientType(login.getClientType());
     	cc.setClientVersion(login.getClientVersion());
@@ -327,7 +343,8 @@ public class ClientController {
 				handlePoll(conversation, message, newResponses, session);
 				break;
 			case ACK: // acknowledge message
-
+				// no op?
+				break;
 			case ADD_FACT:// request to add fact
 			case UPD_FACT:// request to update fact
 			case DEL_FACT:// request to delete fact
@@ -342,6 +359,7 @@ public class ClientController {
 				break;
 			}
 
+			logger.debug("message "+message.getType()+" ("+message+") -> "+newResponses.size()+" responses");
 			// OK!
 			responses.addAll(newResponses);
 		}
@@ -509,7 +527,8 @@ public class ClientController {
 			int removed = 0;
 			QueryTemplate q = new QueryTemplate(MessageToClient.class);
 			//("SELECT x FROM MessageToClient x WHERE x.clientId = :clientId AND x.ackedByClient = 0 AND x.seqNo <= :ackSeq");
-			q.addConstraintEq("clientID", conversation.getClientID());
+			// filter MTCs by conversation rather than client (could be multiple concurrent)
+			q.addConstraintEq("conversationID", conversation.getID());
 			q.addConstraintEq("ackedByClient", 0); 
 			q.addConstraintLe("seqNo", ackSeq);
 			Object mtcs[] = session.match(q);
@@ -525,7 +544,7 @@ public class ClientController {
 				//}
 			}
 			if (mtcs.length>0) {
-				logger.info("Acked "+mtcs.length+" messages to "+conversation.getClientID()+" (seq<="+ackSeq+") - "+removed+" removed");
+				logger.info("Acked "+mtcs.length+" messages to "+conversation.getID()+" (seq<="+ackSeq+") - "+removed+" removed");
 			}
 		}
 		// new individual acks
@@ -536,7 +555,8 @@ public class ClientController {
 			for (int i=0; i< ackSeqs.length; i++) {
 				QueryTemplate q = new QueryTemplate(MessageToClient.class);
 				//("SELECT x FROM MessageToClient x WHERE x.clientId = :clientId AND x.ackedByClient = 0 AND x.seqNo = :ackSeq");
-				q.addConstraintEq("clientID", conversation.getClientID());
+				// filter MTCs by conversation rather than client (could be multiple concurrent)
+				q.addConstraintEq("conversationID", conversation.getID());
 				q.addConstraintEq("ackedByClient", 0); 
 				// Note - exact!
 				q.addConstraintEq("seqNo", ackSeqs[i]);
@@ -553,11 +573,11 @@ public class ClientController {
 					//}
 				}
 				if (mtcs.length==0) 
-					logger.warn("Ack[] of unknown message or duplicate ack seqNo="+ackSeqs[i]+" for "+conversation.getClientID());
+					logger.warn("Ack[] of unknown message or duplicate ack seqNo="+ackSeqs[i]+" for "+conversation.getID());
 				else if (mtcs.length>1)
-					logger.warn("Ack[] found "+mtcs.length+" messages with identical seqNo="+ackSeqs[i]+" for "+conversation.getClientID());
+					logger.warn("Ack[] found "+mtcs.length+" messages with identical seqNo="+ackSeqs[i]+" for "+conversation.getID());
 			}
-			logger.info("Acked[] "+ackSeqs.length+" messages to "+conversation.getClientID()+" - "+removed+" removed");
+			logger.info("Acked[] "+ackSeqs.length+" messages to "+conversation.getID()+" - "+removed+" removed");
 		}
 		
 		//ClientConversation cc = em.find(ClientConversation.class, conversation.getConversationId());
@@ -572,7 +592,8 @@ public class ClientController {
 			if (message.getToFollow()!=null) {
 				maxCount = message.getToFollow();
 				QueryTemplate q2 = new QueryTemplate(MessageToClient.class);
-				q2.addConstraintEq("clientID", conversation.getClientID());
+				// filter MTCs by conversation rather than client (could be multiple concurrent)
+				q2.addConstraintEq("conversationID", conversation.getID());
 				q2.addConstraintEq("ackedByClient", 0L);
 				q2.addConstraintGe("priority", ClientSubscriptionManager.AppPriority.MUST_SEND.ordinal());
 				int mustSend = session.count(q2);
@@ -583,7 +604,8 @@ public class ClientController {
 			}			
 			//Query q = em.createQuery ("SELECT x FROM MessageToClient x WHERE x.clientId = :clientId AND x.seqNo> :ackSeq ORDER BY x.seqNo ASC");
 			QueryTemplate q = new QueryTemplate(MessageToClient.class);
-			q.addConstraintEq("clientID", conversation.getClientID());
+			// filter MTCs by conversation rather than client (could be multiple concurrent)
+			q.addConstraintEq("conversationID", conversation.getID());
 			q.addConstraintEq("ackedByClient", 0L);
 			// hopefully multiple order constraints will work (first should have precedence
 			//MessageToClient mtc; mtc.getAckedByClient();mtc.getPriority();
@@ -593,12 +615,14 @@ public class ClientController {
 				q.setMaxResults(maxCount);
 			Object mtcs [] = session.match(q);
 			sentCount = mtcs.length;
+			logger.debug("Poll (maxCount="+maxCount+") found "+mtcs.length+" MTCs with conversationID="+conversation.getID()+", ackedByClient=0");
 			if (maxCount!=0 || mtcs.length<maxCount)
 				// can't be any left
 				; //checkToFollow = false;
 			else {
 				QueryTemplate q1 = new QueryTemplate(MessageToClient.class);
-				q1.addConstraintEq("clientID", conversation.getClientID());
+				// filter MTCs by conversation rather than client (could be multiple concurrent)
+				q.addConstraintEq("conversationID", conversation.getID());
 				q1.addConstraintEq("ackedByClient", 0L);
 				//Query q = em.createQuery ("SELECT COUNT(x) FROM MessageToClient x WHERE x.clientId = :clientId AND x.seqNo> :ackSeq ");
 				int countResult = session.count(q1);
@@ -630,10 +654,12 @@ public class ClientController {
 				//else
 				mtc.setSentToClient(time);				
 			}
-			if (removed>0) {
-				logger.info("Sent "+mtcs.length+" messages to "+conversation.getClientID()+" (seq>"+ackSeq+") - "+removed+" removed");
+			if (mtcs.length>0 || removed>0) {
+				logger.info("Sent "+mtcs.length+" messages to "+conversation.getID()+" (seq>"+ackSeq+") - "+removed+" removed");
 			}
 		}
+		else
+			logger.debug("Note: no response as Poll request toFollow="+message.getToFollow());
 
 		// response
 		Message pollResponse = new Message();

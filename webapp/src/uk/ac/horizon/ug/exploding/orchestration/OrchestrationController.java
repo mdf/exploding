@@ -19,6 +19,8 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.validation.BindException;
 
 import uk.ac.horizon.ug.exploding.db.Game;
+import uk.ac.horizon.ug.exploding.spectator.Constants;
+import uk.ac.horizon.ug.exploding.spectator.EquipObjectView;
 
 
 import equip2.core.IDataspace;
@@ -93,13 +95,87 @@ public class OrchestrationController
     	return mav;
     }
 	
-    
-    public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws ServletException
+    /** active game list query operation - for lobberservice.
+     * Return XML/JSON-encoding list of non-ENDED games.
+     * 
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ModelAndView game_list(HttpServletRequest request, HttpServletResponse response) throws ServletException
+    {
+    	ModelAndView mav = new ModelAndView();
+		
+		Map model = mav.getModel();
+    	
+    	String gameTag = request.getParameter("tag");
+
+		ISession session = dataspace.getSession();
+		session.begin(ISession.READ_ONLY);
+		
+		QueryTemplate gqt = new QueryTemplate(uk.ac.horizon.ug.exploding.db.Game.class);
+		gqt.addConstraintIn("state", new Object[] {Game.ACTIVE, Game.ENDING, Game.NOT_STARTED});
+		gqt.addOrder("timeCreated");
+		if (gameTag!=null && gameTag.length()>0)
+			gqt.addConstraintEq("tag", gameTag);
+		
+		Object [] gs = session.match(gqt);
+		
+		model.put(Constants.OBJECT_MODEL_NAME, gs);
+
+		session.end();
+		
+		// EquipObjectView allows request parameter 'encoding'='json' to force JSON return
+		mav.setView(new EquipObjectView());
+    	return mav;
+    }
+	
+    /** active game list query operation - for lobberservice.
+     * Return XML/JSON-encoding list of ContentGruops.
+     * 
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ModelAndView content_group_list(HttpServletRequest request, HttpServletResponse response) throws ServletException
+    {
+    	ModelAndView mav = new ModelAndView();
+		
+		Map model = mav.getModel();
+    	
+		// optional filter paramters
+		String location = request.getParameter("location");
+		String version = request.getParameter("version");
+		
+		ISession session = dataspace.getSession();
+		session.begin(ISession.READ_ONLY);
+		
+		QueryTemplate gqt = new QueryTemplate(uk.ac.horizon.ug.exploding.db.ContentGroup.class);
+		if (location!=null && location.length()>0)
+			gqt.addConstraintEq("location", location);
+		if (version!=null && version.length()>0)
+			gqt.addConstraintEq("version", version);
+		
+		Object [] gs = session.match(gqt);
+		
+		model.put(Constants.OBJECT_MODEL_NAME, gs);
+
+		session.end();
+		
+		// EquipObjectView allows request parameter 'encoding'='json' to force JSON return
+		mav.setView(new EquipObjectView());
+    	return mav;
+    }
+	
+    private ModelAndView handleCreate(HttpServletRequest request, HttpServletResponse response) throws ServletException
     {
     	ModelAndView mav = new ModelAndView();
     	HttpSession httpSession = request.getSession();
     	String contentGroupID = request.getParameter("contentGroupID");
     	String gameName = request.getParameter("name");
+    	String gameTag = request.getParameter("tag");
 
     	if(contentGroupID!=null && contentGroupID.length()>0)
     	{    		
@@ -118,6 +194,8 @@ public class OrchestrationController
 			
 			game.setID(IDAllocator.getNewID(session, uk.ac.horizon.ug.exploding.db.Game.class, "GA", null));
 			game.setName(gameName);
+			if (gameTag!=null && gameTag.length()>0)
+				game.setTag(gameTag);
 			game.setGameTimeID(gameTime.getID());
 			game.setState(Game.NOT_STARTED);
 			game.setTimeCreated(System.currentTimeMillis());
@@ -126,11 +204,30 @@ public class OrchestrationController
 			session.add(game);
 
     		session.end();
+
+    		mav.getModel().put(Constants.OBJECT_MODEL_NAME, game);
+
     	}
-    	
-    	mav.setViewName("redirect:/orchestration/games.html");
     	return mav;
     }
+    
+    public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws ServletException
+    {
+    	ModelAndView mav = handleCreate(request, response);
+    	
+    	mav.setViewName("redirect:/orchestration/games.html");    	
+    	return mav;
+    }
+    
+    /** version of create for lobby - returns game object in simple XML */
+    public ModelAndView lobby_create(HttpServletRequest request, HttpServletResponse response) throws ServletException
+    {
+    	ModelAndView mav = handleCreate(request, response);
+
+    	mav.setView(new EquipObjectView());
+		return mav;
+    }
+
     
     public ModelAndView play(HttpServletRequest request, HttpServletResponse response) throws ServletException
     {

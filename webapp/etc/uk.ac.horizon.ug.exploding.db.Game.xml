@@ -9,6 +9,11 @@
 	
 	<property name="name" javatype="java.lang.String" />
 	
+	<property name="tag" javatype="java.lang.String" >
+		<description>Optional string/id for marking a set/series of related games. 
+		May be used to filter game join/spectator requests.</description>
+	</property>
+	
 	<property name="timeCreated" javatype="java.lang.Long" />
 	
 	<property name="gameTimeID" type="IDType" />

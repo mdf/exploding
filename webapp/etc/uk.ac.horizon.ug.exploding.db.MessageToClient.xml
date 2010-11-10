@@ -5,8 +5,10 @@
 
 	<property name="ID" type="IDType" />
 	
-	<property name="clientID" type="IDType" />
+	<!--  note could be long -->
+	<property name="clientID" javatype="java.lang.String" />
 
+	<!--  note could be long -->
 	<property name="conversationID" javatype="java.lang.String" />
 
 	<property name="gameID" type="IDType" />

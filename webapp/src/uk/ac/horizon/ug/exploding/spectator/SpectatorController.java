@@ -63,8 +63,16 @@ public class SpectatorController
 		Vector<Message> msgs = new Vector<Message>();
 		
 		QueryTemplate gqt = new QueryTemplate(Game.class);
-		gqt.addConstraintEq("state", Game.ACTIVE);
+		// active or ending
+		//gqt.addConstraintEq("state", Game.ACTIVE);
+		gqt.addConstraintIn("state", new Object[] {Game.ACTIVE, Game.ENDING});
 		gqt.addOrder("timeCreated", true);
+		// default to null tag
+		String gameTag = request.getParameter("gameTag");
+		if (gameTag==null || gameTag.length()==0)
+			gqt.addConstraintIsNull("tag");
+		else
+			gqt.addConstraintEq("tag", gameTag);
 		
 		Object [] gs = session.match(gqt);
 		
