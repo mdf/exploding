@@ -37,6 +37,7 @@
 	be required. -->
   <!-- uncomment to enable logging (also the constructor argument for the dataspace, below) -->
   <bean id="dataspaceLogger" class="equip2.core.logging.j2se.SimpleFileDataspaceLogger">
+    <!--<constructor-arg><value>/home/martin/work/urban/jetty-6.1.23/logs</value></constructor-arg>-->
     <constructor-arg><value>/usr/local/tomcat-exploding/logs</value></constructor-arg>
     <constructor-arg><value>exploding-dataspace-log-</value></constructor-arg>
     <constructor-arg><value>.equip2log.hessian</value></constructor-arg>
@@ -166,7 +167,8 @@
 		<property name="dataspace"><ref bean="dataspace"/></property>
 		<property name="timeRatio" value="0.003333333"/>
 		<property name="spawnRadius" value="0.0002"/>
-		<property name="proximityRadius" value="0.0002"/>
+		<property name="proximityRadius" value="30"/>
+		<property name="maxMembers" value="20"/>
 	</bean>
 
 	<bean id="engineTickJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

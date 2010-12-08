@@ -407,7 +407,7 @@ public class ClientController {
 				if (player.getNewMemberQuota()<=0) 
 					throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Player "+player.getID()+" tried to create a Member but has no newMemberQuota left");
 				// reduce quota
-				player.setNewMemberQuota(player.getNewMemberQuota()-1);
+				//player.setNewMemberQuota(player.getNewMemberQuota()-1);
 
 				Member newMember = (Member)newVal;
 				newMember.setID(IDAllocator.getNewID(session, Member.class, "M", null));

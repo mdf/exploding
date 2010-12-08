@@ -13,6 +13,7 @@
 			<props>
 				<prop key="/index.html">filenameViewController</prop>
 				<prop key="/games.html">orchestrationViewMultiController</prop>
+				<prop key="/game_detail.html">orchestrationViewMultiController</prop>
 				<prop key="/game_list">orchestrationViewMultiController</prop>
 				<prop key="/content_group_list">orchestrationViewMultiController</prop>
 				<prop key="/create.html">orchestrationViewMultiController</prop>

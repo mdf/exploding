@@ -275,10 +275,16 @@ public class Main implements Runnable {
 		System.out.println("Creating member");
 		Member m = new Member();
 		m.setPlayerID(player.getID());
-		m.setAction(random.nextInt() % 8);
+
+		m.setAction(5);
+		m.setBrains(5);
+		m.setWealth(5);
+		m.setHealth(5);
+		/*m.setAction(random.nextInt() % 8);
 		m.setBrains(random.nextInt() % 8);
 		m.setWealth(random.nextInt() % 8);
 		m.setHealth(2 + (random.nextInt() % 3));
+		*/
 		m.setName(playerName);
 		m.setPosition(getPosition());
 		Zone zone = ZoneService.getZone(client, m.getPosition().getLatitude(), m.getPosition().getLongitude());
