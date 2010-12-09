@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.db" class="GameConfig" id="ID" primarykey="ID" primarykeygenerator="assigned" table="gameconfig">
+	
+	<type name="IDType" javatype="java.lang.String" maxlength="20" />
+
+	<property name="ID" type="IDType" />
+		
+	<property name="name" javatype="java.lang.String" />
+	
+	<property name="spawnRadius" javatype="float" />
+	
+	<property name="proximityRadius" javatype="float" />
+	
+	<property name="maxMembers" javatype="int" />
+	
+	<property name="startTime" javatype="float" />
+	
+	<property name="endTime" javatype="float" />
+	
+	<property name="enableDeath" javatype="int" />
+			
+	<property name="enableEventEffects" javatype="int" />
+	
+	<property name="enableSoleMemberZoneEffect" javatype="int" />
+	
+	<property name="enableMultipleMemberZoneEffect" javatype="int" />
+	
+	<property name="enableAssimilation" javatype="int" />
+	
+	<property name="enableOffspring" javatype="int" />
+	
+	<property name="enableAuthoring" javatype="int" />
+	
+	<property name="enableAuthoringQuota" javatype="int" />
+	
+	<property name="enableMemberCreation" javatype="int" />
+	
+	<property name="enableMemberQuota" javatype="int" />
+	
+	<property name="contextMsgAssimilated" javatype="java.lang.String" />
+	<property name="contextMsgAssimilatedTitle" javatype="java.lang.String" />
+	
+	<property name="contextMsgAssimilate" javatype="java.lang.String" />
+	<property name="contextMsgAssimilateTitle" javatype="java.lang.String" />
+		
+	<property name="contextMsgBirth" javatype="java.lang.String" />
+	<property name="contextMsgBirthTitle" javatype="java.lang.String" />
+	
+	<property name="contextMsgDeath" javatype="java.lang.String" />
+	<property name="contextMsgDeathTitle" javatype="java.lang.String" />
+	
+	<property name="contextMsgEnd" javatype="java.lang.String" />
+	<property name="contextMsgEndTitle" javatype="java.lang.String" />
+	
+	<property name="contextMsgScare" javatype="java.lang.String" />
+	<property name="contextMsgScareTitle" javatype="java.lang.String" />
+
+</bean>
