@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="war" name="exploding">
+<project basedir="." default="war" name="makefest">
 	<description>
 		Exploding Places Webapp
 	</description>
@@ -18,7 +18,7 @@
 	<!-- local properties -->
 	<property file="build.properties"/>
 
-	<property value="exploding" name="webappname"/>
+	<property value="makefest" name="webappname"/>
 	<property value="${webappname}.war" name="warfile"/>
 
 	<target name="init">
@@ -179,6 +179,19 @@
 			<arg value="etc/uk.ac.horizon.ug.exploding.db.Game.xml"/>
 			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/Game.hbm.xml"/>
 		</java>
+		
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.GameConfig.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/GameConfig.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.GameConfig.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/GameConfig_helper.java"/>
+			<arg value="${equip2home}/etc/bean2hibernatehbm.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.db.GameConfig.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/db/GameConfig.hbm.xml"/>
+		</java>		
 		
 	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
 			<classpath refid="classpath_tools"/>
@@ -446,6 +459,11 @@
 			<fileset dir="${dependencies.dir}">
 				<include name="xstream-1.3.1.jar"/>
 			</fileset>
+			<!-- jettison -->
+			<fileset dir="${dependencies.dir}">		
+				<include name="jettison-1.2.jar"/> 
+				<include name="stax-1.2.0.jar"/>	
+			</fileset>			
 		</copy>
 	</target>
 

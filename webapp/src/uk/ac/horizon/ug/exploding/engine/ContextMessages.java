@@ -2,25 +2,14 @@ package uk.ac.horizon.ug.exploding.engine;
 
 public class ContextMessages
 {
-	public static final String MSG_ASSIMILATED = "One of your community members has joined another community<zone>, the other community was stronger, they intermarried, you stay in touch but it is time to say goodbye and let them go out into the world without you.";
-	
-	//public static final String MSG_ASSIMILATE = "Another player’s community members have joined your community, click here to welcome the new members and look after them as if they were your own.";
-	public static final String MSG_ASSIMILATE = "Another player’s community members have joined your community<zone>, welcome the new members and look after them as if they were your own.";
-	
-	//public static final String MSG_BIRTH = "Congratulations, there has been a birth in <zone>, click here to welcome your new community member.";
 	public static final String MSG_BIRTH = "Congratulations, there has been a birth<zone>, welcome your new community member.";
-	
-	//public static final String MSG_DEATH = "Sadly you have lost a community member. Click here to find out more as you may need to move the rest of the community in the area to protect their health.";
+
+	public static final String MSG_BIRTH_TITLE = "Congratulations, there has been a birth in your community<zone>";
+
 	public static final String MSG_DEATH = "Sadly you have lost a community member<zone>. You may need to move the rest of the community in the area to protect their health.";
 
-	public static final String MSG_TITLE_ASSIMILATED = "One of your community members has joined another community<zone>";
+	public static final String MSG_DEATH_TITLE = "Sadly you have lost a community member, check the health of the other members<zone>";
 
-	public static final String MSG_TITLE_ASSIMILATE = "Another player’s community members have joined your community<zone>";
-
-	public static final String MSG_TITLE_BIRTH = "Congratulations, there has been a birth in your community<zone>";
-
-	public static final String MSG_TITLE_DEATH = "Sadly you have lost a community member, check the health of the other members<zone>";
-	
 	public static final String MSG_END = "Congratulations! Your community has survived for 120 years in Woolwich, you have <members> remaining.  Please return to the Tramshed as quickly as possible.";
 	
 	public static final String MSG_END_TITLE = "Please return to the Tramshed as quickly as possible.";
@@ -28,6 +17,15 @@ public class ContextMessages
 	public static final String MSG_SCARE = "There has been a health scare<zone>, check the health of your community members";
 	
 	public static final String MSG_SCARE_TITLE = "There has been a health scare<zone>, check the health of your community members";
+	
+	public static final String MSG_ASSIMILATED = "One of your community members has joined another community<zone>, the other community was stronger, they intermarried, you stay in touch but it is time to say goodbye and let them go out into the world without you.";
+
+	public static final String MSG_ASSIMILATED_TITLE = "One of your community members has joined another community<zone>";
+	
+	public static final String MSG_ASSIMILATE = "Another player’s community members have joined your community<zone>, welcome the new members and look after them as if they were your own.";
+	
+	public static final String MSG_ASSIMILATE_TITLE = "Another player’s community members have joined your community<zone>";
+
 	
 	public static String fillMembers(String message, int members)
 	{

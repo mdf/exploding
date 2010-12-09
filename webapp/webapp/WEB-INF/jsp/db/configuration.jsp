@@ -36,6 +36,7 @@
 		"uk.ac.horizon.ug.exploding.db.ClientConversation",
 		"uk.ac.horizon.ug.exploding.db.ContentGroup",
 		"uk.ac.horizon.ug.exploding.db.Game",
+		"uk.ac.horizon.ug.exploding.db.GameConfig",
 		"uk.ac.horizon.ug.exploding.db.GameTime",
 		"uk.ac.horizon.ug.exploding.db.Member",
 		"uk.ac.horizon.ug.exploding.db.Message",

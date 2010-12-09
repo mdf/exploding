@@ -304,7 +304,7 @@ public class OrchestrationController
 			//gameTime.setGameTime(0.0f);
 			//gameTime.setGameTime(-1000.0f); // about 5 minutes
 
-    		GameConfig gameConfig = (GameConfig) session.get(GameConfig.class, "gameConfigID");
+    		GameConfig gameConfig = (GameConfig) session.get(GameConfig.class, gameConfigID);
     		
     		if(gameConfig!=null)    		
     			gameTime.setGameTime(gameConfig.getStartTime());
@@ -314,6 +314,7 @@ public class OrchestrationController
     		uk.ac.horizon.ug.exploding.db.Game game = new uk.ac.horizon.ug.exploding.db.Game();
 			
 			game.setID(IDAllocator.getNewID(session, uk.ac.horizon.ug.exploding.db.Game.class, "GA", null));
+			
 			game.setName(gameName);
 			if (gameTag!=null && gameTag.length()>0)
 				game.setTag(gameTag);
@@ -323,6 +324,7 @@ public class OrchestrationController
 			game.setState(Game.NOT_STARTED);
 			game.setTimeCreated(System.currentTimeMillis());
 			game.setContentGroupID(contentGroupID);
+			game.setGameConfigID(gameConfigID);
 			
 			session.add(game);
 

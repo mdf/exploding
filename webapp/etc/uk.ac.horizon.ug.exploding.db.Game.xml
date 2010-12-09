@@ -7,6 +7,8 @@
 	
 	<property name="contentGroupID" type="IDType" />
 	
+	<property name="gameConfigID" type="IDType" />
+	
 	<property name="name" javatype="java.lang.String" />
 	
 	<property name="tag" javatype="java.lang.String" >

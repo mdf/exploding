@@ -24,6 +24,7 @@ import uk.ac.horizon.ug.exploding.db.Member;
 import uk.ac.horizon.ug.exploding.clientapi.LoginReplyMessage.Status;
 import uk.ac.horizon.ug.exploding.db.ClientConversation;
 import uk.ac.horizon.ug.exploding.db.Game;
+import uk.ac.horizon.ug.exploding.db.GameConfig;
 import uk.ac.horizon.ug.exploding.db.GameTime;
 import uk.ac.horizon.ug.exploding.db.MessageToClient;
 import uk.ac.horizon.ug.exploding.db.Player;
@@ -127,6 +128,7 @@ public class ClientController {
     	// first look for an association between this client and an active game to reuse...
     	Player player = null;
     	Game game = null;
+    	GameConfig config = null;
     	int maxSeqNo = 1;
     	boolean welcomeBack = false;
     	for (int cci=0; cci<ccs.length; cci++) {
@@ -183,12 +185,21 @@ public class ClientController {
 
     	}
     	if (player==null) {
+    		
+    		// get game config
+    		config = (GameConfig) session.get(GameConfig.class, game.getGameConfigID());
+    		
     		// create a player
     		player = new Player();
     		player.setID(IDAllocator.getNewID(session, uk.ac.horizon.ug.exploding.db.Player.class, "P", null));
     		player.setName(login.getPlayerName());
     		player.setGameID(game.getID());
-    		player.setCanAuthor(false); // have to earn the ability
+    		
+    		if(config.getEnableAuthoring()!=1)
+    			player.setCanAuthor(true); 
+    		else
+    			player.setCanAuthor(false); // have to earn the ability
+    		
     		player.setPoints(0);
     		player.setNewMemberQuota(1);
     		QueryTemplate pq = new QueryTemplate(Player.class);
@@ -404,10 +415,25 @@ public class ClientController {
 				Player player = (Player)session.get(Player.class, conversation.getPlayerID());
 				if (player==null) 
 					throw new ClientAPIException(MessageStatusType.INTERNAL_ERROR, "conversation Player "+conversation.getPlayerID()+" not found");
-				if (player.getNewMemberQuota()<=0) 
-					throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Player "+player.getID()+" tried to create a Member but has no newMemberQuota left");
-				// reduce quota
-				//player.setNewMemberQuota(player.getNewMemberQuota()-1);
+				
+				boolean memberQuota = true;
+				
+				GameConfig config = null;
+				Game game = (Game)session.get(Game.class, player.getGameID());
+				if(game!=null)
+					config = (GameConfig) session.get(GameConfig.class, game.getGameConfigID());
+				
+				if(config!=null && config.getEnableMemberQuota()==0)
+					memberQuota = false;
+				
+				if(memberQuota)
+				{				
+					if (player.getNewMemberQuota()<=0) 
+						throw new ClientAPIException(MessageStatusType.NOT_PERMITTED, "Player "+player.getID()+" tried to create a Member but has no newMemberQuota left");
+						
+					// reduce quota
+					player.setNewMemberQuota(player.getNewMemberQuota()-1);
+				}
 
 				Member newMember = (Member)newVal;
 				newMember.setID(IDAllocator.getNewID(session, Member.class, "M", null));

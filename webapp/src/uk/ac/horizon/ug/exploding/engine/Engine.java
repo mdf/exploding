@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 
 import uk.ac.horizon.ug.exploding.db.Game;
+import uk.ac.horizon.ug.exploding.db.GameConfig;
 import uk.ac.horizon.ug.exploding.db.GameTime;
 import uk.ac.horizon.ug.exploding.db.Member;
 import uk.ac.horizon.ug.exploding.db.Message;
@@ -34,7 +35,7 @@ public class Engine
 {	
 	static Logger logger = Logger.getLogger(Engine.class.getName());
 
-	protected Map<Integer, ZoneCache> zoneCache = new HashMap<Integer, ZoneCache>();
+	protected Set<ZoneCache> zoneCache = new HashSet<ZoneCache>();
 	
 	protected Random random = new Random();
 	
@@ -67,6 +68,7 @@ public class Engine
 	}
 	
 	// new member radius
+	/*
 	protected double spawnRadius;
 	
 	public void setSpawnRadius(double spawnRadius)
@@ -103,6 +105,7 @@ public class Engine
 	{
 		return this.proximityRadius;
 	}
+	*/
 	
 	public Engine()
 	{
@@ -179,7 +182,7 @@ public class Engine
 	{
 		logger.info("Engine::cacheZone triggered");
 		ZoneCache zc = new ZoneCache(zone);
-		zoneCache.put(zone.getOrgId(), zc);
+		zoneCache.add(zc);
 	}
 	
 	public Integer getZoneID(String contentGroupID, Position p)
@@ -189,17 +192,17 @@ public class Engine
 			return null;
 		}
 		
-		Iterator<Entry<Integer, ZoneCache>> it = zoneCache.entrySet().iterator();
+		Iterator<ZoneCache> it = zoneCache.iterator();
 		
 		while(it.hasNext())
 		{
-			Map.Entry<Integer, ZoneCache> pairs = (Map.Entry<Integer, ZoneCache>)it.next();
-			
-			if(pairs.getValue().zone.getContentGroupID().equals(contentGroupID))
+			ZoneCache zc = it.next();
+									
+			if(zc.zone.getContentGroupID().equals(contentGroupID))
 			{
-				if(pairs.getValue().contains(p.getLatitude(), p.getLongitude()))
+				if(zc.contains(p.getLatitude(), p.getLongitude()))
 				{
-					return pairs.getKey();
+					return zc.zone.getOrgId();
 				}
 			}
 	    }
@@ -355,12 +358,12 @@ public class Engine
 		}			
 	}	
 	
-	public boolean isSpawnable(ISession session, Member member)
+	public boolean isSpawnable(ISession session, Member member, int maxMembers)
 	{
 		QueryTemplate mqt = new QueryTemplate(Member.class);
 		mqt.addConstraintEq("playerID", member.getPlayerID());
 			
-		if(session.count(mqt)>=this.maxMembers)
+		if(session.count(mqt)>=maxMembers)
 		{
 			logger.info("spawn refused for player " + member.getPlayerID() + " member " + member.getID() + " over quota");
 			return false;
@@ -405,11 +408,19 @@ public class Engine
 		{
 			Game g = (Game) gs[i];
 						
-			if(g.getContentGroupID()!=null && g.getContentGroupID().length()>0)
+			if(g.getContentGroupID()!=null && g.getContentGroupID().length()>0
+					&& g.getGameConfigID()!=null && g.getGameConfigID().length()>0)
 			{
 				GameTime gt = (GameTime) session.get(GameTime.class, g.getGameTimeID());
 				
 				if(gt==null)
+				{
+					continue;
+				}
+				
+				GameConfig config = (GameConfig) session.get(GameConfig.class, g.getGameConfigID());
+				
+				if(config==null)
 				{
 					continue;
 				}
@@ -440,7 +451,7 @@ public class Engine
 		    		}
 		    		else
 		    		{
-		    			handleContentEvent(session, g, e);		    			
+		    			handleContentEvent(session, g, config, e);		    			
 		    		}
 		    	}
 		    	
@@ -450,7 +461,9 @@ public class Engine
 
 		    	// finish game?
 		    	// 11100 ~= 2011
-		    	if(gt.getGameTime()>=11100)
+		    	//if(gt.getGameTime()>=11100)
+		    	
+		    	if(gt.getGameTime()>=config.getEndTime())
 		    	{
 		    		logger.info("Ending game " + g.getID() + " at " + gt.getGameTime() + " last year " + g.getYear());
 		    		
@@ -474,8 +487,16 @@ public class Engine
 	    		   		
 	    		   		int memberCount = session.count(mqt);
 
-		   				msg.setTitle(ContextMessages.fillMembers(ContextMessages.MSG_END_TITLE, memberCount));
-		   				msg.setDescription(ContextMessages.fillMembers(ContextMessages.MSG_END, memberCount));
+		   				if(config.isSetContextMsgEndTitle())
+			   				msg.setTitle(ContextMessages.fillMembers(config.getContextMsgEndTitle(), memberCount));
+		   				else
+			   				msg.setTitle(ContextMessages.fillMembers(ContextMessages.MSG_END_TITLE, memberCount));
+
+		   				if(config.isSetContextMsgEnd())
+			   				msg.setDescription(ContextMessages.fillMembers(config.getContextMsgEnd(), memberCount));
+		   				else
+			   				msg.setDescription(ContextMessages.fillMembers(ContextMessages.MSG_END, memberCount));
+		   				
 		    		   	msg.setHandled(false);
 		    			msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
 		    		   	msg.setPlayerID(p.getID());
@@ -512,6 +533,13 @@ public class Engine
 			return;
 		}
 		
+		GameConfig config = (GameConfig) session.get(GameConfig.class, game.getGameConfigID());
+		
+		if(config==null)
+		{
+			return;
+		}
+		
 		// client is now setting zone
 		//member.setZone(this.getZoneID(game.getContentGroupID(), member.getPosition()));
 		
@@ -531,339 +559,381 @@ public class Engine
 	   	
 	   	/*
 	   	 * FIXME don't trust this at the moment
-	   	if(movement==false)
-	   	{	   	
-		   	if(ms.length==0)
-		   	{
-		   		// increase wealth
-		   		// FIXME - does "community member in a new region" mean they've not been here before?
-	   			int wealth = member.getWealth();
-	   			wealth += 3;
-	   			if(wealth>10)
-	   			{
-	   				wealth = 10;
-	   			}
-	   			else if(wealth<0)
-	   			{
-	   				wealth = 0;
-	   			}
-	   			member.setWealth(wealth);
-		   	}
-		   	else if(ms.length>=9) // excluding ourselves
-		   	{
-		   		// -2 health, +2 knowledge
-		   		// -2 wealth, +2 participation
-		   		// +2 participation
-		   		// FIXME this presumably *doesn't* mean +4 participation?!
-		   		
-		   		for(int i=0; i<ms.length; i++)
-		   		{
-		   			Member other = (Member) ms[i];
-	
-		   			int health = other.getHealth();
-		   			health += -2;
-			   					   			
-			   		if(health>10)
-			   		{
-			   			health = 10;
-			   		}
-			   		else if(health<=0)
-			   		{
-				   		// initial member
-				   		if(other.getParentMemberID()==null || other.getParentMemberID().length()==0)
-				   		{
-				   			health = 1;
-				   		}
-				   		else
-				   		{
-			   				Message msg = new Message();
-			   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-			   				msg.setCreateTime(System.currentTimeMillis());
-			   				msg.setYear(game.getYear());
-			   				msg.setType(Message.MSG_MEMBER_DIED);
-			   				msg.setPlayerID(other.getPlayerID());
-			   				msg.setHandled(false);
-			   				
-			   				String zoneName = null;
-			   							   				
-			   				if(other.isSetZone() && other.getZone()!=0)
-			   				{
-				   				QueryTemplate zqt = new QueryTemplate(Zone.class);
-				   				zqt.addConstraintEq("orgId", other.getZone());
-				   				
-				   				Object [] zs = session.match(zqt);
-				   				
-				   				if(zs.length==1)
-				   				{
-				   					Zone z = (Zone) zs[0];
-				   					zoneName = z.getName();
-				   				}
-			   				}
-			   				
-			   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_DEATH, zoneName));
-			   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_DEATH, zoneName));
-			   			
-			   				session.add(msg);
-			   			
-			   				logger.info("Player " + other.getPlayerID() + " member " + other.getID() + " killed by member " + member.getID() + " placement");
-				   			
-				   			session.remove(other);
-				   			continue;
-				   		}
-			   		}
-			   			
-			   		other.setHealth(health);		   			
-		   			
-		   			int wealth = other.getWealth();
-			   		wealth += -2;
-			   		if(wealth>10)
-			   		{
-			   			wealth = 10;
-			   		}
-			   		else if(wealth<0)
-			   		{
-			   			wealth = 0;
-			   		}
-			   		other.setWealth(wealth);
-			   		
-		   			int action = other.getAction();
-		   			action += 2;
-		   			if(action>10)
-		   			{
-		   				action = 10;
-		   			}
-		   			else if(action<0)
-		   			{
-		   				action = 0;
-		   			}
-		   			other.setAction(action);
-		   			
-		   			session.update(other);
-		   		}
-		   	}
-	   	}
-	   	*/
+	   	 */
 	   	
-	   	/*
-		
-	   	int year = 0;
-	   	
-	   	try
+	   	if(config.getEnableMultipleMemberZoneEffect()==1)
 	   	{	   	
-	   		year = Integer.parseInt(game.getYear());
-	   	}
-	   	catch(NumberFormatException e)
-	   	{
-	   	}
-	   	
-		// proximity to others
-	   	if(year==0 || year>=1914)
-	   	{	   	
-	   		if(this.isKillable(session, member))
-	   		{		   		
-			   	for(int i=0; i<ms.length; i++)
+		   	if(movement==false)
+		   	{	   	
+			   	if(ms.length==0)
 			   	{
-			   		Member other = (Member) ms[i];
+			   		// increase wealth
+			   		// FIXME - does "community member in a new region" mean they've not been here before?
+		   			int wealth = member.getWealth();
+		   			wealth += 3;
+		   			if(wealth>10)
+		   			{
+		   				wealth = 10;
+		   			}
+		   			else if(wealth<0)
+		   			{
+		   				wealth = 0;
+		   			}
+		   			member.setWealth(wealth);
+			   	}
+			   	else if(ms.length>=9) // excluding ourselves
+			   	{
+			   		// -2 health, +2 knowledge
+			   		// -2 wealth, +2 participation
+			   		// +2 participation
+			   		// FIXME this presumably *doesn't* mean +4 participation?!
 			   		
-			   		if(other.getPlayerID().equals(member.getPlayerID()))
+			   		for(int i=0; i<ms.length; i++)
 			   		{
-			   			continue;
-			   		}
-			   					   		
-			   		// cannot assimilate only member
-			   		if(!this.isKillable(session, other))
-			   		{
-			   			continue;
-			   		}	
-			   		
-			   		if(ZoneCache.distanceBetweenPoints(member.getPosition(), other.getPosition())<proximityRadius)
-			   		{
-			   			if(member.getAction()>other.getAction())
-			   			{
-			   				logger.info("member " + other.getID() + " assimilated by " + member.getID() + " (triggered by " + member.getID() +")");
-				   			// we assimilate them
-				   			int action = member.getAction();
-				   			action += 3;
-				   			if(action>10)
-				   			{
-				   				action = 10;
-				   			}
-				   			else if(action<0)
-				   			{
-				   				action = 0;
-				   			}
-				   			member.setAction(action);	
-				   			
-			   				// message them
-			   				Message msg = new Message();
-			   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-			   				msg.setCreateTime(System.currentTimeMillis());
-			   				msg.setYear(game.getYear());
-			   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
-			   				msg.setPlayerID(other.getPlayerID());
-			   				msg.setHandled(false);
-			   				
-			   				String zoneName = null;
-				   				
-			   				if(other.isSetZone() && other.getZone()!=0)
-			   				{
-				   				QueryTemplate zqt = new QueryTemplate(Zone.class);
-				   				zqt.addConstraintEq("orgId", member.getZone());
-				   				
-				   				Object [] zs = session.match(zqt);
-				   				
-				   				if(zs.length==1)
-				   				{
-				   					Zone z = (Zone) zs[0];
-				   					zoneName = z.getName();
-				   				}
-			   				}
-			   				
-			   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_ASSIMILATED, zoneName));
-			   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATED, zoneName));   				
+			   			Member other = (Member) ms[i];
 		
-			   				session.add(msg);
-			   				
-			   				// message us
-			   				msg = new Message();
-			   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-			   				msg.setCreateTime(System.currentTimeMillis());
-			   				msg.setYear(game.getYear());
-			   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
-			   				msg.setPlayerID(member.getPlayerID());
-			   				msg.setHandled(false);
-			   				
-			   				zoneName = null;
-			   				
-			   				if(member.isSetZone() && member.getZone()!=0)
-			   				{
-				   				QueryTemplate zqt = new QueryTemplate(Zone.class);
-				   				zqt.addConstraintEq("orgId", member.getZone());
+			   			int health = other.getHealth();
+			   			health += -2;
+				   					   			
+				   		if(health>10)
+				   		{
+				   			health = 10;
+				   		}
+				   		else if(health<=0)
+				   		{
+					   		// initial member
+					   		if(other.getParentMemberID()==null || other.getParentMemberID().length()==0 || config.getEnableDeath()==0)
+					   		{
+					   			health = 1;
+					   		}
+					   		else
+					   		{
+				   				Message msg = new Message();
+				   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+				   				msg.setCreateTime(System.currentTimeMillis());
+				   				msg.setYear(game.getYear());
+				   				msg.setType(Message.MSG_MEMBER_DIED);
+				   				msg.setPlayerID(other.getPlayerID());
+				   				msg.setHandled(false);
 				   				
-				   				Object [] zs = session.match(zqt);
-				   				
-				   				if(zs.length==1)
+				   				String zoneName = null;
+				   							   				
+				   				if(other.isSetZone() && other.getZone()!=0)
 				   				{
-				   					Zone z = (Zone) zs[0];
-				   					zoneName = z.getName();
+					   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+					   				zqt.addConstraintEq("orgId", other.getZone());
+					   				
+					   				Object [] zs = session.match(zqt);
+					   				
+					   				if(zs.length==1)
+					   				{
+					   					Zone z = (Zone) zs[0];
+					   					zoneName = z.getName();
+					   				}
 				   				}
-			   				}
-			   				
-			   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_ASSIMILATE, zoneName));
-			   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATE, zoneName));   	
+				   				
+				   				if(config.isSetContextMsgDeathTitle())
+					   				msg.setTitle(ContextMessages.fillZone(config.getContextMsgDeathTitle(), zoneName));
+				   				else
+					   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_DEATH_TITLE, zoneName));
+				   				
+				   				if(config.isSetContextMsgDeath())
+					   				msg.setDescription(ContextMessages.fillZone(config.getContextMsgDeath(), zoneName));
+				   				else
+					   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_DEATH, zoneName));
+				   			
+				   				session.add(msg);
+				   			
+				   				logger.info("Player " + other.getPlayerID() + " member " + other.getID() + " killed by member " + member.getID() + " placement");
+					   			
+					   			session.remove(other);
+					   			continue;
+					   		}
+				   		}
+				   			
+				   		other.setHealth(health);		   			
 			   			
-			   				session.add(msg);
-			   				
-			   				// assimilate
-				   			other.setPlayerID(member.getPlayerID());
-				   			other.setParentMemberID(member.getID());
-			   				session.update(other);
-			   				
-			   				break;
-			   				
-			   			}
-			   			else if(member.getAction()==other.getAction())
+			   			int wealth = other.getWealth();
+				   		wealth += -2;
+				   		if(wealth>10)
+				   		{
+				   			wealth = 10;
+				   		}
+				   		else if(wealth<0)
+				   		{
+				   			wealth = 0;
+				   		}
+				   		other.setWealth(wealth);
+				   		
+			   			int action = other.getAction();
+			   			action += 2;
+			   			if(action>10)
 			   			{
-			   				// do nothing, we are equal
-			   				continue;
+			   				action = 10;
 			   			}
-			   			else
+			   			else if(action<0)
 			   			{
-			   				logger.info("member " + member.getID() + " assimilated by " + other.getID() + " (triggered by " + member.getID() +")");
-			   				// they assimilate us
-				   			int action = other.getAction();
-				   			action += 3;
-				   			if(action>10)
-				   			{
-				   				action = 10;
-				   			}
-				   			else if(action<0)
-				   			{
-				   				action = 0;
-				   			}
-				   			other.setAction(action);
-				   			session.update(other);
-			   				
-				   			// message us
-			   				Message msg = new Message();
-			   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-			   				msg.setCreateTime(System.currentTimeMillis());
-			   				msg.setYear(game.getYear());
-			   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
-			   				msg.setPlayerID(member.getPlayerID());
-			   				msg.setHandled(false);
-			   				
-			   				String zoneName = null;
-			   				
-			   				if(member.isSetZone() && member.getZone()!=0)
-			   				{
-				   				QueryTemplate zqt = new QueryTemplate(Zone.class);
-				   				zqt.addConstraintEq("orgId", member.getZone());
-				   				
-				   				Object [] zs = session.match(zqt);
-				   				
-				   				if(zs.length==1)
-				   				{
-				   					Zone z = (Zone) zs[0];
-				   					zoneName = z.getName();
-				   				}
-			   				}
-			   				
-			   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_ASSIMILATED, zoneName));
-			   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATED, zoneName));   	
-			   			
-			   				session.add(msg);
-			   				
-			   				// message them
-			   				msg = new Message();
-			   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-			   				msg.setCreateTime(System.currentTimeMillis());
-			   				msg.setYear(game.getYear());
-			   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
-			   				msg.setPlayerID(other.getPlayerID());
-			   				msg.setHandled(false);
-			   				
-			   				zoneName = null;
-			   				
-			   				if(other.isSetZone() && other.getZone()!=0)
-			   				{
-				   				QueryTemplate zqt = new QueryTemplate(Zone.class);
-				   				zqt.addConstraintEq("orgId", other.getZone());
-				   				
-				   				Object [] zs = session.match(zqt);
-				   				
-				   				if(zs.length==1)
-				   				{
-				   					Zone z = (Zone) zs[0];
-				   					zoneName = z.getName();
-				   				}
-			   				}
-			   				
-			   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_ASSIMILATE, zoneName));
-			   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATE, zoneName));   
-			   			
-			   				session.add(msg);
-			   				
-			   				// assimilate	   				
-				   			member.setPlayerID(other.getPlayerID());
-				   			member.setParentMemberID(other.getID());
-			   				session.update(member);
-			   				
-
-			   				break;
+			   				action = 0;
 			   			}
+			   			other.setAction(action);
+			   			
+			   			session.update(other);
 			   		}
 			   	}
 		   	}
-		}
+	   	}
+	   	
+	   	
+	   	if(config.getEnableAssimilation()==1)
+	   	{
+			
+		   	int year = 0;
+		   	
+		   	try
+		   	{	   	
+		   		year = Integer.parseInt(game.getYear());
+		   	}
+		   	catch(NumberFormatException e)
+		   	{
+		   	}
+		   	
+			// proximity to others
+		   	if(year==0 || year>=1914)
+		   	{	   	
+		   		if(this.isKillable(session, member))
+		   		{		   		
+				   	for(int i=0; i<ms.length; i++)
+				   	{
+				   		Member other = (Member) ms[i];
+				   		
+				   		if(other.getPlayerID().equals(member.getPlayerID()))
+				   		{
+				   			continue;
+				   		}
+				   					   		
+				   		// cannot assimilate only member
+				   		if(!this.isKillable(session, other))
+				   		{
+				   			continue;
+				   		}	
+				   		
+				   		if(ZoneCache.distanceBetweenPoints(member.getPosition(), other.getPosition())<config.getProximityRadius())
+				   		{
+				   			if(member.getAction()>other.getAction())
+				   			{
+				   				logger.info("member " + other.getID() + " assimilated by " + member.getID() + " (triggered by " + member.getID() +")");
+					   			// we assimilate them
+					   			int action = member.getAction();
+					   			action += 3;
+					   			if(action>10)
+					   			{
+					   				action = 10;
+					   			}
+					   			else if(action<0)
+					   			{
+					   				action = 0;
+					   			}
+					   			member.setAction(action);	
+					   			
+				   				// message them
+				   				Message msg = new Message();
+				   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+				   				msg.setCreateTime(System.currentTimeMillis());
+				   				msg.setYear(game.getYear());
+				   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
+				   				msg.setPlayerID(other.getPlayerID());
+				   				msg.setHandled(false);
+				   				
+				   				String zoneName = null;
+					   				
+				   				if(other.isSetZone() && other.getZone()!=0)
+				   				{
+					   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+					   				zqt.addConstraintEq("orgId", member.getZone());
+					   				
+					   				Object [] zs = session.match(zqt);
+					   				
+					   				if(zs.length==1)
+					   				{
+					   					Zone z = (Zone) zs[0];
+					   					zoneName = z.getName();
+					   				}
+				   				}
+				   				
+				   				if(config.isSetContextMsgAssimilatedTitle())
+					   				msg.setTitle(ContextMessages.fillZone(config.getContextMsgAssimilatedTitle(), zoneName));
+				   				else
+					   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATED_TITLE, zoneName));
+				   				
+				   				if(config.isSetContextMsgAssimilated())
+					   				msg.setDescription(ContextMessages.fillZone(config.getContextMsgAssimilated(), zoneName));
+				   				else
+					   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATED, zoneName));
+			
+				   				session.add(msg);
+				   				
+				   				// message us
+				   				msg = new Message();
+				   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+				   				msg.setCreateTime(System.currentTimeMillis());
+				   				msg.setYear(game.getYear());
+				   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
+				   				msg.setPlayerID(member.getPlayerID());
+				   				msg.setHandled(false);
+				   				
+				   				zoneName = null;
+				   				
+				   				if(member.isSetZone() && member.getZone()!=0)
+				   				{
+					   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+					   				zqt.addConstraintEq("orgId", member.getZone());
+					   				
+					   				Object [] zs = session.match(zqt);
+					   				
+					   				if(zs.length==1)
+					   				{
+					   					Zone z = (Zone) zs[0];
+					   					zoneName = z.getName();
+					   				}
+				   				}
+				   				
+				   				if(config.isSetContextMsgAssimilateTitle())
+					   				msg.setTitle(ContextMessages.fillZone(config.getContextMsgAssimilateTitle(), zoneName));
+				   				else
+					   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATE_TITLE, zoneName));
+				   				
+				   				if(config.isSetContextMsgAssimilate())
+					   				msg.setDescription(ContextMessages.fillZone(config.getContextMsgAssimilate(), zoneName));
+				   				else
+					   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATE, zoneName));
+				   								   			
+				   				session.add(msg);
+				   				
+				   				// assimilate
+					   			other.setPlayerID(member.getPlayerID());
+					   			other.setParentMemberID(member.getID());
+				   				session.update(other);
+				   				
+				   				break;
+				   				
+				   			}
+				   			else if(member.getAction()==other.getAction())
+				   			{
+				   				// do nothing, we are equal
+				   				continue;
+				   			}
+				   			else
+				   			{
+				   				logger.info("member " + member.getID() + " assimilated by " + other.getID() + " (triggered by " + member.getID() +")");
+				   				// they assimilate us
+					   			int action = other.getAction();
+					   			action += 3;
+					   			if(action>10)
+					   			{
+					   				action = 10;
+					   			}
+					   			else if(action<0)
+					   			{
+					   				action = 0;
+					   			}
+					   			other.setAction(action);
+					   			session.update(other);
+				   				
+					   			// message us
+				   				Message msg = new Message();
+				   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+				   				msg.setCreateTime(System.currentTimeMillis());
+				   				msg.setYear(game.getYear());
+				   				msg.setType(Message.MSG_MEMBER_ASSIMILATED);
+				   				msg.setPlayerID(member.getPlayerID());
+				   				msg.setHandled(false);
+				   				
+				   				String zoneName = null;
+				   				
+				   				if(member.isSetZone() && member.getZone()!=0)
+				   				{
+					   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+					   				zqt.addConstraintEq("orgId", member.getZone());
+					   				
+					   				Object [] zs = session.match(zqt);
+					   				
+					   				if(zs.length==1)
+					   				{
+					   					Zone z = (Zone) zs[0];
+					   					zoneName = z.getName();
+					   				}
+				   				}
+
+				   				if(config.isSetContextMsgAssimilatedTitle())
+					   				msg.setTitle(ContextMessages.fillZone(config.getContextMsgAssimilatedTitle(), zoneName));
+				   				else
+					   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATED_TITLE, zoneName));
+				   				
+				   				if(config.isSetContextMsgAssimilated())
+					   				msg.setDescription(ContextMessages.fillZone(config.getContextMsgAssimilated(), zoneName));
+				   				else
+					   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATED, zoneName)); 	
+				   			
+				   				session.add(msg);
+				   				
+				   				// message them
+				   				msg = new Message();
+				   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+				   				msg.setCreateTime(System.currentTimeMillis());
+				   				msg.setYear(game.getYear());
+				   				msg.setType(Message.MSG_MEMBER_ASSIMILATED_OTHER);
+				   				msg.setPlayerID(other.getPlayerID());
+				   				msg.setHandled(false);
+				   				
+				   				zoneName = null;
+				   				
+				   				if(other.isSetZone() && other.getZone()!=0)
+				   				{
+					   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+					   				zqt.addConstraintEq("orgId", other.getZone());
+					   				
+					   				Object [] zs = session.match(zqt);
+					   				
+					   				if(zs.length==1)
+					   				{
+					   					Zone z = (Zone) zs[0];
+					   					zoneName = z.getName();
+					   				}
+				   				}
+
+				   				if(config.isSetContextMsgAssimilateTitle())
+					   				msg.setTitle(ContextMessages.fillZone(config.getContextMsgAssimilateTitle(), zoneName));
+				   				else
+					   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATE_TITLE, zoneName));
+				   				
+				   				if(config.isSetContextMsgAssimilate())
+					   				msg.setDescription(ContextMessages.fillZone(config.getContextMsgAssimilate(), zoneName));
+				   				else
+					   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_ASSIMILATE, zoneName));
+				   			
+				   				session.add(msg);
+				   				
+				   				// assimilate	   				
+					   			member.setPlayerID(other.getPlayerID());
+					   			member.setParentMemberID(other.getID());
+				   				session.update(member);
+				   				
+	
+				   				break;
+				   			}
+				   		}
+				   	}
+			   	}
+			}
+	   	}
 	   	
 	   	// finally, does this mean anyone can author ?
-	   	this.updateAuthorable(session, game);
-	   	*/
+	   	if(config.getEnableAuthoringQuota()==1)
+	   		this.updateAuthorable(session, game);
 	}
 
 	
-	public void handleContentEvent(ISession session, Game game, TimelineEvent event)
+	public void handleContentEvent(ISession session, Game game, GameConfig config, TimelineEvent event)
 	{		
 	   	QueryTemplate mq = new QueryTemplate(Member.class);
 	   	mq.addConstraintEq("gameID", game.getID());
@@ -921,21 +991,8 @@ public class Engine
 		   		}
 	   		}
 	   		
-	   		
-	   		/*
-	   		 * gameState.xml contains events flagged absolute/relative
-	   		 * but *all* appear to be relative
-	   		 * 
-	   		if(event.getAbsolute()==1)
-	   		{
-	   			// FIXME absolute events?!   			
-	   		}
-	   		else
-	   		*/
-	   		{
-	   			// FIXME min/max ranges?!
-	   			// - there are none in gameState.xml still
-	   			
+	   		if(config.getEnableEventEffects()==1)
+	   		{	   		
 	   			if(event.getHealth()!=0)
 	   			{
 	   				int max = 10;
@@ -945,7 +1002,7 @@ public class Engine
 	   					max = event.getHealthMax();
 	   				if(event.isSetHealthMin())
 	   					min = event.getHealthMin();
-
+	
 		   			int health = member.getHealth();
 	   				
 		   			if(health>=min && health<=max)
@@ -959,51 +1016,50 @@ public class Engine
 			   			else if(health<=0)
 			   			{
 				   			// initial member
-			   				if(!this.isKillable(session, member))
+			   				if(!this.isKillable(session, member) || config.getEnableDeath()!=1)
 			   				{
 				   				health = 1;
 				   			}
 				   			else
 				   			{
 				   			   	logger.info("Player " + member.getPlayerID() + " member " + member.getID() + " killed by " + event.getID());
-				   			
-				   			   	/*
-				   			   	if(!playerIDsDeath.contains(member.getPlayerID()))
-				   			   	{
-				   			   		playerIDsDeath.add(member.getPlayerID());
-				   			   		*/
 				   			   		
-					   				Message msg = new Message();
-					   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-					   				msg.setCreateTime(System.currentTimeMillis());
-					   				msg.setYear(game.getYear());
-					   				msg.setType(Message.MSG_MEMBER_DIED);
-					   				msg.setPlayerID(member.getPlayerID());
-					   				msg.setHandled(false);
+				   				Message msg = new Message();
+				   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+				   				msg.setCreateTime(System.currentTimeMillis());
+				   				msg.setYear(game.getYear());
+				   				msg.setType(Message.MSG_MEMBER_DIED);
+				   				msg.setPlayerID(member.getPlayerID());
+				   				msg.setHandled(false);
+				   				
+				   				String zoneName = null;
+				   				
+				   				if(member.isSetZone() && member.getZone()!=0)
+				   				{
+					   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+					   				zqt.addConstraintEq("orgId", member.getZone());
 					   				
-					   				String zoneName = null;
+					   				Object [] zs = session.match(zqt);
 					   				
-					   				if(member.isSetZone() && member.getZone()!=0)
+					   				if(zs.length==1)
 					   				{
-						   				QueryTemplate zqt = new QueryTemplate(Zone.class);
-						   				zqt.addConstraintEq("orgId", member.getZone());
-						   				
-						   				Object [] zs = session.match(zqt);
-						   				
-						   				if(zs.length==1)
-						   				{
-						   					Zone z = (Zone) zs[0];
-						   					zoneName = z.getName();
-						   				}
+					   					Zone z = (Zone) zs[0];
+					   					zoneName = z.getName();
 					   				}
-					   				
-					   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_DEATH, zoneName));
+				   				}
+				   				
+				   				if(config.isSetContextMsgDeathTitle())
+					   				msg.setTitle(ContextMessages.fillZone(config.getContextMsgDeathTitle(), zoneName));
+				   				else
+					   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_DEATH_TITLE, zoneName));
+
+				   				if(config.isSetContextMsgDeath())
+					   				msg.setDescription(ContextMessages.fillZone(config.getContextMsgDeath(), zoneName));
+				   				else
 					   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_DEATH, zoneName)); 
-				   							   				
-					   				session.add(msg);
-					   				/*
-				   			   	}
-				   			   	*/
+				   				
+				   				session.add(msg);
+
 					   				
 					   			deaths++;
 				   				
@@ -1025,7 +1081,7 @@ public class Engine
 	   					max = event.getWealthMax();
 	   				if(event.isSetWealthMin())
 	   					min = event.getWealthMin();
-
+	
 		   			int wealth = member.getWealth();
 	   				
 		   			if(wealth>=min && wealth<=max)
@@ -1052,7 +1108,7 @@ public class Engine
 	   					max = event.getActionMax();
 	   				if(event.isSetActionMin())
 	   					min = event.getActionMin();
-
+	
 		   			int action = member.getAction();
 	   				
 		   			if(action>=min && action<=max)
@@ -1069,7 +1125,7 @@ public class Engine
 			   			member.setAction(action);
 		   			}
 	   			}
-	   			
+   			
 	   			if(event.getBrains()!=0)
 	   			{
 	   				int max = 10;
@@ -1079,7 +1135,7 @@ public class Engine
 	   					max = event.getBrainsMax();
 	   				if(event.isSetBrainsMin())
 	   					min = event.getBrainsMin();
-
+	
 		   			int brains = member.getBrains();
 	   				
 		   			if(brains>=min && brains<=max)
@@ -1096,12 +1152,12 @@ public class Engine
 			   			member.setBrains(brains);
 		   			}
 	   			}
-	   			
-	   			
+   			
+   			
 	   			// create offspring
-	   			if(member.getHealth()>=8)
+	   			if(member.getHealth()>=8 && config.getEnableOffspring()==1)
 	   			{
-		   			boolean spawnable = this.isSpawnable(session, member);
+		   			boolean spawnable = this.isSpawnable(session, member, config.getMaxMembers());
 	   				
 	   				if(member.getWealth()>=8 && member.getAction()>=8)
 	   				{
@@ -1127,7 +1183,7 @@ public class Engine
 	   				else
 	   				{	
 		   			   	logger.info("Player " + member.getPlayerID() + " member " + member.getID() + " spawned by " + event.getID());
-
+	
 		   				member.setHealth(6);
 		   				
 		   			   	if(spawnable)
@@ -1179,8 +1235,8 @@ public class Engine
 				   			}
 	
 			   				// FIXME - should be metres rather than degrees
-			   				double xoffset = (random.nextDouble()*spawnRadius*2)-spawnRadius;
-			   				double yoffset = (random.nextDouble()*spawnRadius*2)-spawnRadius;
+			   				double xoffset = (random.nextDouble()*config.getSpawnRadius()*2)-config.getSpawnRadius();
+			   				double yoffset = (random.nextDouble()*config.getSpawnRadius()*2)-config.getSpawnRadius();
 			   				
 			   				Position p = new Position();
 			   				p.setElevation(0.0);
@@ -1193,50 +1249,50 @@ public class Engine
 			   				offspring.setZone(this.getZoneID(game.getContentGroupID(), p));
 			   				
 			   				session.add(offspring);
+		   				
+		   				
+			   				Message msg = new Message();
+			   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
+			   				msg.setCreateTime(System.currentTimeMillis());
+			   				msg.setYear(game.getYear());
+			   				msg.setType(Message.MSG_MEMBER_CREATED);
+			   				msg.setPlayerID(member.getPlayerID());
+			   				msg.setHandled(false);
 			   				
-			   				/*
-			   			   	if(!playerIDsBirth.contains(member.getPlayerID()))
-			   			   	{
-			   			   		playerIDsBirth.add(member.getPlayerID());
-			   			   		*/
+			   				String zoneName = null;
 			   				
-				   				Message msg = new Message();
-				   				msg.setID(IDAllocator.getNewID(session, Message.class, "MSG", null));
-				   				msg.setCreateTime(System.currentTimeMillis());
-				   				msg.setYear(game.getYear());
-				   				msg.setType(Message.MSG_MEMBER_CREATED);
-				   				msg.setPlayerID(member.getPlayerID());
-				   				msg.setHandled(false);
+			   				if(member.isSetZone() && member.getZone()!=0)
+			   				{
+				   				QueryTemplate zqt = new QueryTemplate(Zone.class);
+				   				zqt.addConstraintEq("orgId", member.getZone());
 				   				
-				   				String zoneName = null;
+				   				Object [] zs = session.match(zqt);
 				   				
-				   				if(member.isSetZone() && member.getZone()!=0)
+				   				if(zs.length==1)
 				   				{
-					   				QueryTemplate zqt = new QueryTemplate(Zone.class);
-					   				zqt.addConstraintEq("orgId", member.getZone());
-					   				
-					   				Object [] zs = session.match(zqt);
-					   				
-					   				if(zs.length==1)
-					   				{
-					   					Zone z = (Zone) zs[0];
-					   					zoneName = z.getName();
-					   				}
+				   					Zone z = (Zone) zs[0];
+				   					zoneName = z.getName();
 				   				}
-				   				
-				   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_TITLE_BIRTH, zoneName));
+			   				}
+			   				
+			   				if(config.isSetContextMsgBirthTitle())
+				   				msg.setTitle(ContextMessages.fillZone(config.getContextMsgBirthTitle(), zoneName));
+			   				else
+				   				msg.setTitle(ContextMessages.fillZone(ContextMessages.MSG_BIRTH_TITLE, zoneName));
+
+			   				if(config.isSetContextMsgBirth())
+				   				msg.setDescription(ContextMessages.fillZone(config.getContextMsgBirth(), zoneName));
+			   				else
 				   				msg.setDescription(ContextMessages.fillZone(ContextMessages.MSG_BIRTH, zoneName)); 
-				   			
-				   				session.add(msg);
-				   				/*
-			   			   	}
-			   			   	*/
+			   			
+			   				session.add(msg);
+	
 		   			   	}
 	   				}
 	   			}
-	   			
+   			
 	   			session.update(member);
-	   		
+		
 	   		}
 	   	}
 	   	
@@ -1285,6 +1341,7 @@ public class Engine
 	   	}
 
 	   	// health scare in a particular, all players
+	   	
 	   	if(deaths>4 && event.getZoneId()!=0)
 	   	{
 	   		String titleText = null;
@@ -1305,8 +1362,16 @@ public class Engine
 	   			}
    			}
    				
-   			titleText = ContextMessages.fillZone(ContextMessages.MSG_SCARE_TITLE, zoneName);
-   			descText = ContextMessages.fillZone(ContextMessages.MSG_SCARE, zoneName); 
+   			if(config.isSetContextMsgScareTitle())
+   	   			titleText = ContextMessages.fillZone(config.getContextMsgScareTitle(), zoneName);
+   			else
+   	   			titleText = ContextMessages.fillZone(ContextMessages.MSG_SCARE_TITLE, zoneName);
+   			
+   			if(config.isSetContextMsgScare())
+   				descText = ContextMessages.fillZone(config.getContextMsgScare(), zoneName);
+   			else
+   				descText = ContextMessages.fillZone(ContextMessages.MSG_SCARE, zoneName);
+   			
 	   		
 	   		QueryTemplate pqt = new QueryTemplate(Player.class);
 		   	pqt.addConstraintEq("gameID", game.getID());
@@ -1333,7 +1398,8 @@ public class Engine
 		   	}
 	   	}
 	   		
-	   	this.updateAuthorable(session, game);
+	   	if(config.getEnableAuthoringQuota()==1)
+	   		this.updateAuthorable(session, game);
 	}
 	
 	

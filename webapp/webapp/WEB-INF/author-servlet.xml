@@ -15,6 +15,11 @@
 				<prop key="/content.html">contentViewMultiController</prop>
 				<prop key="/delete.html">contentViewMultiController</prop>
 				<prop key="/upload.html">contentController</prop>
+				<prop key="/config.html">configViewMultiController</prop>
+				<prop key="/new_config.html">configViewMultiController</prop>
+				<prop key="/list.html">contentViewMultiController</prop>
+				<prop key="/getcontent.html">contentViewMultiController</prop>
+				<prop key="/gameupload.html">contentViewMultiController</prop>
 			</props>
 		</property>
 	</bean>
@@ -34,6 +39,16 @@
 	</bean>
 	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+	
+	<!-- config controller -->
+	<bean id="configViewMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+		<property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+		<property name="delegate"><ref bean="configController"/></property>
+	</bean>
+
+	<bean id="configController" class="uk.ac.horizon.ug.exploding.author.ConfigController">
+		<property name="dataspace"><ref bean="dataspace"/></property>
+	</bean>
 
 	<!-- generic htm/html to jsp mapper -->
 	<bean id="webFilenameViewController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
