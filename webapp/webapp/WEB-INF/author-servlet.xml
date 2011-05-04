@@ -20,6 +20,9 @@
 				<prop key="/list.html">contentViewMultiController</prop>
 				<prop key="/getcontent.html">contentViewMultiController</prop>
 				<prop key="/gameupload.html">contentViewMultiController</prop>
+				<prop key="/export_form.html">exportViewMultiController</prop>
+				<prop key="/export.xml">exportViewMultiController</prop>
+				<prop key="/import.html">exportController</prop>
 			</props>
 		</property>
 	</bean>
@@ -35,6 +38,17 @@
 	<bean id="contentController" class="uk.ac.horizon.ug.exploding.author.ContentController">
 		<property name="commandClass"><value>uk.ac.horizon.ug.exploding.author.FileUploadBean</value></property>
 		<property name="successView"><value>content</value></property>
+		<property name="dataspace"><ref bean="dataspace"/></property>
+	</bean>
+	
+	<bean id="exportViewMultiController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+		<property name="methodNameResolver"><ref bean="internalPathMethodNameResolver"/></property>
+		<property name="delegate"><ref bean="exportController"/></property>
+	</bean>
+
+	<bean id="exportController" class="uk.ac.horizon.ug.exploding.author.ExportController">
+		<property name="commandClass"><value>uk.ac.horizon.ug.exploding.author.FileUploadBean</value></property>
+		<property name="successView"><value>import</value></property>
 		<property name="dataspace"><ref bean="dataspace"/></property>
 	</bean>
 	

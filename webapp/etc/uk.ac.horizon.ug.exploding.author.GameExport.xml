@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<bean package="uk.ac.horizon.ug.exploding.author" class="GameExport">
+	
+	<property name="content" javatype="uk.ac.horizon.ug.exploding.db.ContentGroup" />
+	
+	<property name="config" javatype="uk.ac.horizon.ug.exploding.db.GameConfig" />
+	
+	<property name="zones" javatype="uk.ac.horizon.ug.exploding.db.Zone[]" />
+	
+	<property name="events" javatype="uk.ac.horizon.ug.exploding.db.TimelineEvent[]" />
+	
+</bean>

@@ -142,6 +142,7 @@
 		<mkdir dir="${generated}/equip2/spring/db"/>
 		<mkdir dir="${generated}/uk/ac/horizon/ug/exploding/db"/>
 		<mkdir dir="${generated}/uk/ac/horizon/ug/exploding/spectator"/>
+		<mkdir dir="${generated}/uk/ac/horizon/ug/exploding/author"/>
 		
 	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
 			<classpath refid="classpath_tools"/>
@@ -329,6 +330,17 @@
 			<arg value="etc/uk.ac.horizon.ug.exploding.spectator.MessageBean.xml"/>
 			<arg value="${generated}/uk/ac/horizon/ug/exploding/spectator/MessageBean_helper.java"/>
 		</java>			
+		
+		<!-- author interface bean(s) -->
+	    <java fork="true" classname="equip2.tools.j2se.xsltTransform" failonerror="true">
+			<classpath refid="classpath_tools"/>
+			<arg value="${equip2home}/etc/bean2java.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.author.GameExport.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/author/GameExport.java"/>
+			<arg value="${equip2home}/etc/bean2javahelper.xsl"/>
+			<arg value="etc/uk.ac.horizon.ug.exploding.author.GameExport.xml"/>
+			<arg value="${generated}/uk/ac/horizon/ug/exploding/author/GameExport_helper.java"/>
+		</java>
 		
 		<!-- NextID is a special-case which is just used for Database ID allocation -->
 		<mkdir dir="${generated}/equip2/spring/db"/>
