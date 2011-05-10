@@ -973,7 +973,14 @@ public class Engine
 	   		{   		
 		   		if(event.getZoneId()!=0)
 		   		{
-		   			// not global
+		   			// CMG - we don't get a zone-specific message unless we 
+		   			// have a Member in this zone with ParentMemberID set and
+		   			// another member in this zone with it null ... eh??
+		   			// I think we should get it (potentially) if we have any
+		   			// member in this zone
+			   		playerIDs.add(member.getPlayerID());
+
+/*		   			// not global
 		   			if(member.isSetParentMemberID())
 		   			{
 		   				// find root parent
@@ -994,6 +1001,7 @@ public class Engine
 		   					}
 		   				}
 		   			}
+*/
 		   		}
 		   		else
 		   		{
