@@ -11,7 +11,11 @@ public class ZoneCache
 	{
 		this.zone = zone;
 	}
-	
+
+	public boolean isGameZone() {
+		return zone.getName()!=null && ("main".equals(zone.getName().toLowerCase()) || zone.getName().startsWith("~"));
+	}
+
 	public boolean contains(double latitude, double longitude)
 	{
 		if(this.zone == null || this.zone.getPolygon() != 1)

@@ -191,8 +191,11 @@ public class Engine
 		{
 			return null;
 		}
-		
+
+		// do 'real' zones first
 		Iterator<ZoneCache> it = zoneCache.iterator();
+
+		Integer gameZoneId = null;
 		
 		while(it.hasNext())
 		{
@@ -202,12 +205,17 @@ public class Engine
 			{
 				if(zc.contains(p.getLatitude(), p.getLongitude()))
 				{
-					return zc.zone.getOrgId();
+					// don't place in game zone if in a more specific zone
+					if (zc.isGameZone())
+						gameZoneId = zc.zone.getOrgId();
+					else
+						return zc.zone.getOrgId();
 				}
 			}
 	    }
 
-		return null;
+		// fallback to game zone
+		return gameZoneId;
 	}
 	
 	class MemberListener implements IDataspaceObjectsListener
@@ -479,6 +487,7 @@ public class Engine
 	    	   			Player p = (Player) ps[j];
 
 		    		   	Message msg = new Message();
+		    		   	msg.setGameTime(config.getEndTime());
 		    		   	msg.setCreateTime(System.currentTimeMillis());
 		    		   	msg.setYear(g.getYear());
 	    		   		msg.setType(Message.MSG_TIMELINE_CONTENT_GLOBAL);
@@ -1319,6 +1328,7 @@ public class Engine
 	   		String playerID = it.next();
 	   		
 		   	Message msg = new Message();
+		   	msg.setGameTime(event.getStartTime());
 		   	msg.setCreateTime(System.currentTimeMillis());
 		   	msg.setYear(game.getYear());
 		   	

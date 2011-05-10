@@ -21,6 +21,8 @@
 	
 	<property name="handledTime" javatype="java.lang.Long" />
 	
+	<property name="gameTime" javatype="java.lang.Float" />
+	
 	<constant name="MSG_MEMBER_CREATED" javatype="java.lang.String" value='"member_created"'/>
 	<constant name="MSG_MEMBER_ASSIMILATED" javatype="java.lang.String" value='"member_assimilated"'/>
 	<constant name="MSG_MEMBER_ASSIMILATED_OTHER" javatype="java.lang.String" value='"member_assimilated_other"'/>
