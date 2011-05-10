@@ -37,6 +37,8 @@
 	
 	<property name="enableMemberQuota" javatype="int" />
 	
+	<property name="enableLocalMessagePriority" javatype="int" />
+	
 	<property name="contextMsgAssimilated" javatype="java.lang.String" />
 	<property name="contextMsgAssimilatedTitle" javatype="java.lang.String" />
 	

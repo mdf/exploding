@@ -480,6 +480,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 		MUST_SEND, // the ones after this we REALLY want to send
 		YOUR_MEMBERS_USER_CHANGES, // pick/place, user create
 		GLOBAL_MESSAGES,
+		PRIORITY_TIMELINE_MESSAGES, // elevated priority timeline message
 		ZONES, // required at start
 		YOUR_GAME, // year
 		YOUR_PLAYER, // can author/create
@@ -497,8 +498,10 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 			return AppPriority.ZONES.ordinal();
 		if (val instanceof uk.ac.horizon.ug.exploding.db.Message) {
 			uk.ac.horizon.ug.exploding.db.Message m = (uk.ac.horizon.ug.exploding.db.Message)val;
-			if (uk.ac.horizon.ug.exploding.db.Message.MSG_TIMELINE_CONTENT.equals(m.getType()))
-				return AppPriority.TIMELINE_MESSAGES.ordinal();
+			if (uk.ac.horizon.ug.exploding.db.Message.MSG_TIMELINE_CONTENT.equals(m.getType())) 
+				return AppPriority.TIMELINE_MESSAGES.ordinal();				
+			if (uk.ac.horizon.ug.exploding.db.Message.MSG_PRIORITY_TIMELINE_CONTENT.equals(m.getType())) 
+				return AppPriority.PRIORITY_TIMELINE_MESSAGES.ordinal();				
 			if (uk.ac.horizon.ug.exploding.db.Message.MSG_TIMELINE_CONTENT_GLOBAL.equals(m.getType()))
 				return AppPriority.GLOBAL_MESSAGES.ordinal();
 			return AppPriority.CONTEXT_MESSAGES.ordinal();						

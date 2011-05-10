@@ -433,6 +433,7 @@ public class Engine
 		     	eq.addConstraintGt("startTime", gt.getGameTime());
 		     	eq.addConstraintLe("startTime", currentGameTime);
 		    	eq.addOrder("startTime");
+		    	eq.addOrder("track");
 		    	eq.addConstraintEq("enabled", 1);
 		    	eq.addConstraintEq("contentGroupID", g.getContentGroupID());
 		    	
@@ -1324,6 +1325,11 @@ public class Engine
 		   	if(event.getZoneId()==0)
 		   	{
 		   		msg.setType(Message.MSG_TIMELINE_CONTENT_GLOBAL);
+		   	}
+		   	else if (config!=null && config.isSetEnableLocalMessagePriority() && config.getEnableLocalMessagePriority()==1)
+		   	{
+		   		// option to elevate priority of timeline messages over global messages
+		   		msg.setType(Message.MSG_PRIORITY_TIMELINE_CONTENT);
 		   	}
 		   	else
 		   	{
