@@ -84,6 +84,7 @@ public class ClientController {
 		xs.alias("zone", Zone.class);
 		xs.alias("position", Position.class);
 		xs.alias("player", Player.class);
+		xs.alias("config", GameConfig.class);
 		xs.alias("member", uk.ac.horizon.ug.exploding.db.Member.class);
 		xs.alias("msg", uk.ac.horizon.ug.exploding.db.Message.class);
 		xs.alias("game", uk.ac.horizon.ug.exploding.db.Game.class);
@@ -201,7 +202,12 @@ public class ClientController {
     			player.setCanAuthor(false); // have to earn the ability
     		
     		player.setPoints(0);
-    		player.setNewMemberQuota(1);
+    		if (config.isSetInitialMemberQuota())
+    			player.setNewMemberQuota(config.getInitialMemberQuota());
+    		else
+    			// default
+        		player.setNewMemberQuota(1);
+
     		QueryTemplate pq = new QueryTemplate(Player.class);
     		pq.addConstraintEq("gameID", game.getID());
     		int playerCount = session.count(pq);

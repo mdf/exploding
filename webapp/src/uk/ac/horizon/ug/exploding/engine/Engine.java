@@ -1196,7 +1196,8 @@ public class Engine
 		   					}
 		   				}
 		   				
-	   					continue;
+		   				// CMG don't think this should continue - misses the .update(member)
+	   					//continue;
 	   				}
 	   				else
 	   				{	

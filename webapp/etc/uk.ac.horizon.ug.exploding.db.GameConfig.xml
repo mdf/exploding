@@ -37,7 +37,25 @@
 	
 	<property name="enableMemberQuota" javatype="int" />
 	
+	<property name="initialMemberQuota" javatype="java.lang.Integer" />
+	
 	<property name="enableLocalMessagePriority" javatype="int" />
+	
+	<!--  client config -->
+	<property name="clientCreateMinHealth" javatype="java.lang.Integer" />
+	<property name="clientCreateMaxHealth" javatype="java.lang.Integer" />
+	<property name="clientCreateMinWealth" javatype="java.lang.Integer" />
+	<property name="clientCreateMaxWealth" javatype="java.lang.Integer" />
+	<property name="clientCreateMinKnowledge" javatype="java.lang.Integer" />
+	<property name="clientCreateMaxKnowledge" javatype="java.lang.Integer" />
+	<property name="clientCreateMinParticipation" javatype="java.lang.Integer" />
+	<property name="clientCreateMaxParticipation" javatype="java.lang.Integer" />
+	<property name="clientMessageEndGame" javatype="java.lang.String" />
+	<property name="clientMessageOutOfBounds" javatype="java.lang.String" />
+	<property name="clientPollInterval" javatype="java.lang.Integer" />
+	<property name="clientPollToFollow" javatype="java.lang.Integer" />
+	<property name="clientHttpTimeout" javatype="java.lang.Integer" />
+	<property name="clientShowZonesOnMap" javatype="java.lang.Boolean" />
 	
 	<property name="contextMsgAssimilated" javatype="java.lang.String" />
 	<property name="contextMsgAssimilatedTitle" javatype="java.lang.String" />

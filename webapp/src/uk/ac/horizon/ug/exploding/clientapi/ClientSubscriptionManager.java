@@ -13,6 +13,7 @@ import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 import uk.ac.horizon.ug.exploding.db.ClientConversation;
 import uk.ac.horizon.ug.exploding.db.Game;
+import uk.ac.horizon.ug.exploding.db.GameConfig;
 import uk.ac.horizon.ug.exploding.db.Member;
 import uk.ac.horizon.ug.exploding.db.MessageToClient;
 import uk.ac.horizon.ug.exploding.db.Player;
@@ -181,6 +182,7 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 	private void handleSubscriptions(ClientConversation cc, ISession session) {
 
 		// APPLICATION_SPECIFIC
+		
     	// own Player
     	Player player = (Player)getClientProjection(cc, session.get(Player.class, cc.getPlayerID()));
 		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, player, null, null, null, 0, session);
@@ -189,7 +191,11 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 		// repliace Game
     	Game game = (Game) getClientProjection(cc, session.get(Game.class, cc.getGameID()));
 		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, game, null, null, null, 0, session);
-    	
+
+		// replicate (projection of) GameConfig
+		GameConfig config = (GameConfig) session.get(GameConfig.class, game.getGameConfigID());		
+		insertMessageToClient(cc, MessageType.FACT_EX.ordinal(), false, null, getClientProjection(cc, config), null, null, null, 0, session);		
+
     	//ContentGroup contentgame.getContentGroupID()
     	QueryTemplate q = new QueryTemplate(Zone.class);
     	q.addConstraintEq("contentGroupID", game.getContentGroupID());
@@ -483,11 +489,15 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 		PRIORITY_TIMELINE_MESSAGES, // elevated priority timeline message
 		ZONES, // required at start
 		YOUR_GAME, // year
+		GAME_CONFIG, // various client config options
 		YOUR_PLAYER, // can author/create
 	}
 	/** application-specific: return priority for delivery to client */
 	public static int getPriority(ClientConversation cc, int typeOrdinal, Object oldVal, Object newVal) {
 		Object val = newVal!=null ? newVal : oldVal;
+		if (val instanceof GameConfig)
+			// you only get your own player anyway
+			return AppPriority.GAME_CONFIG.ordinal();
 		if (val instanceof Player)
 			// you only get your own player anyway
 			return AppPriority.YOUR_PLAYER.ordinal();
@@ -548,6 +558,28 @@ public class ClientSubscriptionManager implements IDataspaceObjectsListener {
 				logger.debug("getClientProjection for player "+cc.getPlayerID()+": "+m+" -> "+nm);
 				return nm;
 			}
+		}
+		if (value instanceof GameConfig) {
+			GameConfig gc = (GameConfig)value;
+			// only client fields
+			GameConfig ngc = new GameConfig();
+			ngc.setID(gc.getID());
+			ngc.setClientCreateMaxHealth(gc.getClientCreateMaxHealth());
+			ngc.setClientCreateMaxKnowledge(gc.getClientCreateMaxKnowledge());
+			ngc.setClientCreateMaxParticipation(gc.getClientCreateMaxParticipation());
+			ngc.setClientCreateMaxWealth(gc.getClientCreateMaxWealth());
+			ngc.setClientCreateMinHealth(gc.getClientCreateMinHealth());
+			ngc.setClientCreateMinKnowledge(gc.getClientCreateMinKnowledge());
+			ngc.setClientCreateMinParticipation(gc.getClientCreateMinParticipation());
+			ngc.setClientCreateMinWealth(gc.getClientCreateMinWealth());
+			ngc.setClientHttpTimeout(gc.getClientHttpTimeout());
+			ngc.setClientMessageEndGame(gc.getClientMessageEndGame());
+			ngc.setClientMessageOutOfBounds(gc.getClientMessageOutOfBounds());
+			ngc.setClientPollInterval(gc.getClientPollInterval());
+			ngc.setClientPollToFollow(gc.getClientPollToFollow());
+			ngc.setClientShowZonesOnMap(gc.getClientShowZonesOnMap());
+			logger.debug("getClientProjection: "+gc+" -> "+ngc);
+			return ngc;
 		}
 		// no change
 		return value;

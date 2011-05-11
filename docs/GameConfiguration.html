@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>Game Configuration</title>
+</head>
+<body>
+<h1>Game Configuration</h1>
+<p>Some notes on game configuration (GameConfig) options.</p>
+<p>Game time rate is currently compiled in at a rate such that 1 minute
+= 200 game time units; in the authoring tool one timeline column = 100
+time units, hence 30 seconds.</p>
+<p>General Configuration:</p>
+
+<ul>
+  <li>startTime: game time when game becomes ACTIVE (i.e. "play" is pressed in orchestration interface).&nbsp;</li>
+  <ul>
+    <li>Should typically be negative or zero; typically no timeline
+events will occur while game time is negative, providing time for
+briefing users on the interface.&nbsp;</li>
+    <li>E.g.&nbsp;1 minute initial delay = -200</li>
+  </ul>
+  <li>endTime: game time when the server will automatically change game
+state from ACTIVE to ENDING and send the game ending message to each
+player.&nbsp;</li>
+  <ul>
+    <li>E.g. 16 "years" (editor columns) = 1600 (~8 minutes or wall clock time)</li>
+  </ul>
+  <li>contextMessageEndTitle &amp; contextMessageEnd: title and test of
+"game ending" message sent to clients when game endTime is reached.&nbsp;&nbsp;</li>
+</ul>
+Adding Stories:
+<ul>
+  <li>enableAuthoring ==1 =&gt; server will enforce checks on client ability to author,</li>
+  <ul>
+    <li>i.e. enableAuthoring = 0 =&gt; players can author at any time.</li>
+    <li>If enableAuthoring = 1 and enableAuthoringQuota = 0 then I don't think player can ever author</li>
+  </ul>
+  <li>enableAuthoringQuota ==1 =&gt; server will run logic to change
+player ability to author according to whether a community member has
+brains &gt;= 8</li>
+  <ul>
+    <li>If enableAuthoring !=1 this will have no effect (I think)</li>
+  </ul>
+</ul>
+Adding Members:<br>
+<br>
+<ul>
+  <li>enableMemberQuota !=0 =&gt; enforce quota per member</li>
+  <li>initialMemberQuota [Integer, new], defaults to 1</li>
+</ul>
+Member Game Rules:
+<ul>
+  <li>enableSoleMemberZoneEffect - not used?</li>
+</ul>
+Client Configuration - General: (new)<br>
+<ul>
+  <li>clientCreateMinHealth [0-10, optional; default 2]</li>
+  <li>clientCreateMaxHealth [default 5]</li>
+  <li>clientCreateMinWealth [default 0]</li>
+  <li>clientCreateMaxWealth [default 7]</li>
+  <li>clientCreateMinKnowledge [default 0]</li>
+  <li>clientCreateMaxKnowledge [default 7]</li>
+  <li>clientCreateMinParticipation&nbsp;[default 0]</li>
+  <li>clientCreateMaxParticipation [default 7]</li>
+  <li>clientMessageEndGame [String]</li>
+  <li>clientMessageOutOfBounds [String]</li>
+  <li>clientPollInterval [ms]</li>
+  <li>clientPollToFollow [#messages]</li>
+  <li>clientHttpTimeout [ms]</li>
+  <li>clientShowZonesOnMap&nbsp;[Boolean, default false, editable in Debug &gt; Properties]</li>
+</ul>
+</body>
+</html>
